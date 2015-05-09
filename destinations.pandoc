@@ -131,3 +131,61 @@ Basically LambdaCube 3D is Haskell98 + various language extensions. TODO
 TODO
 
 
+Overview of LambdaCube 3D components
+====================================
+
+-   editor
+-   parser  --> errors to editor
+-   type checker (scope checking included)  -->  System-F to reducer  --> errors & type info to editor
+-   reducer
+-   byte code generator (CPU, GPU)
+-   byte code interpreter for each backend
+
+
+Live coding
+===========
+
+
+Tutorial
+========
+
+This going to be inteactive.
+
+
+Coding dojo exercises
+=====================
+
+
+Language specification
+======================
+
+
+Background
+==========
+
+History:
+
+Ogre Haskell implementation (read files, graphics in IO monads)  
+-> Haskell EDSL (shader reuse and composition)  
+-> Haskell EDSL (strong static typing of constraints)  
+-> Haskell EDSL (rewrite after gpipe inspiration but with better context handling)  
+(pipline description and pipline input is separated)  
+-> DSL
+
+Team:
+
+Csaba, Gergő, Divip
+
+Motivations:
+
+-   Compilers, functional programming & graphics
+-   Use cutting edge theory in industry
+-   Open minded collaboration
+
+Vision:
+
+-   close to nature work environment
+
+
+
+
