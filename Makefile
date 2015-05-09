@@ -3,5 +3,5 @@ destinations.tpl: destinations.pandoc
 
 .PHONEY: upload
 upload:
-	scp destinations.tpl divip@lambdacube3d.com:/home/www/hello/snaplets/heist/templates
+	scp destinations.tpl lambdacube3d.com:/home/www/hello/snaplets/heist/templates
 
