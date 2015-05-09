@@ -29,7 +29,11 @@ LambdaCube 3D components
     -   automatic GPU resource management
     -   strict static type system guarantees all constraints in OpenGL specification
 -   Integrated Development Environment
-    -   editor with syntax highlighting, error highlighting, jump to definitions etc.
+    -   context sensitive editor
+        -   syntax highlighting
+        -   error highlighting
+        -   jump to definitions
+        -   completion
     -   helpful error messages
     -   instant visual feedback
     -   code hot swapping
@@ -37,7 +41,7 @@ LambdaCube 3D components
     -   desktop
     -   browser
 -   Documentation
-    -   tutorial (exercises)
+    -   tutorial with exercises
     -   demos
     -   DSL specification
 
@@ -103,7 +107,7 @@ Links
 Contact us
 ==========
 
-![](csabaemail.png)
+![](csabaemail.png)  
 ![](divipemail.png)
 
 
@@ -115,5 +119,15 @@ What is the LambdaCube 3D project licence?
 
 The whole project is licenced under BSD3.
 
+Haskell related questions
+-------------------------
+
+### How LambdaCube 3D is related to Haskell?
+
+Basically LambdaCube 3D is Haskell98 + various language extensions. TODO
+
+### Why LambdaCube 3D is a DSL instead of being a Haskell EDSL?
+
+TODO
 
 
