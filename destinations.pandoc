@@ -21,6 +21,8 @@ LambdaCube 3D Tour
 ==================
 
 In 2015 we are going to a tour of Europe presenting LambdaCube 3D.
+Our main motivation is to collect feedback from potential LambdaCube 3D users.
+
 
 Destinations
 ------------
@@ -82,7 +84,7 @@ Components
 -   DSL for GPU graphics programming
     -   targets the whole graphics pipeline
     -   automatic GPU resource management
-    -   strict static type system guarantees all constraints in OpenGL specification
+    -   strict static typing guarantees all constraints in OpenGL specification
 -   Integrated Development Environment
     -   context sensitive editor
         -   syntax highlighting
@@ -194,7 +196,7 @@ Note    Explanation
 Prelude
 -------
 
-TODO
+[The current Prelude](https://github.com/csabahruska/lc-dsl/blob/master/lambdacube-dsl/tests/accept/Prelude.lc)
 
 
 Background
