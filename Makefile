@@ -1,5 +1,5 @@
 destinations.tpl: destinations.pandoc
-	pandoc -t html $< -o $@
+	pandoc -S -t html $< -o $@
 
 .PHONEY: upload
 upload:
