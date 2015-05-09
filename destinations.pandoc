@@ -104,13 +104,6 @@ Links
 -   [WordPress blog](https://lambdacube3d.wordpress.com/)
 
 
-Contact us
-==========
-
-![](csabaemail.png)  
-![](divipemail.png)
-
-
 Questions & answers
 ===================
 
@@ -186,6 +179,35 @@ Vision:
 
 -   close to nature work environment
 
+
+Participation
+=============
+
+Starting with [ZuriHac2015](https://wiki.haskell.org/ZuriHac2015/Projects), we are
+open to collaboration.
+We are happy to share several tasks you can working on, either at ZuriHack or from anywhere in you spare time.
+
+Notes:
+We prefer content licensed under BSD3.
+When you share content with us not licenced under BSD3, please notify us.
+
+Tasks
+-----
+
+-   Add or improve demos
+-   Improve documentation
+-   Compiler
+    -   ...
+-   ...
+
+Please report bugs at the corresponding GitHub repositories.
+
+
+Contact us
+==========
+
+![](csabaemail.png)  
+![](divipemail.png)
 
 
 
