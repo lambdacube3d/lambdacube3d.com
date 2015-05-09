@@ -13,37 +13,52 @@ This page is work in progress. Please do not share now.
 
 In 2015 we are going to a tour of Europe presenting LambdaCube 3D.
 
-♦  
-
 </div>
 
-LambdaCube 3D project goals
----------------------------
+About LambdaCube 3D
+===================
+
+Computer graphics programming is a complex task. This complexity is usually hidden inside of graphics engines. Most of these frameworks, however, place limitations on the graphics algorithms that can be formulated in them. An alternative approach is to build a DSL (Domain Specific Language) which provides access to all OpenGL features. A single unified language is used in place of the OpenGL API and GLSL. This unified language improves code reusability and guarantees correctness by compile-time checks. The user can thus focus on creativity instead of the technical details.
+
+
+LambdaCube 3D components
+------------------------
 
 -   DSL for GPU graphics programming
-    - targets the whole graphics pipeline
-    - automatic GPU resource management
-    - strict static type system guarantees all constraints in OpenGL specification
+    -   targets the whole graphics pipeline
+    -   automatic GPU resource management
+    -   strict static type system guarantees all constraints in OpenGL specification
 -   Integrated Development Environment
-    - editor with syntax highlighting, error highlighting, jump to definitions etc.
-    - helpful error messages
-    - instant visual feedback
-    - code hot swapping
+    -   editor with syntax highlighting, error highlighting, jump to definitions etc.
+    -   helpful error messages
+    -   instant visual feedback
+    -   code hot swapping
+-   Supported platforms
+    -   desktop
+    -   browser
 -   Documentation
-    - tutorial (exercises)
-    - demos
-    - DSL specification
+    -   tutorial (exercises)
+    -   demos
+    -   DSL specification
 
-<div align='center'>♦</div>  
 
 Presentations
--------------
+=============
 
 -   Overview of LambdaCube 3D components (approx. 20 min)
 -   Live coding demo (approx. 20 min)
 -   Coding dojo (bring your laptop!) (approx. 40 min)
 
-<div align='center'>♦</div>  
+
+Presenters
+----------
+
+Csaba Hruska
+:   Csaba is a enthusiastic Haskell programmer. He likes to experiment with cutting edge technologies usually doing it in open source collaboration.
+
+Péter Diviánszky
+:   Detto
+
 
 Destinations
 ------------
@@ -53,8 +68,6 @@ Destinations
 <iframe src='https://www.google.com/maps/embed?pb=!1m115!1m8!1m3!1d9409055.83025079!2d3.342443612500011!3d54.84791795891814!3m2!1i1024!2i768!4f13.1!4m104!1i0!3e0!4m5!1s0x4741c334d1d4cfc9%3A0x400c4290c1e1160!2sBudapest!3m2!1d47.497912!2d19.040235!4m5!1s0x479e75f9a38c5fd9%3A0x10cb84a7db1987d!2sMunich%2C+Germany!3m2!1d48.1351253!2d11.5819806!4m5!1s0x47900b9749bea219%3A0xe66e8df1e71fdc03!2sZurich%2C+Switzerland!3m2!1d47.3686498!2d8.539182499999999!4m5!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C+France!3m2!1d48.856614!2d2.3522219!4m5!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C+UK!3m2!1d51.5073509!2d-0.1277583!4m5!1s0x47d8774ed42712a9%3A0x21ca80abf36db5bb!2sUniversity+of+Cambridge%2C+The+Old+Schools%2C+Trinity+Lane%2C+Cambridge+CB2+1TN%2C+United+Kingdom!3m2!1d52.204266999999994!2d0.114908!4m5!1s0x487832d2390779cd%3A0x108063201919db15!2sNottingham%2C+UK!3m2!1d52.954783199999994!2d-1.1581086!4m5!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C+UK!3m2!1d51.5073509!2d-0.1277583!4m5!1s0x47c66f4339d32d37%3A0xd6c8fc4c19af4ae9!2sUtrecht%2C+Netherlands!3m2!1d52.090737399999995!2d5.1214201!4m5!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin%2C+Germany!3m2!1d52.520006599999995!2d13.404954!4m5!1s0x4652533c5c803d23%3A0x4dd7edde69467b8!2sCopenhagen%2C+Denmark!3m2!1d55.676096799999996!2d12.568337099999999!4m5!1s0x464f8e67966c073f%3A0x4019078290e7c40!2sGothenburg%2C+Sweden!3m2!1d57.70887!2d11.97456!4m5!1s0x465f763119640bcb%3A0xa80d27d3679d7766!2sStockholm%2C+Sweden!3m2!1d59.329323499999994!2d18.0685808!4m5!1s0x46920bc796210691%3A0xcd4ebd843be2f763!2sHelsinki%2C+Finland!3m2!1d60.1733244!2d24.941024799999997!4m5!1s0x46eecfb0e5073ded%3A0x400cfcd68f2fe30!2zUsSrZ2EsIExhdHZpYQ!3m2!1d56.9496487!2d24.105186399999997!4m5!1s0x471ecc669a869f01%3A0x72f0be2a88ead3fc!2sWarsaw%2C+Poland!3m2!1d52.2296756!2d21.012228699999998!4m5!1s0x4741c334d1d4cfc9%3A0x400c4290c1e1160!2sBudapest!3m2!1d47.497912!2d19.040235!5e0!3m2!1sen!2shu!4v1429609876683' width='600' height='450' frameborder='0' style='border:0'></iframe>
 
 </div>
-
-<div align='center'>♦</div>  
 
 City          Date                            Organisation + event link
 ------------- ------------------------------- ---------------------------------
@@ -79,5 +92,21 @@ Helsinki      July 7, 8 or 9
 
 Maybe: Tallinn, Riga, Vilnius, Warsaw, Kraków, Bratislava
 
-<div align='center'>♦</div>  
+
+Links
+=====
+
+-   [GitHub repository](https://github.com/csabahruska/lc-dsl/tree/master/lambdacube-dsl)
+-   [WordPress blog](https://lambdacube3d.wordpress.com/)
+
+
+Questions & answers
+===================
+
+What is the LambdaCube 3D project licence?
+------------------------------------------
+
+The whole project is licenced under BSD3.
+
+
 
