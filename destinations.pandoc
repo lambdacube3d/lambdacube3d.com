@@ -14,7 +14,11 @@
 About LambdaCube 3D
 ===================
 
-Computer graphics programming is a complex task. This complexity is usually hidden inside of graphics engines. Most of these frameworks, however, place limitations on the graphics algorithms that can be formulated in them. An alternative approach is to build a DSL (Domain Specific Language) which provides access to all OpenGL features. A single unified language is used in place of the OpenGL API and GLSL. This unified language improves code reusability and guarantees correctness by compile-time checks. The user can thus focus on creativity instead of the technical details.
+Computer graphics programming is a complex task. This complexity is usually hidden inside of graphics engines. Most of these
+frameworks, however, place limitations on the graphics algorithms that can be formulated in them. An alternative approach is to
+build a DSL (Domain Specific Language) which provides access to all OpenGL features. A single unified language is used in place of
+the OpenGL API and GLSL. This unified language improves code reusability and guarantees correctness by compile-time checks. The
+user can thus focus on creativity instead of the technical details.
 
 
 LambdaCube 3D Tour
@@ -202,13 +206,52 @@ Prelude
 Background
 ==========
 
+The LambdaCube adventure started in the beginning of 2009, when Csaba decided to create an Ogre3D compatible engine in Haskell.
+At this time, Gergely was a postgraduate student at BME (Technical University of Budapest) doing research aimed at applying
+functional programming in various areas -- interactive applications and embedded systems --, and he ended up mentoring Csaba over
+the years thanks to their overlap in interests.
+
+Originally Csaba intended the engine to act as a drop-in replacement for Ogre3D, including the ability to read and display all the
+existing assets without the need for conversion. The first incarnation of LambdaCube was therefore a traditional rendering engine
+based on a hierarchical scene graph, offering an essentially C-style imperative API. Around this time we also submitted it to the
+Jane Street Summer Project program and it ended up as a finalist.
+
+Afterwards, the project went dormant for nearly two years. We did some work under the hood, but only very sporadically as life
+would deliver its distractions during this period. In mid-2011 we finally released a new version of the engine whose main
+contribution was defining an actual public API. This required a major clean-up job, but in hindsight the actual improvements were
+really minor. We basically wrapped all the operations of the engine in an extra monadic layer called LCM (guess what it stands
+for!), which took care of resource management under the hood. This was also the moment where we switched to the raw OpenGL
+bindings.
+
+As the [announcement](http://just-bottom.blogspot.fi/2011/06/renewed-lambdacube-bullet-bindings-and.html) for the above release
+stated, at this point we realised that the direction we had been pursuing was really a dead-end. Trying to shoehorn an imperative
+API into a purely functional language felt like a constrant struggle against the elements. We went back to the drawing board and
+came up with a different plan: let's take inspiration from [GPipe](https://wiki.haskell.org/GPipe) and create a purely functional
+model of the rendering pipeline. We set the goal of creating an independent DSL, but starting to evolve it as a Haskell EDSL at
+first.
+
+Unfortunately, progress had to slow down due to the team becoming physically separate, as Gergely moved to Finland and became a
+game developer shortly after the announcement. It took another year before we would reveal the first public version of the new
+library in the summer of 2012. We also started the [LambdaCube3D blog](https://lambdacube3d.wordpress.com/).
+
+The LambdaCube language was designed to be feature complete and safe by construction from the beginning. We deviated from GPipe's
+design in a number of ways to achieve this, e.g. by introducing explicit contexts for various rendering phases or defining shaders
+as explicit functions instead of mapping over streams. We also leverage the type system to encode the constraints of shader
+languages. As an important design decision, we clearly separate data (geometry) from logic (pipeline), which goes against the
+long-standing tradition of coupling meshes with materials, but it allows us to describe complex effects and their compositions
+with surface materials in a modular manner, and makes it easier to implement hot-swapping both for assets and pipelines.
+
+In 2013 we introduced the LambdaCube Intermediate Representation (IR), which was the next logical step on the path to the
+independent DSL. The IR allows us to separate the frontend and the backend, and ultimately compile a single pipeline description
+to several platforms.
+
 History:
 
-Ogre Haskell implementation (read files, graphics in IO monads)  
--> Haskell EDSL (shader reuse and composition)  
--> Haskell EDSL (strong static typing of constraints)  
--> Haskell EDSL (rewrite after gpipe inspiration but with better context handling)  
-(pipline description and pipline input is separated)  
+Ogre Haskell implementation (read files, graphics in IO monads)
+-> Haskell EDSL (shader reuse and composition)
+-> Haskell EDSL (strong static typing of constraints)
+-> Haskell EDSL (rewrite after gpipe inspiration but with better context handling)
+(pipline description and pipline input is separated)
 -> DSL
 
 Team:
@@ -292,7 +335,7 @@ Cons
     -   but providing a Haskell FFI in LambdaCube 3D loosens this argument
 -   missing GHC toolset (profiling tools, cabal, ...)
 -   missing GHC features (?)
--   maintenance costs of a separate parser, type checker and runtime system  
+-   maintenance costs of a separate parser, type checker and runtime system
     Remark: we pay this costs as we go, so the argument is that we might have a fully working system later than with an EDSL - we don't think that this is the case though
 
 Conclusion
@@ -313,8 +356,5 @@ Links
 Contact us
 ==========
 
-![](csabaemail.png)  
+![](csabaemail.png)
 ![](divipemail.png)
-
-
-
