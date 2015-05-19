@@ -56,10 +56,12 @@ Maybe: Tallinn, Riga, Vilnius, Warsaw, Kraków, Bratislava
 
 <div align='center'>
 
-<iframe src='https://www.google.com/maps/embed?pb=!1m115!1m8!1m3!1d9409055.83025079!2d3.342443612500011!3d54.84791795891814!3m2!1i1024!2i768!4f13.1!4m104!1i0!3e0!4m5!1s0x4741c334d1d4cfc9%3A0x400c4290c1e1160!2sBudapest!3m2!1d47.497912!2d19.040235!4m5!1s0x479e75f9a38c5fd9%3A0x10cb84a7db1987d!2sMunich%2C+Germany!3m2!1d48.1351253!2d11.5819806!4m5!1s0x47900b9749bea219%3A0xe66e8df1e71fdc03!2sZurich%2C+Switzerland!3m2!1d47.3686498!2d8.539182499999999!4m5!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C+France!3m2!1d48.856614!2d2.3522219!4m5!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C+UK!3m2!1d51.5073509!2d-0.1277583!4m5!1s0x47d8774ed42712a9%3A0x21ca80abf36db5bb!2sUniversity+of+Cambridge%2C+The+Old+Schools%2C+Trinity+Lane%2C+Cambridge+CB2+1TN%2C+United+Kingdom!3m2!1d52.204266999999994!2d0.114908!4m5!1s0x487832d2390779cd%3A0x108063201919db15!2sNottingham%2C+UK!3m2!1d52.954783199999994!2d-1.1581086!4m5!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C+UK!3m2!1d51.5073509!2d-0.1277583!4m5!1s0x47c66f4339d32d37%3A0xd6c8fc4c19af4ae9!2sUtrecht%2C+Netherlands!3m2!1d52.090737399999995!2d5.1214201!4m5!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin%2C+Germany!3m2!1d52.520006599999995!2d13.404954!4m5!1s0x4652533c5c803d23%3A0x4dd7edde69467b8!2sCopenhagen%2C+Denmark!3m2!1d55.676096799999996!2d12.568337099999999!4m5!1s0x464f8e67966c073f%3A0x4019078290e7c40!2sGothenburg%2C+Sweden!3m2!1d57.70887!2d11.97456!4m5!1s0x465f763119640bcb%3A0xa80d27d3679d7766!2sStockholm%2C+Sweden!3m2!1d59.329323499999994!2d18.0685808!4m5!1s0x46920bc796210691%3A0xcd4ebd843be2f763!2sHelsinki%2C+Finland!3m2!1d60.1733244!2d24.941024799999997!4m5!1s0x46eecfb0e5073ded%3A0x400cfcd68f2fe30!2zUsSrZ2EsIExhdHZpYQ!3m2!1d56.9496487!2d24.105186399999997!4m5!1s0x471ecc669a869f01%3A0x72f0be2a88ead3fc!2sWarsaw%2C+Poland!3m2!1d52.2296756!2d21.012228699999998!4m5!1s0x4741c334d1d4cfc9%3A0x400c4290c1e1160!2sBudapest!3m2!1d47.497912!2d19.040235!5e0!3m2!1sen!2shu!4v1429609876683' width='600' height='450' frameborder='0' style='border:0'></iframe>
+<iframe src='https://www.google.com/maps/embed?pb=!1m115!1m8!1m3!1d9409055.83025079!2d3.342443612500011!3d54.84791795891814!3m2!1i1024!2i768!4f13.1!4m104!1i0!3e0!4m5!1s0x4741c334d1d4cfc9%3A0x400c4290c1e1160!2sBudapest!3m2!1d47.497912!2d19.040235!4m5!1s0x479e75f9a38c5fd9%3A0x10cb84a7db1987d!2sMunich%2C+Germany!3m2!1d48.1351253!2d11.5819806!4m5!1s0x47900b9749bea219%3A0xe66e8df1e71fdc03!2sZurich%2C+Switzerland!3m2!1d47.3686498!2d8.539182499999999!4m5!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C+France!3m2!1d48.856614!2d2.3522219!4m5!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C+UK!3m2!1d51.5073509!2d-0.1277583!4m5!1s0x47d8774ed42712a9%3A0x21ca80abf36db5bb!2sUniversity+of+Cambridge%2C+The+Old+Schools%2C+Trinity+Lane%2C+Cambridge+CB2+1TN%2C+United+Kingdom!3m2!1d52.204266999999994!2d0.114908!4m5!1s0x487832d2390779cd%3A0x108063201919db15!2sNottingham%2C+UK!3m2!1d52.954783199999994!2d-1.1581086!4m5!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C+UK!3m2!1d51.5073509!2d-0.1277583!4m5!1s0x47c66f4339d32d37%3A0xd6c8fc4c19af4ae9!2sUtrecht%2C+Netherlands!3m2!1d52.090737399999995!2d5.1214201!4m5!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin%2C+Germany!3m2!1d52.520006599999995!2d13.404954!4m5!1s0x4652533c5c803d23%3A0x4dd7edde69467b8!2sCopenhagen%2C+Denmark!3m2!1d55.676096799999996!2d12.568337099999999!4m5!1s0x464f8e67966c073f%3A0x4019078290e7c40!2sGothenburg%2C+Sweden!3m2!1d57.70887!2d11.97456!4m5!1s0x465f763119640bcb%3A0xa80d27d3679d7766!2sStockholm%2C+Sweden!3m2!1d59.329323499999994!2d18.0685808!4m5!1s0x46920bc796210691%3A0xcd4ebd843be2f763!2sHelsinki%2C+Finland!3m2!1d60.1733244!2d24.941024799999997!4m5!1s0x46eecfb0e5073ded%3A0x400cfcd68f2fe30!2zUsSrZ2EsIExhdHZpYQ!3m2!1d56.9496487!2d24.105186399999997!4m5!1s0x471ecc669a869f01%3A0x72f0be2a88ead3fc!2sWarsaw%2C+Poland!3m2!1d52.2296756!2d21.012228699999998!4m5!1s0x4741c334d1d4cfc9%3A0x400c4290c1e1160!2sBudapest!3m2!1d47.497912!2d19.040235!5e0!3m2!1sen!2shu!4v1429609876683' width='600' height='450' frameborder='0' class='border:0'></iframe>
 
 </div>
 
+
+<div class='hidden'>
 
 Presentation schedule
 ---------------------
@@ -78,9 +80,17 @@ Csaba Hruska
 Péter Diviánszky
 :   Detto
 
+</div>
 
 Overview of LambdaCube 3D components
 ====================================
+
+Architecture
+------------
+
+<img src='lc-architecture.svg' width='550px' height='auto' />
+
+<div class='hidden'>
 
 Components
 ----------
@@ -106,21 +116,9 @@ Components
     -   demos
     -   DSL specification
 
-Architecture
-------------
+</div>
 
-<img src='lc-architecture.svg' width='550px' height='auto' />
-
-<!--
-Figure (TODO):
-
--   editor
--   parser  -> errors to editor
--   type checker (scope checking included)  ->  System-F to reducer  -> errors & type info to editor
--   reducer
--   byte code generator (CPU, GPU)
--   byte code interpreter for each backend
--->
+<div class='hidden'>
 
 Live coding demos
 =================
@@ -139,6 +137,7 @@ Coding dojo exercises
 
 TODO
 
+</div>
 
 Participation
 =============
@@ -151,6 +150,8 @@ Notes:
 We prefer content licensed under BSD3.
 When you share content with us not licenced under BSD3, please notify us.
 
+<div class='hidden'>
+
 Tasks
 -----
 
@@ -160,8 +161,12 @@ Tasks
     -   ...
 -   ...
 
+</div>
+
 Please report bugs at the corresponding GitHub repositories.
 
+
+<div class='hidden'>
 
 Language specification
 ======================
@@ -202,15 +207,30 @@ Note    Explanation
 *TODO*  We think we know how to do this, needs time
 ------- ---------------
 
-
 Prelude
 -------
 
 [The current Prelude](https://github.com/csabahruska/lc-dsl/blob/master/lambdacube-dsl/tests/accept/Prelude.lc)
 
+</div>
 
-Background
-==========
+Motivations and goals
+=====================
+
+The basic motivation for creating LambdaCube is really simple: it represents the perfect intersection of different fields that
+have excited us for a long time -- pure functional programming, computer graphics, and compiler research. We intend to explore a
+totally new branch of the design space for authoring and developer tools.
+
+Ideally this project would be of interest to people with very different backgrounds. We're employing some of the latest and
+greatest bits of type theory -- in some ways being a step or two ahead of the newest extensions to Haskell --, but at the same
+time we're also aiming to create a friendly, efficient environment for rapidly iterating visual ideas.
+
+We strongly believe in the value of exposing ourselves and others to completely new fields of thought, and approaching them with
+an open mind. Great discoveries often happen at the boundaries, when a new connection is made -- both between the people and the
+ideas from each side. Only the future can tell whether LambdaCube will have any such impact, but one can always hope!
+
+A little history
+================
 
 The LambdaCube adventure started in the beginning of 2009, when Csaba decided to create an Ogre3D compatible engine in Haskell.
 At this time, Gergely was a postgraduate student at BME (Technical University of Budapest) doing research aimed at applying
@@ -251,29 +271,17 @@ In 2013 we introduced the LambdaCube Intermediate Representation (IR), which was
 independent DSL. The IR allows us to separate the frontend and the backend, and ultimately compile a single pipeline description
 to several platforms.
 
-History:
+Work on the actual DSL started in 2014.  This was the time when Péter joined the team, first working on our beloved Stunts
+example, then moving on to the compiler project itself.  The last months preceding the big tour in 2015 were spent building the
+online editing environment.
 
-Ogre Haskell implementation (read files, graphics in IO monads)
--> Haskell EDSL (shader reuse and composition)
--> Haskell EDSL (strong static typing of constraints)
--> Haskell EDSL (rewrite after gpipe inspiration but with better context handling)
-(pipline description and pipline input is separated)
--> DSL
-
-Team:
-
-Csaba, Gergő, Divip
-
-Motivations:
-
--   Compilers, functional programming & graphics
--   Use cutting edge theory in industry
--   Open minded collaboration
+<div class='hidden'>
 
 Vision:
 
 -   close to nature work environment
 
+</div>
 
 Questions & answers
 ===================
@@ -288,6 +296,7 @@ How can I participate?
 
 See [Participation](#participation)
 
+<div class='hidden'>
 
 Haskell related questions
 -------------------------
@@ -350,6 +359,7 @@ As Csaba spent significant time already with experimenting with a Haskell EDSL,
 we switch focus now to experiment with a proper DSL. The option is always there
 to backport the DSL's innovations to the Haskell EDSL.
 
+</div>
 
 Links
 =====
@@ -362,5 +372,8 @@ Links
 Contact us
 ==========
 
-![](csabaemail.png)
-![](divipemail.png)
+csaba.hruska&#64;gmail.com
+
+patai.gergely&#64;gmail.com
+
+divipp&#64;gmail.com
