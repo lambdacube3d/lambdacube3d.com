@@ -106,15 +106,21 @@ Components
     -   demos
     -   DSL specification
 
+Architecture
+------------
+
+<img src='lc-architecture.svg' width='550px' height='auto' />
+
+<!--
 Figure (TODO):
 
 -   editor
--   parser  --> errors to editor
--   type checker (scope checking included)  -->  System-F to reducer  --> errors & type info to editor
+-   parser  -> errors to editor
+-   type checker (scope checking included)  ->  System-F to reducer  -> errors & type info to editor
 -   reducer
 -   byte code generator (CPU, GPU)
 -   byte code interpreter for each backend
-
+-->
 
 Live coding demos
 =================
