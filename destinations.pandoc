@@ -7,25 +7,26 @@
 
 <div align='center'>
 
-***This page is work in progress. Please do not share now.***
+***This page is work in progress. Please do not share yet.***
 
 </div>
 
 About LambdaCube 3D
 ===================
 
-Computer graphics programming is a complex task. This complexity is usually hidden inside of graphics engines. Most of these
-frameworks, however, place limitations on the graphics algorithms that can be formulated in them. An alternative approach is to
-build a DSL (Domain Specific Language) which provides access to all OpenGL features. A single unified language is used in place of
-the OpenGL API and GLSL. This unified language improves code reusability and guarantees correctness by compile-time checks. The
-user can thus focus on creativity instead of the technical details.
+Computer graphics programming is a complex task. This complexity is usually hidden in the dark corners of graphics engines. Most
+of these frameworks, however, either place limitations on the algorithms that can be formulated in them, or make it awkward to
+express complex relationships. An alternative approach is to build a DSL (Domain Specific Language) which provides access to all
+GPU features and makes it possible to create better tools. A single unified language is used in place of the OpenGL API and
+GLSL. This language improves composability and guarantees correctness by compile-time checks, the user can thus focus on
+creativity instead of the technical details.
 
 
 LambdaCube 3D Tour
 ==================
 
-In 2015 we are going to a tour of Europe presenting LambdaCube 3D.
-Our main motivation is to collect feedback from potential LambdaCube 3D users.
+In 2015 we are going on a tour around Europe presenting LambdaCube 3D. Our main motivation is to collect feedback from potential
+LambdaCube 3D users.
 
 
 Destinations
@@ -63,7 +64,7 @@ Maybe: Tallinn, Riga, Vilnius, Warsaw, Kraków, Bratislava
 
 <div class='hidden'>
 
-Presentation schedule
+Presentation Schedule
 ---------------------
 
 -   [Overview of LambdaCube 3D components](#overview-of-lambdacube-3d-components) (approx. 20 min)
@@ -75,14 +76,38 @@ Presenters
 ----------
 
 Csaba Hruska
-:   Csaba is a enthusiastic Haskell programmer. He likes to experiment with cutting edge technologies usually doing it in open source collaboration.
+:   Csaba is an enthusiastic Haskell programmer. He likes to experiment with cutting edge technologies usually doing it in open source collaboration.
 
 Péter Diviánszky
 :   Detto
 
 </div>
 
-Overview of LambdaCube 3D components
+Participation
+=============
+
+Starting with [ZuriHac2015](https://wiki.haskell.org/ZuriHac2015/Projects), we are open to collaboration.  We are happy to share
+several tasks you can work on, either at ZuriHack or from anywhere in your spare time.
+
+Note: We prefer content licenced under BSD3. When you share content with us not licenced under BSD3, please notify us.
+
+<div class='hidden'>
+
+Tasks
+-----
+
+-   Add or improve demos
+-   Improve documentation
+-   Compiler
+    -   ...
+-   ...
+
+</div>
+
+Please report bugs at the corresponding GitHub repositories.
+
+
+Overview of LambdaCube 3D Components
 ====================================
 
 Architecture
@@ -120,7 +145,7 @@ Components
 
 <div class='hidden'>
 
-Live coding demos
+Live Coding Demos
 =================
 
 *Youtube links*
@@ -132,43 +157,16 @@ Tutorial
 This going to be inteactive.
 
 
-Coding dojo exercises
+Coding Dojo Exercises
 =====================
 
 TODO
 
 </div>
 
-Participation
-=============
-
-Starting with [ZuriHac2015](https://wiki.haskell.org/ZuriHac2015/Projects), we are
-open to collaboration.
-We are happy to share several tasks you can working on, either at ZuriHack or from anywhere in your spare time.
-
-Notes:
-We prefer content licensed under BSD3.
-When you share content with us not licenced under BSD3, please notify us.
-
 <div class='hidden'>
 
-Tasks
------
-
--   Add or improve demos
--   Improve documentation
--   Compiler
-    -   ...
--   ...
-
-</div>
-
-Please report bugs at the corresponding GitHub repositories.
-
-
-<div class='hidden'>
-
-Language specification
+Language Specification
 ======================
 
 Basically LambdaCube 3D is [Haskell98](https://www.haskell.org/onlinereport/) + various language extensions.
@@ -214,7 +212,7 @@ Prelude
 
 </div>
 
-Motivations and goals
+Motivations and Goals
 =====================
 
 The basic motivation for creating LambdaCube is really simple: it represents the perfect intersection of different fields that
@@ -229,7 +227,7 @@ We strongly believe in the value of exposing ourselves and others to completely 
 an open mind. Great discoveries often happen at the boundaries, when a new connection is made -- both between the people and the
 ideas from each side. Only the future can tell whether LambdaCube will have any such impact, but one can always hope!
 
-A little history
+A Little History
 ================
 
 The LambdaCube adventure started in the beginning of 2009, when Csaba decided to create an Ogre3D compatible engine in Haskell.
@@ -283,7 +281,7 @@ Vision:
 
 </div>
 
-Questions & answers
+Questions & Answers
 ===================
 
 What is the LambdaCube 3D project licence?
@@ -294,7 +292,7 @@ The whole project is licenced under BSD3.
 How can I participate?
 ----------------------
 
-See [Participation](#participation)
+See [Participation](#participation).
 
 <div class='hidden'>
 
@@ -364,16 +362,12 @@ to backport the DSL's innovations to the Haskell EDSL.
 Links
 =====
 
--   [WordPress blog](https://lambdacube3d.wordpress.com/)
--   [GitHub repository](https://github.com/csabahruska/lc-dsl/tree/master/lambdacube-dsl)
--   [Homepage GitHub repository](https://github.com/csabahruska/lambdacube3d.com)
+-   [Official blog](https://lambdacube3d.wordpress.com/)
+-   [GitHub organisation](https://github.com/lambdacube3d)
 
-
-Contact us
+Contact Us
 ==========
 
-csaba.hruska&#64;gmail.com
-
-patai.gergely&#64;gmail.com
-
-divipp&#64;gmail.com
+-   csaba.hruska&#64;gmail.com
+-   patai.gergely&#64;gmail.com
+-   divipp&#64;gmail.com
