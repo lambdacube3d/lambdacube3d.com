@@ -9,5 +9,6 @@ destinations.html: destinations.pandoc
 
 .PHONEY: upload
 upload:
+	chmod g+w destinations.tpl
 	scp destinations.tpl lambdacube3d.com:/home/www/hello/snaplets/heist/templates
 
