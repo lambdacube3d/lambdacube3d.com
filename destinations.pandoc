@@ -168,53 +168,6 @@ TODO
 
 </div>
 
-<div class='hidden'>
-
-Language Specification
-======================
-
-Basically LambdaCube 3D is [Haskell98](https://www.haskell.org/onlinereport/) + various language extensions.
-
--   Haskell98 features
-    -   Type classes
-    -   ...
--   Missing/omitted Haskell98 features
-    -   N+k patterns, see [`NoNPlusKPatterns`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoNPlusKPatterns)
-    -   Monomorphism restriction, see [`NoMonomorphismRestriction`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoMonomorphismRestriction)
-    -   [Different Prelude](#prelude)
-    -   ...
--   Diversions from Haskell98
-    -   Mutual definitions should be marked explicitly \*
-    -   Definitions should be ordered bottom-up \*
-    -   ...
--   GHC extensions
-    -   `ScopedTypeVariables`, see [Lexically scoped type variables](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/other-type-extensions.html#scoped-type-variables)
-    -   `PolyKinds` and `DataKinds`, see [Kind polymorphism and promotion](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/kind-polymorphism-and-promotion.html) -- *WIP*
-    -   [Type families](https://wiki.haskell.org/GHC/Type_families)
-    -   ...
--   Planned GHC extensions
-    -   [`TypeApplication`](https://ghc.haskell.org/trac/ghc/wiki/TypeApplication)  -- *Done*
--   Other extensions
-    -   Raw polymorphism -- *Done*
-    -   [Swizzling](http://en.wikipedia.org/wiki/Swizzling_%28computer_graphics%29) -- *TODO*
-    -   Type error specialisation
--   Other diversions from GHC
-    -   ...
-
-Note    Explanation
-------- ---------------
-\*      Not essential restriction (can be lifted in the future)
-*Done*  Done
-*WIP*   Work In Progress
-*TODO*  We think we know how to do this, needs time
-------- ---------------
-
-Prelude
--------
-
-[The current Prelude](https://github.com/csabahruska/lc-dsl/blob/master/lambdacube-dsl/tests/accept/Prelude.lc)
-
-</div>
 
 Motivations and Goals
 =====================
@@ -298,70 +251,6 @@ How can I participate?
 
 See [Participation](#participation).
 
-<div class='hidden'>
-
-Haskell related questions
--------------------------
-
-### How LambdaCube 3D is related to Haskell?
-
-The LambdaCube 3D language is specified [compared to Haskell98](#language-specification).
-
-There is a Haskell EDSL too, but we focus development on the DSL now.
-
-
-### Why LambdaCube 3D is focusing now on a DSL instead of a Haskell EDSL as before?
-
-We know that this question may be sensitive to Haskell programmers.
-As we present LambdaCube 3D for lots of Haskell communities during our tour,
-we discuss the question in detail.
-
-Pros
-
--   syntax
-    -   ordinary Haskell functions syntax can be used for shader descriptions
-        -   counterargument: also possible with quasiquoting, although at the expense of some syntactic noise
-    -   syntactic sugar for swizzling
-        -   counterargument: also possible with quasiquoting, although at the expense of some syntactic noise
--   type system
-    -   domain specific error messages
-    -   interactive explanations of errors
-    -   row polymorphism
-        -   counterargument: this may be done with a GHC constraint solver plugin
--   runtime system
-    -   should be available in several platforms (in the browser too)
-        -   counterargument: could be solved by replacing the GHC runtime only
-    -   small compiled binaries
-    -   more control on evaluation order
-        -   counterargument: could be solved by replacing the GHC runtime only
-    -   more control on garbage collection
-        -   counterargument: could be solved by replacing the GHC runtime only
--   other
-    -   easier to experiment with new features
-    -   be lightweight (run also the compiler in the browser)
-    -   more control on sharing of subexpressions
-        -   counterargument: there are several techniques to solve this, but none of them was fully working in our case
-
-Cons
-
--   a new language to learn (for a Haskell programmer)
-    -   but trying to be close to Haskell loosens this argument
--   cannot freely mix LambdaCube3D and Haskell in the same module
-    -   but trying to be close to Haskell loosens this argument
--   cannot freely mix LambdaCube3D with existing Haskell libraries
-    -   but providing a Haskell FFI in LambdaCube 3D loosens this argument
--   missing GHC toolset (profiling tools, cabal, ...)
--   missing GHC features (?)
--   maintenance costs of a separate parser, type checker and runtime system
-    Remark: we pay this costs as we go, so the argument is that we might have a fully working system later than with an EDSL - we don't think that this is the case though
-
-Conclusion
-
-As Csaba spent significant time already with experimenting with a Haskell EDSL,
-we switch focus now to experiment with a proper DSL. The option is always there
-to backport the DSL's innovations to the Haskell EDSL.
-
-</div>
 
 Links
 =====

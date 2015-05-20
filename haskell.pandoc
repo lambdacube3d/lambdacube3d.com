@@ -1,0 +1,139 @@
+*This page is a work in progress*
+
+Language Specification
+======================
+
+LambdaCube 3D is Haskell98 + various language extensions.
+
+-   [Haskell98](https://www.haskell.org/onlinereport/) features
+    -   patterns (variable, constructor, at-pattern, wildcard) -- *Done*
+    -   expressions (variable, constructor, application, lambda, let, case, if, type signature) -- *Done*
+    -   tuples, lists -- *Done*
+    -   definitions (value definition, function, function alternative, guard, where-block, type signature) -- *Done*
+    -   operators, fixity declarations -- *Done*
+    -   data declarations -- *Done*
+    -   newtype declarations -- *TODO*
+    -   type synonyms -- *TODO*
+    -   type classes -- *WIP*
+    -   module imports -- *Done*
+    -   module import and export lists -- *TODO*
+    -   defaulting -- *TODO*
+-   Registered extensions (automatically enabled)
+    -   [`NoMonomorphismRestriction`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoMonomorphismRestriction) -- *Done*
+    -   [`NoNPlusKPatterns`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoNPlusKPatterns)  -- *Done*
+    -   [`TypeApplication`](https://ghc.haskell.org/trac/ghc/wiki/TypeApplication)  -- *Done*
+    -   `KindSignatures` -- *Done*
+    -   [`PolyKinds` & `DataKinds`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/kind-polymorphism-and-promotion.html) -- *WIP*
+    -   [`GADTs`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/data-type-extensions.html#gadt) (includes `ExistentialQuantification`) -- *WIP*
+    -   [`TypeFamilies`](https://wiki.haskell.org/GHC/Type_families) -- *WIP*
+    -   [`ScopedTypeVariables`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/other-type-extensions.html#scoped-type-variables) -- *TODO*
+-   Other extensions (automatically enabled)
+    -   [Raw polymorphism](#row-polymorphism) -- *Done*
+    -   [Swizzling](#swizzling) -- *WIP*
+    -   Type error specialisation -- *TODO*
+-   Diversions from Haskell
+    -   [Different Prelude](#prelude)  -- *WIP*
+    -   Definitions should be ordered bottom-up  -- \* 
+    -   Mutual definitions should be marked explicitly -- *TODO* \*
+    -   Type signatues should be placed right before definitions  -- \* 
+    -   Irrefutable patterns are not supported  -- \* 
+    -   List comprehensions are not supported  -- \* 
+
+Notes
+------- ---------------
+\*      Not essential restriction (could be lifted)
+*Done*  Done
+*WIP*   Work In Progress
+*TODO*  We think we know how to do this, needs time
+------- ---------------
+
+Prelude
+-------
+
+[The current Prelude](https://github.com/csabahruska/lc-dsl/blob/master/lambdacube-dsl/tests/accept/Prelude.lc)
+
+Row polymorphism
+----------------
+
+~~~~~~~~ {.haskell}
+v1 = {x: 1.0, y: 2.0, z: 3.0}
+v2 = {x: 1.0, y: 2.0, z: 3.0, a: 4.0}
+
+f v = v.x `PrimAddS` v.y
+
+r = f v1 `PrimAddS` f v2
+~~~~~~~~
+
+Swizzling
+---------
+
+[Wikipedia article](http://en.wikipedia.org/wiki/Swizzling_%28computer_graphics%29)
+
+~~~~~~~~ {.haskell}
+{x: 1, y: 2, z: 3}%xxy   ===   (1, 1, 2)
+~~~~~~~~
+
+
+
+Questions & Answers
+===================
+
+How LambdaCube 3D is related to Haskell?
+----------------------------------------
+
+The LambdaCube 3D language is specified [compared to Haskell98](#language-specification).
+
+There is a Haskell EDSL too, but we focus development on the DSL now.
+
+Why LambdaCube 3D is focusing now on a DSL instead of a Haskell EDSL as before?
+-------------------------------------------------------------------------------
+
+We know that this question may be sensitive to Haskell programmers.
+As we present LambdaCube 3D for lots of Haskell communities during our tour,
+we discuss the question in detail.
+
+### Pros
+
+-   syntax
+    -   ordinary Haskell functions syntax can be used for shader descriptions
+        -   counterargument: also possible with quasiquoting, although at the expense of some syntactic noise
+    -   syntactic sugar for swizzling
+        -   counterargument: also possible with quasiquoting, although at the expense of some syntactic noise
+-   type system
+    -   domain specific error messages
+    -   interactive explanations of errors
+    -   row polymorphism
+        -   counterargument: this may be done with a GHC constraint solver plugin
+-   runtime system
+    -   should be available in several platforms (in the browser too)
+        -   counterargument: could be solved by replacing the GHC runtime only
+    -   small compiled binaries
+    -   more control on evaluation order
+        -   counterargument: could be solved by replacing the GHC runtime only
+    -   more control on garbage collection
+        -   counterargument: could be solved by replacing the GHC runtime only
+-   other
+    -   easier to experiment with new features
+    -   be lightweight (run also the compiler in the browser)
+    -   more control on sharing of subexpressions
+        -   counterargument: there are several techniques to solve this, but none of them was fully working in our case
+
+### Cons
+
+-   a new language to learn (for a Haskell programmer)
+    -   but trying to be close to Haskell loosens this argument
+-   cannot freely mix LambdaCube3D and Haskell in the same module
+    -   but trying to be close to Haskell loosens this argument
+-   cannot freely mix LambdaCube3D with existing Haskell libraries
+    -   but providing a Haskell FFI in LambdaCube 3D loosens this argument
+-   missing GHC toolset (profiling tools, cabal, ...)
+-   missing GHC features (?)
+-   maintenance costs of a separate parser, type checker and runtime system
+    Remark: we pay this costs as we go, so the argument is that we might have a fully working system later than with an EDSL - we don't think that this is the case though
+
+### Conclusion
+
+As Csaba spent significant time already with experimenting with a Haskell EDSL,
+we switch focus now to experiment with a proper DSL. The option is always there
+to backport the DSL's innovations to the Haskell EDSL.
+
