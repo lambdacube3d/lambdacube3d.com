@@ -1,7 +1,7 @@
 
 <div class='fullscreen'>
 <a href='https://lambdacube3d.wordpress.com/'>
-<img src='/lclogo.png' />
+<img src='/lambdacube-logo.svg' />
 </a>
 
 [*Try online*](http://lambdacube3d.com/editor.html)
@@ -24,6 +24,8 @@ express complex relationships. An alternative approach is to build a DSL (Domain
 GPU features and makes it possible to create better tools. A single unified language is used in place of the OpenGL API and
 GLSL. This language improves composability and guarantees correctness by compile-time checks, the user can thus focus on
 creativity instead of the technical details.
+
+For more background information check out the [official LambdaCube 3D blog](https://lambdacube3d.wordpress.com/).
 
 
 LambdaCube 3D Tour
