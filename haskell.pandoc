@@ -7,41 +7,48 @@ LambdaCube 3D is Haskell98 + various language extensions.
 
 -   [Haskell98](https://www.haskell.org/onlinereport/) features
     -   patterns (variable, constructor, at-pattern, wildcard) -- *Done*
-    -   expressions (variable, constructor, application, lambda, let, case, if, type signature) -- *Done*
+    -   expressions (variable, constructor, application, lambda, let, case, if, type signature, list comprehensions) -- *Done*
+    -   dot-dot expressions -- *WIP*
     -   tuples, lists -- *Done*
+    -   do syntax -- *TODO*
     -   definitions (value definition, function, function alternative, guard, where-block, type signature) -- *Done*
     -   operators, fixity declarations -- *Done*
     -   data declarations -- *Done*
     -   newtype declarations -- *TODO*
     -   type synonyms -- *TODO*
     -   type classes -- *WIP*
-    -   module imports -- *Done*
-    -   module import and export lists -- *TODO*
     -   defaulting -- *TODO*
+    -   deriving -- *TODO*
+    -   module imports and export lists -- *WIP*
 -   Registered extensions (automatically enabled)
     -   [`NoMonomorphismRestriction`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoMonomorphismRestriction) -- *Done*
     -   [`NoNPlusKPatterns`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoNPlusKPatterns)  -- *Done*
     -   [`TypeApplication`](https://ghc.haskell.org/trac/ghc/wiki/TypeApplication)  -- *Done*
     -   `KindSignatures` -- *Done*
+    -   [`EmptyDataDecls`](https://ghc.haskell.org/trac/haskell-prime/wiki/EmptyDataDecls) -- *TODO*
     -   [`PolyKinds` & `DataKinds`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/kind-polymorphism-and-promotion.html) -- *WIP*
     -   [`GADTs`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/data-type-extensions.html#gadt) (includes `ExistentialQuantification`) -- *WIP*
     -   [`TypeFamilies`](https://wiki.haskell.org/GHC/Type_families) -- *WIP*
+    -   [`PartialTypeSignatures`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/partial-type-signatures.html) -- *WIP*
     -   [`ScopedTypeVariables`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/other-type-extensions.html#scoped-type-variables) -- *TODO*
+    -   [`RankNTypes`](https://ghc.haskell.org/trac/haskell-prime/wiki/RankNTypes) -- *TODO*
+    -   [Typed holes](https://wiki.haskell.org/GHC/Typed_holes) -- *TODO*
+    -   [`LambdaCase`](https://ghc.haskell.org/trac/haskell-prime/wiki/LambdaCase) -- *TODO*
 -   Other extensions (automatically enabled)
     -   [Raw polymorphism](#row-polymorphism) -- *Done*
     -   [Swizzling](#swizzling) -- *WIP*
+    -   `ImplicitParams` -- *WIP*
     -   Type error specialisation -- *TODO*
 -   Diversions from Haskell
     -   [Different Prelude](#prelude)  -- *WIP*
     -   Definitions should be ordered bottom-up  -- \* 
-    -   Mutual definitions should be marked explicitly -- *TODO* \*
+    -   Mutual recursion is not supported -- \*
     -   Type signatues should be placed right before definitions  -- \* 
     -   Irrefutable patterns are not supported  -- \* 
-    -   List comprehensions are not supported  -- \* 
 
 Notes
 ------- ---------------
-\*      Not essential restriction (could be lifted)
+\*      Not essential restriction (will be lifted)
 *Done*  Done
 *WIP*   Work In Progress
 *TODO*  We think we know how to do this, needs time
