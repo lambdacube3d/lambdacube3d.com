@@ -86,6 +86,7 @@ Péter Diviánszky
 
 </div>
 
+
 Participation
 =============
 
@@ -279,7 +280,7 @@ Where can I find the documentation for the language?
 ----------------------------------------------------
 
 There is only a rough [language specification](haskell) at the moment.
-We plan to add documentation and a tutorial. Get back to the [news](#news) to see the progress.
+We plan to add documentation and a tutorial. Get back to the [development history](#dev-history) to see the progress.
 
 
 What's the next big feature to add?
@@ -417,6 +418,29 @@ Prelude modules        0.7 kLOC LambdaCube 3D
 OpenGL 3.3 backend     2.7 kLOC Haskell
 WebGL backend          1.9 kLOC PureScript
 ---------------------- -----------------
+
+
+Dev history
+===========
+
+date            feature
+--------------- ---------------------------------------------------------------
+2015.06.04.     Texture support
+2015.05.31.     New language features: list comprehension, dot-dot expression
+2015.05.29.     New language feature: export lists
+2015.05.19.     Initial editor with error highlight, type popups, auto compilation
+2015.05.17.     WebGL backend in PureScript
+2015.05.16.     New language features: operator precedences; swizzling
+2015.05.12.     New language feature: first version of type classes
+2015.04.29.     New language feature: type-level literals
+2015.04.28.     New language features: type arguments; first version of GADTs
+2015.04.13.     OpenGL 3.3 backend in Haskell
+2015.04.10.     New language feature: support row polymorphism
+2015.04.04.     OpenGL constraints modelled with type families work in the DSL
+2015.02.25.     Use System-F as core language
+2015.02.14.     First working example in DSL: rotating cube
+2015.02.12.     First implementation of compositional typing
+--------------- ---------------------------------------------------------------
 
 
 Links
