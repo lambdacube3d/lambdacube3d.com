@@ -240,15 +240,183 @@ Vision:
 Questions & Answers
 ===================
 
+These questions were asked by the audience during our tour.
+
+
 What is the LambdaCube 3D project licence?
 ------------------------------------------
 
-The whole project is licenced under BSD3.
+The whole project is licensed under BSD3.
 
-How can I participate?
-----------------------
 
-See [Participation](#participation).
+What are your long-term goals with the project?
+-----------------------------------------------
+
+We plan to use LambdaCube 3D for application development.
+
+
+What kind of applications would you like to develop with LambdaCube 3D?
+---------------------------------------------
+
+We decide the subject of our first application after our tour (mid July 2015).
+It could be a mobile game or a data visualisation tool.
+
+
+When will be the language stable?
+---------------------------------
+
+We consider the following phases of completeness (ordered list):
+
+-   having a tutorial and documentation
+-   releases on HackageDB and Stackage
+-   pilot mobile application written with LambdaCube 3D
+
+After completing these phases, we plan to write more and more applications
+and validate the language against real world use cases until LambdaCube 3D will be announced stable.
+
+
+Where can I find the documentation for the language?
+----------------------------------------------------
+
+There is only a rough [language specification](haskell) at the moment.
+We plan to add documentation and a tutorial. Get back to the [news](#news) to see the progress.
+
+
+What's the next big feature to add?
+---------------------------------
+
+Planned features
+
+-   Various language extensions: `RankNTypes`, `ScopedTypeVariables`, typed holes 
+-   Compute shaders
+-   Nested data parallelism
+-   FRP system
+
+
+How does this language compare to Elm?
+--------------------------------------
+
+Elm focuses on FRP and web programming.
+LambdaCube 3D targets computer graphics on multiple platforms.
+
+Elm has a different philosophy regarding language features: be newcomer friendly and avoid
+advanced type system constructs like type classes and GADTs. On the contrary, LambdaCube 3D
+aims to use these powerful constructs.
+
+LambdaCube3D try to reuse syntax and type system constructs from Haskell.
+Elm explores new areas instead.
+
+
+How is the time input treated in the demos?
+-------------------------------------------
+
+The `time` variable is a `Float`-typed input value which is supposed to be updated by the user application.
+Input values are constants during the rendering of a frame.
+
+Conceptually this means
+that we treat the screen frames as a set of individual images and there is no way
+to express connection between the images with the type system at the moment.
+We plan to add some kind of FRP system to LambdaCube 3D which will be reflected in the type of `time` too.
+
+
+How do you support debugging?
+----------------------------
+
+Currently we use native debugging tools on different platforms.
+It is possible to add a debugger for the intermediate representation of LambdaCube 3D.
+It is also possible to add a debugger for the LambdaCube 3D language.
+
+
+Do you have performance comparisons against C++ and native OpenGL?
+-----------------------------------------------------------------
+
+We know that performance is crucial for 3D graphics programming.
+Currently the focus is on language design, later it will shift
+to compiler optimizations with performance benchmarks.
+
+
+Is it OK to deal with performance later?
+----------------------------------------
+
+Csaba has experience with doing computer graphics in C++.
+We keep performance in mind during making design decisions.
+
+
+Is it possible to get good performance for a high-level language like LambdaCube 3D?
+------------------------------------------------------------------------------------
+
+We believe that modern compilers should automate as much boring programming tasks as possible
+while keeping good performance.
+You can see LambdaCube 3D as an experiment achieving this goal.
+
+
+I expect usability errors with structural records plus type classes. Does they play well together?
+--------------------------------------------------------------------------------------------------
+
+We don't have enough experience yet to answer this question.
+We plan to use structural records more and more in our Prelude and see the consequences.
+
+
+Why do you develop a separate DSL instead of a Haskell EDSL?
+------------------------------------------------------------
+
+Csaba spent several years with experimenting with a Haskell EDSL, 
+as the previous version of LambdaCube3D was a Haskell EDSL.
+We switch focus now to experiment with a proper DSL. The pros and cons we considered are listed below.
+Note that the option is always there to backport the DSL's innovations to the Haskell EDSL.
+
+### Pros
+
+-   syntax
+    -   ordinary Haskell functions syntax can be used for shader descriptions
+        -   counterargument: also possible with quasiquoting, although at the expense of some syntactic noise
+    -   syntactic sugar for swizzling
+        -   counterargument: also possible with quasiquoting, although at the expense of some syntactic noise
+-   type system
+    -   domain specific error messages
+    -   interactive explanations of errors
+    -   row polymorphism
+        -   counterargument: this may be done with a GHC constraint solver plugin
+-   runtime system
+    -   should be available in several platforms (in the browser too)
+        -   counterargument: could be solved by replacing the GHC runtime only
+    -   small compiled binaries
+    -   more control on evaluation order
+        -   counterargument: could be solved by replacing the GHC runtime only
+    -   more control on garbage collection
+        -   counterargument: could be solved by replacing the GHC runtime only
+-   other
+    -   easier to experiment with new features
+    -   be lightweight (run also the compiler in the browser)
+    -   more control on sharing of subexpressions
+        -   counterargument: there are several techniques to solve this, but none of them was fully working in our case
+
+### Cons
+
+-   a new language to learn (for a Haskell programmer)
+    -   but trying to be close to Haskell loosens this argument
+-   cannot freely mix LambdaCube3D and Haskell in the same module
+    -   but trying to be close to Haskell loosens this argument
+-   cannot freely mix LambdaCube3D with existing Haskell libraries
+    -   but providing a Haskell FFI in LambdaCube 3D loosens this argument
+-   missing GHC toolset (profiling tools, cabal, ...)
+-   missing GHC features (?)
+-   maintenance costs of a separate parser, type checker and runtime system
+    Remark: we pay this costs as we go, so the argument is that we might have a fully working system later than with an EDSL - we don't think that this is the case though
+
+
+What is the code-base size?
+---------------------------
+
+Figures as of 5th June, 2015
+
+Component              Sources
+---------------------- -----------------
+Compiler               4.6 kLOC Haskell
+Prelude modules        0.7 kLOC LambdaCube 3D
+OpenGL 3.3 backend     2.7 kLOC Haskell
+WebGL backend          1.9 kLOC PureScript
+---------------------- -----------------
 
 
 Links
