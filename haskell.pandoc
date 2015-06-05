@@ -1,4 +1,3 @@
-*This page is a work in progress*
 %Language Specification
 
 Overview
@@ -113,10 +112,10 @@ Swizzling means rearranging the elements of a vector.[^swizzling]
 (V3 1.0 2.0 3.0)%xxzy   ==   V4 1.0 1.0 3.0 2.0
 ~~~~~~~~
 
-The letters `x`, `y`, `z` and `w` refers to the 1st, 2nd, 3rd and 4th element of a record, respectively.
+The letters `x`, `y`, `z` and `w` refers to the 1st, 2nd, 3rd and 4th element of a record, respectively.  
 It is also possible to use the letters `r`, `g`, `b` and `a` instead of `x`, `y`, `z` and `w`.
 
-[swizzling]: [Wikipedia article](http://en.wikipedia.org/wiki/Swizzling_%28computer_graphics%29)
+[^swizzling]: [Wikipedia article](http://en.wikipedia.org/wiki/Swizzling_%28computer_graphics%29)
 
 
 Compositional typing
