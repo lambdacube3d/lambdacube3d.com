@@ -74,7 +74,7 @@ These extensions are automatically enabled.
 
 ### Other extensions
 
--   [Raw polymorphism](#row-polymorphism) -- *Done*
+-   [Row polymorphism](#row-polymorphism) -- *Done*
 -   [Swizzling](#swizzling) -- *WIP*
 -   `ImplicitParams` -- *WIP*
 -   Compositional typing -- *Done*
