@@ -361,10 +361,9 @@ We plan to use structural records more and more in our Prelude and see the conse
 Why do you develop a separate DSL instead of a Haskell EDSL?
 ------------------------------------------------------------
 
-Csaba spent several years with experimenting with a Haskell EDSL, 
-as the previous version of LambdaCube3D was a Haskell EDSL.
+Csaba spent several years with experimenting with a GHC Haskell EDSL, as the previous version of LambdaCube3D was a GHC Haskell EDSL.
 We switch focus now to experiment with a proper DSL. The pros and cons we considered are listed below.
-Note that the option is always there to backport the DSL's innovations to the Haskell EDSL.
+Note that the option is always there to backport the DSL's innovations to the GHC Haskell EDSL.
 
 ### Pros
 
@@ -390,19 +389,17 @@ Note that the option is always there to backport the DSL's innovations to the Ha
     -   easier to experiment with new features
     -   be lightweight (run also the compiler in the browser)
     -   more control on sharing of subexpressions
-        -   counterargument: there are several techniques to solve this, but none of them was fully working in our case
+        -   counterargument: there are several techniques to solve this (but none of them was fully working in our case)
 
 ### Cons
 
--   a new language to learn (for a Haskell programmer)
-    -   but trying to be close to Haskell loosens this argument
--   cannot freely mix LambdaCube3D and Haskell in the same module
-    -   but trying to be close to Haskell loosens this argument
--   cannot freely mix LambdaCube3D with existing Haskell libraries
-    -   but providing a Haskell FFI in LambdaCube 3D loosens this argument
+-   one cannot use existing (GHC) Haskell libraries because they won't work out of the box with the LambdaCube 3D compiler  
+    We see the following options to loosen this argument:
+    -   allow to use GHC \*.hi files with the LambdaCube 3D compiler
+    -   compile more and more existing GHC libraries out of the box over time with the LambdaCube compiler
 -   missing GHC toolset (profiling tools, cabal, ...)
 -   missing GHC features (?)
--   maintenance costs of a separate parser, type checker and runtime system
+-   maintenance costs of a separate parser, type checker and runtime system  
     Remark: we pay this costs as we go, so the argument is that we might have a fully working system later than with an EDSL - we don't think that this is the case though
 
 
