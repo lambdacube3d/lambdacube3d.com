@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="26cm" height="39cm" viewBox="80 -61 501 762" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <text font-size="12.8" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="350" y="24.425">
+    <tspan x="350" y="24.425">LambdaCube pipeline description</tspan>
+  </text>
+  <g>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x="200" y="59" width="320" height="321"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="209" y="87.4">
+      <tspan x="209" y="87.4">Frontend</tspan>
+      <tspan x="209" y="103.4">compiler</tspan>
+      <tspan x="209" y="119.4"></tspan>
+      <tspan x="209" y="135.4"></tspan>
+      <tspan x="209" y="151.4"></tspan>
+      <tspan x="209" y="167.4"></tspan>
+      <tspan x="209" y="183.4"></tspan>
+      <tspan x="209" y="199.4"></tspan>
+      <tspan x="209" y="215.4"></tspan>
+      <tspan x="209" y="231.4"></tspan>
+      <tspan x="209" y="247.4"></tspan>
+      <tspan x="209" y="263.4"></tspan>
+      <tspan x="209" y="279.4"></tspan>
+      <tspan x="209" y="295.4"></tspan>
+      <tspan x="209" y="311.4"></tspan>
+      <tspan x="209" y="327.4"></tspan>
+      <tspan x="209" y="343.4"></tspan>
+      <tspan x="209" y="359.4"></tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="360" y1="-20" x2="360" y2="70.2639"/>
+    <polygon style="fill: #000000" points="360,77.7639 355,67.7639 360,70.2639 365,67.7639 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="360,77.7639 355,67.7639 360,70.2639 365,67.7639 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="360" y1="358" x2="360" y2="450.264"/>
+    <polygon style="fill: #000000" points="360,457.764 355,447.764 360,450.264 365,447.764 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="360,457.764 355,447.764 360,450.264 365,447.764 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="350" y="416.425">
+    <tspan x="350" y="416.425">Intermediate representation</tspan>
+    <tspan x="350" y="432.425">(abstract imperative rendering language)</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="270" y="624.425">
+    <tspan x="270" y="624.425">Geometry, textures, uniforms</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="280" y1="660" x2="280" y2="589.736"/>
+    <polygon style="fill: #000000" points="280,582.236 285,592.236 280,589.736 275,592.236 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="280,582.236 285,592.236 280,589.736 275,592.236 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="200" y="660" width="320" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="200" y="660" width="320" height="40"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="683.9">
+      <tspan x="360" y="683.9">Application</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="440" y1="580" x2="440" y2="650.264"/>
+    <polygon style="fill: #000000" points="440,657.764 435,647.764 440,650.264 445,647.764 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="440,657.764 435,647.764 440,650.264 445,647.764 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="450" y="624.425">
+    <tspan x="450" y="624.425">Rendering</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="200" y="-60" width="320" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="200" y="-60" width="320" height="40"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="-36.1">
+      <tspan x="360" y="-36.1">Editor</tspan>
+    </text>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="-40">
+    <tspan x="360" y="-40"></tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="280" y="80" width="160" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="280" y="80" width="160" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="102.9">
+      <tspan x="360" y="102.9">Parser</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="279.25" y="160" width="161.5" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="279.25" y="160" width="161.5" height="40"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="183.9">
+      <tspan x="360" y="183.9">Type &amp; scope checker</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="360" y1="118" x2="360" y2="150.264"/>
+    <polygon style="fill: #000000" points="360,157.764 355,147.764 360,150.264 365,147.764 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="360,157.764 355,147.764 360,150.264 365,147.764 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="280" y="240" width="160" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="280" y="240" width="160" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="262.9">
+      <tspan x="360" y="262.9">Reducer</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="360" y1="200" x2="360" y2="230.264"/>
+    <polygon style="fill: #000000" points="360,237.764 355,227.764 360,230.264 365,227.764 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="360,237.764 355,227.764 360,230.264 365,227.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="440,99 580,99 580,-40 529.736,-40 "/>
+    <polygon style="fill: #000000" points="522.236,-40 532.236,-45 529.736,-40 532.236,-35 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="522.236,-40 532.236,-45 529.736,-40 532.236,-35 "/>
+  </g>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="440.75,180 580,180 580,100 580,100 "/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="570" y="24.425">
+    <tspan x="570" y="24.425">Errors</tspan>
+  </text>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="279.25,180 100,180 100,-40 190.264,-40 "/>
+    <polygon style="fill: #000000" points="197.764,-40 187.764,-35 190.264,-40 187.764,-45 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="197.764,-40 187.764,-35 190.264,-40 187.764,-45 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="110" y="164.425">
+    <tspan x="110" y="164.425">Type info</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="350" y="224.425">
+    <tspan x="350" y="224.425">System-F</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="350" y="144.425">
+    <tspan x="350" y="144.425">AST</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="280" y="320" width="160" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="280" y="320" width="160" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="342.9">
+      <tspan x="360" y="342.9">Bytecode generator</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="360" y1="278" x2="360" y2="310.264"/>
+    <polygon style="fill: #000000" points="360,317.764 355,307.764 360,310.264 365,307.764 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="360,317.764 355,307.764 360,310.264 365,307.764 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="200" y="460" width="320" height="120"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x="200" y="460" width="320" height="120"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="483.9">
+      <tspan x="360" y="483.9">Backend</tspan>
+      <tspan x="360" y="499.9"></tspan>
+      <tspan x="360" y="515.9"></tspan>
+      <tspan x="360" y="531.9"></tspan>
+      <tspan x="360" y="547.9"></tspan>
+      <tspan x="360" y="563.9"></tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="220" y="500" width="80" height="60"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="260" y="525.9">
+      <tspan x="260" y="525.9">Haskell</tspan>
+      <tspan x="260" y="541.9">OpenGL</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="320" y="500" width="80" height="60"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="360" y="525.9">
+      <tspan x="360" y="525.9">PureScript</tspan>
+      <tspan x="360" y="541.9">WebGL</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="420" y="500" width="80" height="60"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="460" y="533.9">
+      <tspan x="460" y="533.9">...</tspan>
+    </text>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:normal" x="350" y="304.425">
+    <tspan x="350" y="304.425">System-F</tspan>
+  </text>
+</svg>
