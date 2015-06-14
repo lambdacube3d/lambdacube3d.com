@@ -419,8 +419,7 @@ reasons:
 
     Syntax absolutely matters.  Unfortunately, Haskell's record syntax makes it rather unpleasant to use as a shading language,
     where we often need to deal with structs, vectors, and swizzling.  Besides, we want to keep our options open with respect to
-    syntax; today LambdaCube looks mostly like Haskell, but we might decide to make it e.g. C-like in appearance with curly braces
-    depending on its future audience.
+    syntax.
 
 -   **Better integration between the interactive system and the compiler**
 
@@ -451,7 +450,11 @@ reasons:
     the features we need in the final product, we would need to work within the depths of GHC itself, or wait for GHC bugs to be
     fixed (this is an issue for us due to our heavy use of cutting edge language extensions).
 
-Note that the option is always there to backport the DSL's innovations to the EDSL implementation if there's demand to do so.
+To sum it up, in many ways going the Haskell EDSL way would either make the result suboptimal compared to our vision, or it would
+be at least an order of magnitude more work to achieve what we want.  For instance, several of the above mentioned issues could be
+solved by improving GHC.  However, that's suddenly a lot bigger undertaking than working on our tiny isolated project, and it
+would also be a distraction from our own goals that would slow us down considerably.  Besides, the option is always there to
+backport the DSL's innovations to the EDSL implementation if there's demand to do so.
 
 <!--
 ### Pros
