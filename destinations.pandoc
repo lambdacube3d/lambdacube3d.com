@@ -533,11 +533,12 @@ We tried GHCJS to run the compiler in the browser. It was running, but it was 13
 with it later again.
 
 
-Dev history
-===========
+Development history
+===================
 
 date            feature
 --------------- ---------------------------------------------------------------
+2015.06.07.     Geometry can be defined in LambdaCube 3D now
 2015.06.04.     Texture support
 2015.05.31.     New language features: list comprehension, dot-dot expression
 2015.05.29.     New language feature: export lists
