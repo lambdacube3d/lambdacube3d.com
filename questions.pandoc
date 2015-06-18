@@ -1,13 +1,20 @@
-Questions & Answers
-===================
+% Questions & Answers
+
+# About
 
 These questions were asked by the audience during our tour.
+
+
+# Licence
 
 
 What is the LambdaCube 3D project licence?
 ------------------------------------------
 
 The whole project is licensed under BSD3.
+
+
+# Project goals
 
 
 What are your long-term goals with the project?
@@ -29,6 +36,9 @@ Is LambdaCube 3D only for graphics programming?
 Currently yes, it is. General purpose GPU programming is planned.
 
 
+# Development plan
+
+
 When will be the language stable?
 ---------------------------------
 
@@ -40,13 +50,6 @@ We consider the following phases of completeness (ordered list):
 
 After completing these phases, we plan to write more and more applications
 and validate the language against real world use cases until LambdaCube 3D will be announced stable.
-
-
-Where can I find the documentation for the language?
-----------------------------------------------------
-
-There is only a rough [language specification](haskell) at the moment.
-We plan to add documentation and a tutorial. Get back to the [development history](#dev-history) to see the progress.
 
 
 What's the next big feature to add?
@@ -72,26 +75,18 @@ Also we would like to experiment with a language extension which would specialis
 messages for the problem domain and make this machinery independent from the actual
 problem domain.
 
-<div class='hidden'>
 
-What do you use type families for in the domain specific operations?
---------------------------------------------------------------------
-
-</div>
+# Documentation
 
 
-How does this language compare to Elm?
---------------------------------------
+Where can I find the documentation for the language?
+----------------------------------------------------
 
-Elm focuses on FRP and web programming.
-LambdaCube 3D targets computer graphics on multiple platforms.
+There is only a rough [language specification](haskell) at the moment.
+We plan to add documentation and a tutorial. Get back to the [development history](#dev-history) to see the progress.
 
-Elm has a different philosophy regarding language features: be newcomer friendly and avoid
-advanced type system constructs like type classes and GADTs. On the contrary, LambdaCube 3D
-aims to use these powerful constructs.
 
-LambdaCube3D try to reuse syntax and type system constructs from Haskell.
-Elm explores new areas instead.
+# Development with LambdaCube 3D
 
 
 How is the time input treated in the demos?
@@ -112,6 +107,9 @@ How do you support debugging?
 Currently we use native debugging tools on different platforms.
 It is possible to add a debugger for the intermediate representation of LambdaCube 3D.
 It is also possible to add a debugger for the LambdaCube 3D language.
+
+
+# Performance
 
 
 Are the shaders generated for every frame?
@@ -148,11 +146,39 @@ while keeping good performance.
 You can see LambdaCube 3D as an experiment achieving this goal.
 
 
+# Types
+
+
+<div class='hidden'>
+
+What do you use type families for in the domain specific operations?
+--------------------------------------------------------------------
+
+</div>
+
+
 I expect usability errors with structural records plus type classes. Does they play well together?
 --------------------------------------------------------------------------------------------------
 
 We don't have enough experience yet to answer this question.
 We plan to use structural records more and more in our Prelude and see the consequences.
+
+
+# Related work
+
+
+How does this language compare to Elm?
+--------------------------------------
+
+Elm focuses on FRP and web programming.
+LambdaCube 3D targets computer graphics on multiple platforms.
+
+Elm has a different philosophy regarding language features: be newcomer friendly and avoid
+advanced type system constructs like type classes and GADTs. On the contrary, LambdaCube 3D
+aims to use these powerful constructs.
+
+LambdaCube3D try to reuse syntax and type system constructs from Haskell.
+Elm explores new areas instead.
 
 
 Why are you developing a separate DSL instead of a Haskell EDSL?
@@ -254,6 +280,9 @@ backport the DSL's innovations to the EDSL implementation if there's demand to d
 -   maintenance costs of a separate parser, type checker and runtime system  
     Remark: we pay this costs as we go, so the argument is that we might have a fully working system later than with an EDSL - we don't think that this is the case though
 -->
+
+
+# Source code
 
 
 What is the code-base size?
