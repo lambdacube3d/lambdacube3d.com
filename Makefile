@@ -6,10 +6,10 @@ all: $(TEMPLATES)/destinations.tpl $(TEMPLATES)/questions.tpl $(TEMPLATES)/haske
 $(TEMPLATES)/destinations.tpl: destinations.pandoc
 	pandoc -S -t html $< -o $@
 
-$(TEMPLATES)/questions.tpl: questions.pandoc
+$(TEMPLATES)/questions.tpl: questions.pandoc template.tpl
 	pandoc --toc --template=template.tpl -S -t html $< -o $@
 
-$(TEMPLATES)/haskell.tpl: haskell.pandoc
+$(TEMPLATES)/haskell.tpl: haskell.pandoc template.tpl
 	pandoc --toc --template=template.tpl -S -t html $< -o $@
 
 %.html: %.pandoc
