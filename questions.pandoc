@@ -212,9 +212,7 @@ reasons:
 
     Since we roll our own parser and type checker, we are free to evolve the API that allows the editor to have a continuous
     conversation with the compiler based on the feature requirements.  While it is possible to get some feedback from GHC for a
-    better editing experience, the setup that makes this happen tends to be way too complicated for our purposes.  Also, working
-    with the GHC API would be a lot harder and time-consuming due to the sheer size of the codebase and the fact that it's an
-    external dependency.
+    better editing experience, the setup that makes this happen tends to be way too complicated for our purposes.
 
 -   **Compilation performance**
 
