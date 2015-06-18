@@ -191,7 +191,8 @@ reasons:
 -   **Independence of Haskell**
 
     Our ultimate goal is to create a graphics pipeline language that can be easily integrated into any other system. Requiring
-    potential users to install GHC (and the inevitable torrent of dependencies) or learn Haskell is an absolute showstopper for
+    potential users to install GHC (and the inevitable torrent of dependencies) or learn Haskell
+    with the ecosystem of tools around GHC is an absolute showstopper for
     most people who are mainly interested in getting graphics work done.
 
 -   **Full control over the type system**
