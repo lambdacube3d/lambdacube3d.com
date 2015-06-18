@@ -1,13 +1,15 @@
-.PHONEY: all
-all: destinations.tpl haskell.tpl
+TEMPLATES=snaplets/heist/templates
 
-destinations.tpl: destinations.pandoc
+.PHONEY: all
+all: $(TEMPLATES)/destinations.tpl $(TEMPLATES)/haskell.tpl
+
+$(TEMPLATES)/destinations.tpl: destinations.pandoc
 	pandoc -S -t html $< -o $@
 
 %.html: %.pandoc
 	pandoc --toc -s -S -t html $< -o $@
 
-haskell.tpl: haskell.pandoc
+$(TEMPLATES)/haskell.tpl: haskell.pandoc
 	pandoc --toc --template=template.tpl -S -t html $< -o $@
 
 %.svg: %.dia
