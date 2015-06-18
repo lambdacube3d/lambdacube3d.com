@@ -242,32 +242,6 @@ would also be a distraction from our own goals that would slow us down considera
 backport the DSL's innovations to the EDSL implementation if there's demand to do so.
 
 <!--
-### Pros
-
--   syntax
-    -   ordinary Haskell functions syntax can be used for shader descriptions
-        -   counterargument: also possible with quasiquoting, although at the expense of some syntactic noise
-    -   syntactic sugar for swizzling
-        -   counterargument: also possible with quasiquoting, although at the expense of some syntactic noise
--   type system
-    -   domain specific error messages
-    -   interactive explanations of errors
-    -   row polymorphism
-        -   counterargument: this may be done with a GHC constraint solver plugin
--   runtime system
-    -   should be available in several platforms (in the browser too)
-        -   counterargument: could be solved by replacing the GHC runtime only
-    -   small compiled binaries
-    -   more control on evaluation order
-        -   counterargument: could be solved by replacing the GHC runtime only
-    -   more control on garbage collection
-        -   counterargument: could be solved by replacing the GHC runtime only
--   other
-    -   easier to experiment with new features
-    -   be lightweight (run also the compiler in the browser)
-    -   more control on sharing of subexpressions
-        -   counterargument: there are several techniques to solve this (but none of them was fully working in our case)
-
 ### Cons
 
 -   one cannot use existing (GHC) Haskell libraries because they won't work out of the box with the LambdaCube 3D compiler  
