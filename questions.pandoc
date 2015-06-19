@@ -1,46 +1,42 @@
 % Questions & Answers
 
-# About
-
 These questions were asked by the audience during our tour.
 
 
-# Licence
+# Project
 
 
-What is the LambdaCube 3D project licence?
-------------------------------------------
+## Licence
+
+
+### What is the LambdaCube 3D project licence?
 
 The whole project is licensed under BSD3.
 
 
-# Project goals
+## Project goals
 
 
-What are your long-term goals with the project?
------------------------------------------------
+### What are your long-term goals with the project?
 
 We plan to use LambdaCube 3D for application development.
 
 
-What kind of applications would you like to develop with LambdaCube 3D?
----------------------------------------------
+### What kind of applications would you like to develop with LambdaCube 3D?
 
 We decide the subject of our first application after our tour (mid July 2015).
 It could be a mobile game or a data visualisation tool.
 
 
-Is LambdaCube 3D only for graphics programming?
------------------------------------------------
+### Is LambdaCube 3D only for graphics programming?
 
 Currently yes, it is. General purpose GPU programming is planned.
 
 
-# Development plan
+## Development plan
 
 
-When will be the language stable?
----------------------------------
+### When will be the language stable?
 
 We consider the following phases of completeness (ordered list):
 
@@ -52,8 +48,7 @@ After completing these phases, we plan to write more and more applications
 and validate the language against real world use cases until LambdaCube 3D will be announced stable.
 
 
-What's the next big feature to add?
----------------------------------
+### What's the next big feature to add?
 
 Planned features
 
@@ -63,8 +58,7 @@ Planned features
 -   FRP system
 
 
-Will the compiler be independent?
----------------------------------
+### Will the compiler be independent?
 
 The compiler is already in a separate GitHub repository.
 We intend to make the compiler as general purpose as possible,
@@ -76,21 +70,21 @@ messages for the problem domain and make this machinery independent from the act
 problem domain.
 
 
-# Documentation
+# Language
+
+## Documentation
 
 
-Where can I find the documentation for the language?
-----------------------------------------------------
+### Where can I find the documentation for the language?
 
 There is only a rough [language specification](haskell) at the moment.
 We plan to add documentation and a tutorial. Get back to the [development history](#dev-history) to see the progress.
 
 
-# Development with LambdaCube 3D
+## Development with LambdaCube 3D
 
 
-How is the time input treated in the demos?
--------------------------------------------
+### How is the time input treated in the demos?
 
 The `time` variable is a `Float`-typed input value which is supposed to be updated by the user application.
 Input values are constants during the rendering of a frame.
@@ -101,74 +95,33 @@ to express connection between the images with the type system at the moment.
 We plan to add some kind of FRP system to LambdaCube 3D which will be reflected in the type of `time` too.
 
 
-How do you support debugging?
-----------------------------
+### How do you support debugging?
 
 Currently we use native debugging tools on different platforms.
 It is possible to add a debugger for the intermediate representation of LambdaCube 3D.
 It is also possible to add a debugger for the LambdaCube 3D language.
 
 
-# Performance
-
-
-Are the shaders generated for every frame?
-------------------------------------------
-
-No, shaders are generated compile time. This means that all shaders
-should be known at compile time, i.e. only static pipelines are supported. We
-plan to support dynamic pipelines (pipeline which depend on user input) later.
-
-If you use LambdaCube from a JavaScript or C++ application,
-then the application has to load the pipeline through a LambdaCube backend. The backend allocates every necessary OpenGL resources for pipeline execution, then it can be used to render several frames.
-
-
-Do you have performance comparisons against C++ and native OpenGL?
------------------------------------------------------------------
-
-We know that performance is crucial for 3D graphics programming.
-Currently the focus is on language design, later it will shift
-to compiler optimizations with performance benchmarks.
-
-
-Is it OK to deal with performance later?
-----------------------------------------
-
-Csaba has experience with doing computer graphics in C++.
-We keep performance in mind during making design decisions.
-
-
-Is it possible to get good performance for a high-level language like LambdaCube 3D?
-------------------------------------------------------------------------------------
-
-We believe that modern compilers should automate as much boring programming tasks as possible
-while keeping good performance.
-You can see LambdaCube 3D as an experiment achieving this goal.
-
-
-# Types
+## Type system
 
 
 <div class='hidden'>
 
-What do you use type families for in the domain specific operations?
---------------------------------------------------------------------
+### What do you use type families for in the domain specific operations?
 
 </div>
 
 
-I expect usability errors with structural records plus type classes. Does they play well together?
---------------------------------------------------------------------------------------------------
+### I expect usability errors with structural records plus type classes. Does they play well together?
 
 We don't have enough experience yet to answer this question.
 We plan to use structural records more and more in our Prelude and see the consequences.
 
 
-# Related work
+## Related work
 
 
-How does this language compare to Elm?
---------------------------------------
+### How does this language compare to Elm?
 
 Elm focuses on FRP and web programming.
 LambdaCube 3D targets computer graphics on multiple platforms.
@@ -181,8 +134,7 @@ LambdaCube3D try to reuse syntax and type system constructs from Haskell.
 Elm explores new areas instead.
 
 
-Why are you developing a separate DSL instead of a Haskell EDSL?
-----------------------------------------------------------------
+### Why are you developing a separate DSL instead of a Haskell EDSL?
 
 Csaba spent several years experimenting with EDSLs, as the previous versions of LambdaCube 3D were implemented as DSLs embedded in
 GHC Haskell.  Based on this experience, we decided to make the next iteration of the language an independent DSL for several
@@ -255,11 +207,47 @@ backport the DSL's innovations to the EDSL implementation if there's demand to d
 -->
 
 
-# Source code
 
 
-What is the code-base size?
----------------------------
+# Implementation
+
+## Performance
+
+
+### Are the shaders generated for every frame?
+
+No, shaders are generated compile time. This means that all shaders
+should be known at compile time, i.e. only static pipelines are supported. We
+plan to support dynamic pipelines (pipeline which depend on user input) later.
+
+If you use LambdaCube from a JavaScript or C++ application,
+then the application has to load the pipeline through a LambdaCube backend. The backend allocates every necessary OpenGL resources for pipeline execution, then it can be used to render several frames.
+
+
+### Do you have performance comparisons against C++ and native OpenGL?
+
+We know that performance is crucial for 3D graphics programming.
+Currently the focus is on language design, later it will shift
+to compiler optimizations with performance benchmarks.
+
+
+### Is it OK to deal with performance later?
+
+Csaba has experience with doing computer graphics in C++.
+We keep performance in mind during making design decisions.
+
+
+### Is it possible to get good performance for a high-level language like LambdaCube 3D?
+
+We believe that modern compilers should automate as much boring programming tasks as possible
+while keeping good performance.
+You can see LambdaCube 3D as an experiment achieving this goal.
+
+
+## Source code
+
+
+### What is the code-base size?
 
 Figures as of 5th June, 2015
 
@@ -272,8 +260,7 @@ WebGL backend          1.9 kLOC PureScript
 ---------------------- -----------------
 
 
-Why do you use PureScript instead of Elm?
------------------------------------------
+### Why do you use PureScript instead of Elm?
 
 -   There are more libraries for PureScript than for Elm.
 -   PureScript has a better JavaScript FFI.
@@ -281,8 +268,7 @@ Why do you use PureScript instead of Elm?
 -   PureScript has no runtime environment.
 
 
-Why don't you use GHCJS?
-------------------------
+### Why don't you use GHCJS?
 
 GHCJS can be used in the following cases:
 
