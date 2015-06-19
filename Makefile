@@ -1,7 +1,8 @@
 TEMPLATES=snaplets/heist/templates
+TPL=$(TEMPLATES)/destinations.tpl $(TEMPLATES)/questions.tpl $(TEMPLATES)/haskell.tpl
 
 .PHONEY: all
-all: $(TEMPLATES)/destinations.tpl $(TEMPLATES)/questions.tpl $(TEMPLATES)/haskell.tpl
+all: $(TPL)
 
 $(TEMPLATES)/destinations.tpl: destinations.pandoc
 	pandoc -S -t html $< -o $@
@@ -20,6 +21,6 @@ $(TEMPLATES)/haskell.tpl: haskell.pandoc template.tpl
 
 .PHONEY: upload
 upload:
-	chmod g+w destinations.tpl
-	scp destinations.tpl haskell.tpl lambdacube3d.com:/home/www/hello/snaplets/heist/templates
+	chmod g+w $(TPL)
+	scp $(TPL) lambdacube3d.com:/home/www/hello/snaplets/heist/templates
 
