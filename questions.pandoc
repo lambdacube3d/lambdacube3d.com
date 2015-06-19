@@ -70,6 +70,22 @@ messages for the problem domain and make this machinery independent from the act
 problem domain.
 
 
+## Other
+
+### Who sponsors you?
+
+Two of us work on the project full time, living on spared money.
+One of us work on the project in his spare time.
+
+<div class='hidden'>
+
+### Are you looking for sponsors?
+
+We would like to be independent.
+
+</div>
+
+
 # Language
 
 ## Documentation
@@ -93,6 +109,12 @@ Conceptually this means
 that we treat the screen frames as a set of individual images and there is no way
 to express connection between the images with the type system at the moment.
 We plan to add some kind of FRP system to LambdaCube 3D which will be reflected in the type of `time` too.
+
+### Is it possible to see the generated shader code?
+
+The generated shader code is part of the IR (Intermediate Representation) which is the output
+of the LambdaCube compiler.
+In the online editor IR is shown on a separate tab next to the canvas.
 
 
 ### How do you support debugging?
@@ -279,4 +301,9 @@ We would like to keep the WebGL interpreter as lightweight as possible, the code
 
 We tried GHCJS to run the compiler in the browser. It was running, but it was 13x slower than the native code. We will experiment
 with it later again.
+
+
+### Which editor do you use in the browser?
+
+It is Ace editor, an open-source editor written in JavaScript.  PureScript has an Ace interface.
 
