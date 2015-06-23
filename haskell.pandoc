@@ -125,6 +125,55 @@ Compositional typing improves error messages.
 Compositional typing can be seen as a language extension if we suppose that a language description provide information about
 ill-typed programs too.
 
-Gergő Érdi's master thesis: [Compositional Type Checking for Hindley-Milner Type Systems with Ad-hoc Polymorphism](http://gergo.erdi.hu/projects/tandoori/Tandoori-Compositional-Typeclass.pdf)
+Compositional typing does unification in a bottom-up order:
+during typing of expressions it unifies the calculated typings of subexpression.
+Doing so, compositional typing avoids the left-to-right (or right-to-left) bias caused by
+a substitution state carried by type inference algorithms used today.
+
+As an example, consider the following code (example copied from Gergő Érdi's thesis):
+
+~~~~~~~~ {.haskell}
+test x = (toUpper x, not x)
+~~~~~~~~
+
+Gergő Érdi made a short survey on the error messages given some Haskell compilers:
+
+-   GHC 6.12: The subexpression toUpper x is processed first.
+
+        Couldn’t match expected type ‘Bool’
+        against inferred type ‘Char’
+        In the first argument of ‘not’, namely ‘x’
+        In the expression: not x
+        In the expression: (toUpper x, not x)
+
+-   Hugs 98 seems to process application in the reversed order:
+
+        ERROR "test.hs":1 - Type error in application
+        *** Expression     : toUpper x
+        *** Term           : x
+        *** Type           : Bool
+        *** Does not match : Char
+
+-   Helium 1.6 gives the same result as GHC above.
+
+        (1,29): Type error in application
+        expression     : not x
+        function       : not
+        type           : Bool -> Bool
+        1st argument   : x
+        type           : Char
+        does not match : Bool
+
+-   Gergő Érdi's prototype of compositional typing gives the following error message:
+
+        input/test.hs:1:8-25:
+        (toUpper x, not x)
+        Cannot unify ‘Char’ with ‘Bool’ when unifying ‘x’:
+              toUpper x    not x
+              Char         Bool
+        x ::  Char         Bool
+
+
+Link to Gergő Érdi's master thesis: [Compositional Type Checking for Hindley-Milner Type Systems with Ad-hoc Polymorphism](http://gergo.erdi.hu/projects/tandoori/Tandoori-Compositional-Typeclass.pdf)
 
 
