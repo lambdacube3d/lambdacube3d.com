@@ -76,8 +76,8 @@ These extensions are automatically enabled.
 
 -   [Row polymorphism](#row-polymorphism) -- *Done*
 -   [Swizzling](#swizzling) -- *WIP*
+-   [Compositional typing](#compositional-typing) -- *Done*
 -   `ImplicitParams` -- *WIP*
--   Compositional typing -- *Done*
 -   Type error specialisation -- *TODO*
 
 
@@ -121,7 +121,7 @@ It is also possible to use the letters `r`, `g`, `b` and `a` instead of `x`, `y`
 Compositional typing
 ====================
 
-Compositional typing improves error messages.
+Compositional typing improves error messages.  
 Compositional typing can be seen as a language extension if we suppose that a language description provide information about
 ill-typed programs too.
 
