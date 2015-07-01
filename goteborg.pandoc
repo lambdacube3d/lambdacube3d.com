@@ -1,0 +1,88 @@
+% LambdaCube 3D DSL
+
+
+## Overview
+
+-   background
+    -   hardware
+    -   software
+
+
+# Hardware background
+
+
+## General trends
+
+-   Performance per watt grows exponentially for computer architectures  
+    [5 gigaflops/watt was surpassed in 2014](http://www.green500.org/news/green500-list-november-2014)
+
+-   Consequently, computer architectures target more and more work intensive algorithms
+
+
+## GPU related work intensive algorithms
+
+
+-   2D graphics
+    -   sprites
+    -   line drawing
+    -   triangle filling, filling
+    -   blending (emulating transparency)
+-   3D vertex transformations, tesselation, clipping
+-   texturing
+    -   term: texel
+    -   anti alias
+    -   mipmaps
+-   shading
+-   real time decompression / compression of data streams
+    -   video: H.265
+-   global illumination
+    -   term: voxel, a small cube of 3D space
+    -   multi-projection --> viewport multicast
+-   climate modelling
+-   biochemistry
+
+## Trends driving GPU development
+
+Two alternating trends:
+
+-   migrate computationally intensive work from CPU to GPU  
+    usually this adds special hardware elements
+-   unify GPU hardware elements to be more general purpose
+
+## Related trends for GPUs
+
+-   desktop-mobile closer: http://hothardware.com/reviews/mobile-maxwell-nvidia-launches-geforce-gtx-980m-970m
+
+-   CPU - GPU integration:
+    -   unified memory
+
+-   memory closer to computation
+    -   error tolerance
+    -   compression
+
+-   hierarchical design (see maxwell gpu die & block diagram)
+
+-   bigger displays
+    -   resolution
+        -   downsampling
+    -   color
+    -   hz
+    -   dual
+    -   number of displays (drivable from one card)
+
+
+
+
+# Software background
+
+
+OpenGL
+
+
+
+
+
+
+
+
+

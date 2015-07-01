@@ -13,6 +13,9 @@ $(TEMPLATES)/questions.tpl: questions.pandoc template.tpl
 $(TEMPLATES)/haskell.tpl: haskell.pandoc template.tpl
 	pandoc --toc --template=template.tpl -S -t html $< -o $@
 
+goteborg.html: goteborg.pandoc
+	pandoc -s -S -t slidy --slide-level=2 $< -o $@
+
 %.html: %.pandoc
 	pandoc --toc -s -S -t html $< -o $@
 
