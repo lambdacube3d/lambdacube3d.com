@@ -22,24 +22,27 @@
 ## GPU related work intensive algorithms
 
 
+80's
 -   2D graphics
     -   sprites
     -   line drawing
     -   triangle filling, filling
     -   blending (emulating transparency)
--   3D vertex transformations, tesselation, clipping
--   texturing
+mid 90's
+-   96 texturing
     -   term: texel
     -   anti alias
     -   mipmaps
--   shading
--   real time decompression / compression of data streams
+-   99 3D vertex transformations, tesselation, clipping
+-   01 programmable shading
+-   00's real time decompression / compression of data streams
     -   video: H.265
--   global illumination
-    -   term: voxel, a small cube of 3D space
-    -   multi-projection --> viewport multicast
+2007 - gpgpu
 -   climate modelling
 -   biochemistry
+-   10's global illumination
+    -   term: voxel, a small cube of 3D space
+    -   multi-projection --> viewport multicast
 
 ## Trends driving GPU development
 
