@@ -17,6 +17,9 @@
 
 -   Consequently, computer architectures target more and more work intensive algorithms
 
+![green500](600px-Green500_evolution.png)
+
+[source](https://en.wikipedia.org/wiki/Performance_per_watt)
 
 ## Trends driving GPU development
 
@@ -25,6 +28,10 @@ Two alternating trends:
 -   migrate computationally intensive work from CPU to GPU  
     usually this adds special hardware elements
 -   unify GPU hardware elements to be more general purpose
+
+![cpu-vs-gpu](cpu-vs-gpu-thumbnail.png)
+
+[source](http://michaelgalloy.com/2013/06/11/cpu-vs-gpu-performance.html)
 
 
 ## Work migrated from CPU to GPU
