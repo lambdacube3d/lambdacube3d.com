@@ -2,7 +2,7 @@ TEMPLATES=snaplets/heist/templates
 TPL=$(TEMPLATES)/destinations.tpl $(TEMPLATES)/questions.tpl $(TEMPLATES)/haskell.tpl
 
 .PHONEY: all
-all: $(TPL)
+all: $(TPL) static/goteborg.html
 
 $(TEMPLATES)/destinations.tpl: destinations.pandoc
 	pandoc -S -t html $< -o $@
@@ -13,7 +13,7 @@ $(TEMPLATES)/questions.tpl: questions.pandoc template.tpl
 $(TEMPLATES)/haskell.tpl: haskell.pandoc template.tpl
 	pandoc --toc --template=template.tpl -S -t html $< -o $@
 
-goteborg.html: goteborg.pandoc
+static/goteborg.html: goteborg.pandoc
 	pandoc -s -S -t slidy --slide-level=2 $< -o $@
 
 %.html: %.pandoc
