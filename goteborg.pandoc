@@ -18,31 +18,6 @@
 -   Consequently, computer architectures target more and more work intensive algorithms
 
 
-## GPU related work intensive algorithms
-
-
-80's
--   2D graphics
-    -   sprites
-    -   line drawing
-    -   triangle filling, filling
-    -   blending (emulating transparency)
-mid 90's
--   96 texturing
-    -   term: texel
-    -   anti alias
-    -   mipmaps
--   99 3D vertex transformations, tesselation, clipping
--   01 programmable shading
--   00's real time decompression / compression of data streams
-    -   video: H.265
-2007 - gpgpu
--   climate modelling
--   biochemistry
--   10's global illumination
-    -   term: voxel, a small cube of 3D space
-    -   multi-projection --> viewport multicast
-
 ## Trends driving GPU development
 
 Two alternating trends:
@@ -50,6 +25,31 @@ Two alternating trends:
 -   migrate computationally intensive work from CPU to GPU  
     usually this adds special hardware elements
 -   unify GPU hardware elements to be more general purpose
+
+
+## Work migrated from CPU to GPU
+
+-   80's
+    -   sprites
+    -   line drawing
+    -   filling
+    -   blending (transparency)
+-   mid 90's
+    -   96: texturing, clipping
+    -   99: 3D vertex transformations
+-   00's
+    -   real time decompression / compression of data streams
+    -   2001: programmable shading
+        -   shadow mapping
+        -   bump mapping
+    -   2007: GPGPU
+        -   computational finance
+        -   biochemistry
+        -   climate modelling, ...
+-   10's
+    -   tesselation
+    -   global illumination
+
 
 ## Related trends for GPUs
 
