@@ -3,9 +3,12 @@
 
 ## Overview
 
--   background
+-   Background
     -   hardware (GPUs)
     -   software (OpenGL)
+-   LambdaCube 3D
+    -   motivations, usage, components, plans
+-   Demo
 
 # Hardware background
 
@@ -19,19 +22,16 @@
 
 ![green500](600px-Green500_evolution.png)
 
-[source](https://en.wikipedia.org/wiki/Performance_per_watt)
 
 ## Trends driving GPU development
 
 Two alternating trends:
 
 -   migrate computationally intensive work from CPU to GPU  
-    usually this adds special hardware elements
+    -   usually this adds special hardware elements
 -   unify GPU hardware elements to be more general purpose
 
 ![cpu-vs-gpu](cpu-vs-gpu-thumbnail.png)
-
-[source](http://michaelgalloy.com/2013/06/11/cpu-vs-gpu-performance.html)
 
 
 ## Work migrated from CPU to GPU
@@ -58,86 +58,69 @@ Two alternating trends:
     -   global illumination
 
 
-## Related trends for GPUs
-
--   desktop-mobile closer: http://hothardware.com/reviews/mobile-maxwell-nvidia-launches-geforce-gtx-980m-970m
-
--   CPU - GPU integration:
-    -   unified memory
+## Other related trends for GPUs
 
 -   memory closer to computation
-    -   error tolerance
-    -   compression
+-   more hierarchical design (see figure)
+-   [desktop and mobile GPUs are getting closer](http://hothardware.com/reviews/mobile-maxwell-nvidia-launches-geforce-gtx-980m-970m)
+-   more tight CPU - GPU integration
+    -   unified memory
+-   bigger displays (resolution, color depth, HZ, number of displays drivable from one card)
 
--   hierarchical design (see maxwell gpu die & block diagram)
-
--   bigger displays
-    -   resolution
-        -   downsampling
-    -   color
-    -   hz
-    -   dual
-    -   number of displays (drivable from one card)
-
-
-
+![Maxwell GPU block diagram](GeForce_GTX_980_Block_Diagram_FINAL_575px.png)
 
 # Software background
 
 ## GPU API
 
-main motivation:
+Main motivation
+  ~ have a common interface for lots of different GPUs
 
-we need a common interface for lots of different hardware
+How it works
+  ~ missing features on a specific GPU are emulated on CPU
 
-how it works:
-
--   missing features on GPU are done on CPU (but slower)
 
 ## OpenGL
 
-Currently OpenGL is the only cross-language, multi-platform API for GPU graphics
+Currently OpenGL is the only cross-language, multi-platform API for GPU graphics.
 
-Scope:
-It covers 2D and 3D vector graphics + some general purpose GPU programming (compute shaders)
+Scope
 
-(We are interested in this part)
+-   2D and 3D vector graphics
+-   some general purpose GPU programming (compute shaders)
 
 
 ## OpenGL (2)
 
--   Development started in 1991, by Silicon Graphics Inc.
--   Currently is managed by the non-profit technology consortium Khronos Group
-
--   Primarily for C language, but has many language bindings
-
-
--   WebGL: JavaScript binding for browsers
--   OpenGL ES: for embedded systems (mobile devices)
--   iOS, Android, Linux, Windows, ...
-
--   versions: 1.0, 1.1, 1.2, 1.2.1, 1.3, 1.4, 1.5, 2.0, 2.1, 3.0, 3.1, 3.2, **3.3**, 4.0, 4.1, 4.2, 4.3, 4.4, **4.5**
-
--   implementations:
+-   History
+    -   Development started in 1991, by Silicon Graphics Inc.
+    -   Currently is managed by the non-profit technology consortium Khronos Group.
+-   Languages
+    -   Primarily for C language, but has many language bindings
+-   Platforms
+    -   desktop: iOS, Linux, Windows, ...
+    -   OpenGL ES: for embedded systems (mobile devices)
+    -   WebGL: JavaScript binding for browsers (Chrome, Firefox, Safari, Opera, IE, BlackBerry, Maemo, Tizen, ...)
+-   Versions  
+    1.0, 1.1, 1.2, 1.2.1, 1.3, 1.4, 1.5, 2.0, 2.1, 3.0, 3.1, 3.2, **3.3**, 4.0, 4.1, 4.2, 4.3, 4.4, **4.5**
+-   Implementations (a.k.a. drivers)
     -   by graphics card manufacturers
     -   open source drivers
 
 
-## OpenGL operation
+## OpenGL architecture and usage
 
-OpenGL is a state-machine whose state is called pipeline.
+OpenGL is a state-machine whose state is called **pipeline**.
 
 The pipeline is an abstract model of the configured GPU  
 (the data is loaded into the GPU memory but the computation did not begin)
 
-OpenGL operations:
+Two different group of OpenGL operations:
 
--   pipeline setup (lots of different operations which modify the pipeline)
+-   pipeline setup (operations which modify the pipeline)
 -   pipeline execution (draw call)
 
-The pipeline execution is asynchronous (with respect to the CPU).
-
-Typical sequence of operations:
+Typical sequence of operations of an application:
 
 1.  initial pipeline setup
 2.  pipeline execution
@@ -149,27 +132,27 @@ Typical sequence of operations:
 
 ## OpenGL pipeline
 
-*picture*
-
 -   some parts of the pipeline are *configurable*
--   some parts of the pipeline are *programmable* (configurable by a program)
+-   some parts of the pipeline are *programmable* (configurable by a program; blue on figure)
 
-The programs in the pipeline are called *shaders*,
+The programs in the pipeline are called **shaders**,
 i.e. shaders are programs running on the GPU
+
+![Pipleline](pipieline33.jpg)
 
 
 ## Shaders
 
 GLSL: the language specified for shaders in OpenGL
 
--   C like language  
-    -   the same language for all OpenGL language bindings (WebGL too)
--   no stack on GPU -> no procedure calls in GLSL
+-   it is a C like language  
+    -   the same language for all OpenGL language bindings
+-   no stack on GPU, thus no procedure calls in GLSL
     -   limited procedure calls are emulated by inlining / using registers  
         limitation: call graph should be known statically 
 -   there are branches (if-then-else) and loops
 
-Steps for processing GLSL code:
+Steps for processing GLSL source code:
 
 1.  the application provides GLSL code as a string (usually hand written)
 2.  the driver compiles it to GPU machine code (usually at runtime)
@@ -185,7 +168,7 @@ Main goal: cross-platform GPU graphics in a statically typed functional language
 Layers and design decisions:
 
 -   backend: use OpenGL
--   LambdaCube 3D Intermediate Representation (IR)
+-   Intermediate Representation (IR)
     -   a data type for OpenGL command sequences
     -   interpreters execute IR on various platforms
 -   functional OpenGL API
@@ -228,12 +211,6 @@ Scope:
 
 Main abstractions used: GADTs, functions, type classes
 
-Examples
-
--   configuration
--   shader descriptions
--   
-
 
 ## Language specification
 
@@ -241,25 +218,49 @@ Haskell98 (with some diversions) + various extensions
 
 Main diversion: different Prelude
 
+[more](haskell)
+
 
 ## LambdaCube 3D Prelude
 
 -   no `IO` monad
 -   builtins for the functional OpenGL API
--   utility functions
+    -   GADTs
+    -   primitive operations used in shaders
+-   utility functions (`id`, `foldl`, ...)
 
+
+~~~~~ {.haskell}
+data FrontFace
+    = CW
+    | CCW
+
+data CullMode
+    = CullFront FrontFace
+    | CullBack FrontFace
+    | CullNone
+
+data RasterContext (a :: PrimitiveType) where
+  TriangleCtx         :: CullMode -> PolygonMode -> PolygonOffset -> ProvokingVertex -> RasterContext Triangle
+  PointCtx            :: PointSize -> Float -> PointSpriteCoordOrigin                -> RasterContext Point
+  LineCtx             :: Float -> ProvokingVertex                                    -> RasterContext Line
+
+builtins
+  PrimAnd, PrimOr, PrimXor  :: Bool -> Bool -> Bool
+  PrimAdd, PrimSub, PrimMul :: (t ~ MatVecElem a, Num t) => a -> a -> a
+~~~~~
 
 
 
 ## Compiler
 
+-   written in Haskell
 -   built from scratch
-    -   why?
-
 
 
 ## Web-based editor
 
+![figure](lc-architecture.svg)
 
 
 ## Plans
@@ -273,11 +274,13 @@ Plans for the second half of 2015
 -   get feedback & plan next phase
 
 
-# Popular questions
+# Sources of figures
 
+##
 
-## Why switched to DSL instead of Haskell EDSL?
-
+-   http://www.anandtech.com/show/8526/nvidia-geforce-gtx-980-review/3
+-   https://en.wikipedia.org/wiki/Performance_per_watt
+-   http://michaelgalloy.com/2013/06/11/cpu-vs-gpu-performance.html
 
 
 
