@@ -4,9 +4,8 @@
 ## Overview
 
 -   background
-    -   hardware
-    -   software
-
+    -   hardware (GPUs)
+    -   software (OpenGL)
 
 # Hardware background
 
@@ -78,8 +77,111 @@ Two alternating trends:
 
 # Software background
 
+## GPU API
 
-OpenGL
+main motivation:
+
+we need a common interface for lots of different hardware
+
+how it works:
+
+-   missing features on GPU are done on CPU (but slower)
+
+## OpenGL
+
+Currently OpenGL is the only cross-language, multi-platform API for GPU graphics
+
+Scope:
+It covers 2D and 3D vector graphics + some general purpose GPU programming (compute shaders)
+
+(We are interested in this part)
+
+
+## OpenGL (2)
+
+-   Development started in 1991, by Silicon Graphics Inc.
+-   Currently is managed by the non-profit technology consortium Khronos Group
+
+-   Primarily for C language, but has many language bindings
+
+
+-   WebGL: JavaScript binding for browsers
+-   OpenGL ES: for embedded systems (mobile devices)
+-   iOS, Android, Linux, Windows, ...
+
+-   versions: 1.0, 1.1, 1.2, 1.2.1, 1.3, 1.4, 1.5, 2.0, 2.1, 3.0, 3.1, 3.2, **3.3**, 4.0, 4.1, 4.2, 4.3, 4.4, **4.5**
+
+-   implementations:
+    -   by graphics card manufacturers
+    -   open source drivers
+
+
+## OpenGL operation
+
+OpenGL is a state-machine whose state is called pipeline.
+
+The pipeline is an abstract model of the configured GPU  
+(the data is loaded into the GPU memory but the computation did not begin)
+
+OpenGL operations:
+
+-   pipeline setup (lots of different operations which modify the pipeline)
+-   pipeline execution (draw call)
+
+The pipeline execution is asynchronous (with respect to the CPU).
+
+Typical sequence of operations:
+
+1.  initial pipeline setup
+2.  pipeline execution
+3.  put the result onto the screen (not part of OpenGL)
+4.  wait for user input (not part of OpenGL)
+5.  pipeline modification
+6.  go back to 2.
+
+
+## OpenGL pipeline
+
+*picture*
+
+-   some parts of the pipeline are *configurable*
+-   some parts of the pipeline are *programmable* (configurable by a program)
+
+The programs in the pipeline are called *shaders*,
+i.e. shaders are programs running on the GPU
+
+
+## Shaders
+
+GLSL: the language specified for shaders in OpenGL
+
+-   C like language  
+    -   the same language for all OpenGL language bindings (WebGL too)
+-   no stack on GPU -> no procedure calls in GLSL
+    -   limited procedure calls are emulated by inlining / using registers  
+        limitation: call graph should be known statically 
+-   there are branches (if-then-else) and loops
+
+Steps for processing GLSL code:
+
+1.  the application provides GLSL code as a string (usually hand written)
+2.  the driver compiles it to GPU machine code (usually at runtime)
+3.  the code is uploaded to the GPU with separate OpenGL commands (at runtime)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
