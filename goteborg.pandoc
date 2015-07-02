@@ -17,7 +17,7 @@
 
 -   Consequently, computer architectures target more and more work intensive algorithms
 
-![green500](600px-Green500_evolution.png)
+![green500](static/600px-Green500_evolution.png)
 
 [source](https://en.wikipedia.org/wiki/Performance_per_watt)
 
@@ -29,7 +29,7 @@ Two alternating trends:
     usually this adds special hardware elements
 -   unify GPU hardware elements to be more general purpose
 
-![cpu-vs-gpu](cpu-vs-gpu-thumbnail.png)
+![cpu-vs-gpu](static/cpu-vs-gpu-thumbnail.png)
 
 [source](http://michaelgalloy.com/2013/06/11/cpu-vs-gpu-performance.html)
 
