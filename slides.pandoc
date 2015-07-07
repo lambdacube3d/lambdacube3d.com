@@ -177,7 +177,7 @@ Layers and design decisions:
 -   functional OpenGL API
     -   written in a Haskell-like language
     -   OpenGL constraints are expressed in the type system
-    -   OpenGL state machine is replaced by expressions built with ADT constructors
+    -   OpenGL state machine is replaced by ADT expressions
     -   shaders are expressions with function type (`input -> output`)
     -   compiled to IR
 -   high-level layer on top of the functional OpenGL API
@@ -186,7 +186,36 @@ Layers and design decisions:
     -   developed by need
 
 
-## History
+## State machine vs. ADT expressions
+
+A *state machine* is fed by a sequence of state modification operations
+
+-   each operation modifies one part of the state
+-   easy to express mutations of state
+
+An *ADT expression* is built up by constructors
+
+-   ADT stands for Algebraic Data Type (a kind of composite type)
+-   each ADT constructor builds a substate from smaller substates
+-   easy to reuse substates
+-   immutability prevents unexpected mutations
+-   needs optimization to reach the same performance as with the state-machine approach
+
+
+## Use strong static typing
+
+-   Language construct used:
+    -   ADTs: the type of argument substates are constrained
+    -   GADTs: the type of the result substate can depend on the constructor and the type of arguments used
+    -   type classes
+    -   type families
+-   example
+
+Result: *all* OpenGL specification constraints are expressed in the type system  
+i.e. if the type checking succeeds at compile time, we have a valid pipeline at runtime
+
+
+## Development history of LambdaCube 3D
 
 --------------- ----------------------------------------------------
 2009            begin to work on an Ogre3D compatible engine in Haskell

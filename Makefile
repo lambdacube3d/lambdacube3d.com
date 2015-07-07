@@ -26,6 +26,6 @@ static/slides.html: slides.pandoc
 .PHONEY: upload
 upload:
 	chmod g+w $(TPL)
-	scp $(TPL) lambdacube3d.com:/home/www/hello/snaplets/heist/templates
-#	scp $(STATIC) lambdacube3d.com:/home/www/hello/static
+#	scp $(TPL) lambdacube3d.com:/home/www/hello/snaplets/heist/templates
+	scp $(STATIC) lambdacube3d.com:/home/www/hello/static
 
