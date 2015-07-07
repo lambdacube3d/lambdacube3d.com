@@ -20,18 +20,17 @@
 
 -   Consequently, computer architectures target more and more work intensive algorithms
 
-![green500](600px-Green500_evolution.png)
+![[performance per watt based on data from the Green500 list](https://en.wikipedia.org/wiki/Performance_per_watt)](600px-Green500_evolution.png)
 
 
 ## Trends driving GPU development
 
-Two alternating trends:
+Main trend: Migrate computationally intensive work from CPU to GPU  
 
--   migrate computationally intensive work from CPU to GPU  
-    -   usually this adds special hardware elements
--   unify GPU hardware elements to be more general purpose
+-   by adding special hardware elements
+-   by unifying GPU hardware elements to be more general purpose
 
-![cpu-vs-gpu](cpu-vs-gpu-thumbnail.png)
+![[cpu-vs-gpu](http://michaelgalloy.com/2013/06/11/cpu-vs-gpu-performance.html)](cpu-vs-gpu-thumbnail.png)
 
 
 ## Work migrated from CPU to GPU
@@ -58,16 +57,16 @@ Two alternating trends:
     -   global illumination
 
 
-## Other related trends for GPUs
+## Other trends in GPU development
 
 -   memory closer to computation
 -   more hierarchical design (see figure)
 -   [desktop and mobile GPUs are getting closer](http://hothardware.com/reviews/mobile-maxwell-nvidia-launches-geforce-gtx-980m-970m)
 -   more tight CPU - GPU integration
-    -   unified memory
+    -   planned: unified memory
 -   bigger displays (resolution, color depth, HZ, number of displays drivable from one card)
 
-![Maxwell GPU block diagram](GeForce_GTX_980_Block_Diagram_FINAL_575px.png)
+![[Maxwell GPU block diagram](http://www.anandtech.com/show/8526/nvidia-geforce-gtx-980-review/3)](GeForce_GTX_980_Block_Diagram_FINAL_575px.png)
 
 # Software background
 
@@ -84,7 +83,7 @@ How it works
 
 Currently OpenGL is the only cross-language, multi-platform API for GPU graphics.
 
-Scope
+Scope:
 
 -   2D and 3D vector graphics
 -   some general purpose GPU programming (compute shaders)
@@ -133,30 +132,32 @@ Typical sequence of operations of an application:
 ## OpenGL pipeline
 
 -   some parts of the pipeline are *configurable*
--   some parts of the pipeline are *programmable* (configurable by a program; blue on figure)
+-   some parts of the pipeline are *programmable* (configurable by a program; blue in figure)  
+    The configuration programs are called **shaders**,  
+    i.e. shaders are programs running on the GPU
 
-The programs in the pipeline are called **shaders**,
-i.e. shaders are programs running on the GPU
+![OpenGL 3.3 simplified pipeline](pipieline33.jpg)
 
-![Pipleline](pipieline33.jpg)
+## OpenGL pipeline (2)
 
+![OpenGL 3.3 simplified pipeline](1354202.jpg)
 
 ## Shaders
 
-GLSL: the language specified for shaders in OpenGL
+**GLSL**: the language specified for shaders in OpenGL
 
--   it is a C like language  
+-   a C like language  
     -   the same language for all OpenGL language bindings
--   no stack on GPU, thus no procedure calls in GLSL
-    -   limited procedure calls are emulated by inlining / using registers  
+-   no real procedure calls because there is no stack on GPU
+    -   limited procedure calls are emulated by inlining / using registers;  
         limitation: call graph should be known statically 
--   there are branches (if-then-else) and loops
+-   branches (`if-then-else`) and loops (`while` and `for`) are possible
 
 Steps for processing GLSL source code:
 
 1.  the application provides GLSL code as a string (usually hand written)
 2.  the driver compiles it to GPU machine code (usually at runtime)
-3.  the code is uploaded to the GPU with separate OpenGL commands (at runtime)
+3.  the code is uploaded to the GPU with specific OpenGL commands (at runtime)
     
 
 # LambdaCube 3D
@@ -165,22 +166,24 @@ Steps for processing GLSL source code:
 
 Main goal: cross-platform GPU graphics in a statically typed functional language
 
+## LambdaCube 3D layers
+
 Layers and design decisions:
 
--   backend: use OpenGL
+-   OpenGL backend for various architectures
 -   Intermediate Representation (IR)
-    -   a data type for OpenGL command sequences
-    -   interpreters execute IR on various platforms
+    -   data type for OpenGL command sequences
+    -   interpreted with OpenGL command calls
 -   functional OpenGL API
     -   written in a Haskell-like language
     -   OpenGL constraints are expressed in the type system
     -   OpenGL state machine is replaced by expressions built with ADT constructors
     -   shaders are expressions with function type (`input -> output`)
     -   compiled to IR
--   high-level library on top of the functional OpenGL API
-    -   uses the same language as the functional OpenGL API
-    -   developed by need
+-   high-level layer on top of the functional OpenGL API
+    -   library in the same language as the functional OpenGL API
     -   intended for use by application developers
+    -   developed by need
 
 
 ## History
@@ -272,15 +275,5 @@ Plans for the second half of 2015
 -   organize a game jam
 -   develop a small, real game
 -   get feedback & plan next phase
-
-
-# Sources of figures
-
-##
-
--   http://www.anandtech.com/show/8526/nvidia-geforce-gtx-980-review/3
--   https://en.wikipedia.org/wiki/Performance_per_watt
--   http://michaelgalloy.com/2013/06/11/cpu-vs-gpu-performance.html
-
 
 
