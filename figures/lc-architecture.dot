@@ -1,0 +1,26 @@
+digraph G {
+//    "executable" [shape = none]
+    "lc program", "Haskell application", ".png" [shape = box]
+    "lc libraries" -> "lc program" [style = "dashed"]
+//    "lc program" -> "executable" [label = "a) pipeline description"]
+//    "lc libraries" -> "executable"
+//    "lc compiler" -> "Haskell backend" [label = "pipeline description"]
+//    "Haskell backend" -> "GHC" [label = "renderer"]
+    "GLFW" -> "Haskell application" [style = "dashed"]
+    "lc compiler" -> "Haskell application" [style = "dashed"]
+    "lc GL backend" -> "Haskell application" [style = "dashed"]
+    "Haskell application" -> "executable" [label = "GHC"]
+    "lc program" -> "pipeline description" [label = "compilerMain\nlc compiler"]
+    "pipeline description" -> "renderer" [label = "allocRenderer"]
+    "storage"
+//    ".png" -> "textureData" [label = "uploadTexture2DToGPU"]
+//    "textureData" -> "storage" [label = "@="]
+    ".png" -> "storage"
+    "time" -> "storage"
+    "geometry" -> "storage"
+    "storage" -> "renderer" [label = "setStorage", arrowhead = "none"] //, constraint = "false"]
+    "storage" -> "frame" [label = "renderFrame renderer"]
+    {rank = same; "storage"; "renderer"}
+}
+
+
