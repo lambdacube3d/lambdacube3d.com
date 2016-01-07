@@ -1,0 +1,21 @@
+% Glossary
+
+
+compiler pipeline
+
+    libraries
+        high-level interface
+        prelude
+    lambdacube-compiler (compiler)
+        bytecode generator
+    intermediate representation (IR, bytecode)
+    pipeline
+    renderer
+    storage
+    backend
+        C++-backend, Haskell-backend, PureScript-backend
+    live coding
+    application
+        editor
+    pipeline input (pipeline data)
+
