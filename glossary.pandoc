@@ -8,14 +8,14 @@ compiler pipeline
         prelude
     lambdacube-compiler (compiler)
         bytecode generator
-    intermediate representation (IR, bytecode)
     pipeline
-    renderer
-    storage
+        intermediate representation (IR, bytecode)
     backend
+        renderer
+        storage
         C++-backend, Haskell-backend, PureScript-backend
-    live coding
     application
         editor
-    pipeline input (pipeline data)
+            live coding
+        pipeline input (pipeline data)
 
