@@ -1,0 +1,70 @@
+% Introduction to LambdaCube 3D
+
+
+Scope
+=====
+
+LambdaCube 3D is a domain specific language for programming the GPU (graphics processing unit).
+LambdaCube 3D is a Haskell-like purely functional language.
+
+Currently LambdaCube 3D is intended for implement the part of the program which is responsible for 2D or 3D computer graphics.
+Other parts of the program (e.g. networking, application logic) can be implemented in Haskell, C++ or JavaScript.
+LambdaCube 3D can be used for desktop and mobile applications, either in standalone applications or in browsers too.
+
+
+Related projects
+================
+
+You may want to skip this section if you have not heard of the following projects.
+
+OpenGL
+------
+
+LambdaCube 3D is an alternative to using OpenGl.
+LambdaCube 3D is functional and statically typed as opposed to OpenGl's inherently imperative style.
+In any OpenGL bindings a dedicated language should be used to implement the shaders (the GPU subprograms).
+In LambdaCube 3D, shaders are implemented as regular functions.
+
+GPipe
+-----
+
+GPipe is the most related project to LambdaCube 3D, with similar goals. The main difference is that
+GPipe is a Haskell library whilst LambdaCube 3D is a standalone Haskell-like language.
+See also LambdaCube 3D EDSL below.
+
+LambdaCube 3D EDSL
+------------------
+
+LambdaCube 3D EDSL (embedded domain specific language) is a Haskell library, whilst
+LambdaCube 3D DSL (abberviated as LambdaCube 3D) is a standalone Haskell-like language with its own compiler and libraries.
+Currently the EDSL version is maintained and the DSL version is actively developed.
+The DSL version has less syntactic noise. Other pros and cons can be found here. <link>
+
+LambdaCube 3D EDSL is quite similar to GPipe. The main difference is that GPipe has more expressive power
+(it has dynamic pipelines) whilst there is more optimization opportunity in the LambdaCube 3D EDSL.
+
+Luminance
+---------
+
+Luminance is a Haskell EDSL for GPU graphics.
+In Luminance, shaders can only be implemented in the C-like shader language.
+
+
+Getting started
+===============
+
+Suppose you would like to develop an application which has 2D or 3D graphics, and you would like
+to use the GPU for that.
+
+You can implement the graphics part of your application (the "graphics engine") in LambdaCube 3D,
+and the other parts in Haskell, C++ or JavaScript.
+
+You may choose whether you would like develop you application for mobile or for desktop computers.
+You also may choose whether you would like run you application in the browser or as a standalone application.
+
+After making these decitions, probably the easiest way to understand how different parts of your application
+fits together is to look at a corresponding hello world program.
+
+<TODO>
+
+
