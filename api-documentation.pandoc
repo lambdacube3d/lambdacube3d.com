@@ -1,0 +1,221 @@
+LambdaCube 3D 0.3
+===================
+
+-   getting started: Haskell, PureScript, C++
+    -   goal: collect feedback and improve the API later
+    -   hint: provide screenshots of the intented result
+
+
+-   overview:
+    -   should introduce the purpose and features of the system
+    -   should describe the relation to other systems and libraries
+
+-   basic API documentation: should introduce the functional pipeline and corresponding primitives for the GPU model
+    -   list the supported builtin primitives with type
+
+-   homepage review:
+    -   reorganize content
+    -   list related publications:
+        -   lambdacube related
+        -   pure graphics related
+        -   graphics dsl relted
+
+Functional Pipeline Primitives
+==============================
+Framebuffer
+-----------
+-   Image
+-   Framebuffer
+-   ScreenOut
+
+Rendering Parameters
+--------------------
+-   AccumulationContext
+-   RasterContext
+
+Shader Input
+------------
+-   Uniform
+-   TextureSlot
+
+Texturing
+---------
+-   Texture2D
+-   Sampler
+
+Shaders
+-------
+-   Fetch
+-   Transform
+-   Rasterize
+-   Accumulate
+-   VertexOut
+-   FragmentOut
+-   FragmentFilter
+
+
+questions for the builtin functions:
+  - what does it do
+  - what are the valid parameters
+  - give me an example
+
+Builtin Primitives
+==================
+
+###Arithmetic Functions (componentwise)
+--------  ---------------------------------------------------
+PrimAdd   Num (MatVecElem a) => a -> a -> a
+PrimSub   Num (MatVecElem a) => a -> a -> a
+PrimMul   Num (MatVecElem a) => a -> a -> a
+PrimAddS  (t ~ MatVecScalarElem a, Num t) => a -> t -> a
+PrimSubS  (t ~ MatVecScalarElem a, Num t) => a -> t -> a
+PrimMulS  (t ~ MatVecScalarElem a, Num t) => a -> t -> a
+PrimDiv   (Num t, a ~ VecScalar d t) => a -> a -> a
+PrimMod   (Num t, a ~ VecScalar d t) => a -> a -> a
+PrimDivS  (Num t, a ~ VecScalar d t) => a -> t -> a
+PrimModS  (Num t, a ~ VecScalar d t) => a -> t -> a
+PrimNeg   Signed (MatVecScalarElem a) => a -> a
+--------  ---------------------------------------------------
+
+###Bit-wise Functions
+------------- ---------------------------------------------------
+PrimBAnd      (Integral t, a ~ VecScalar d t) => a -> a -> a
+PrimBOr       (Integral t, a ~ VecScalar d t) => a -> a -> a
+PrimBXor      (Integral t, a ~ VecScalar d t) => a -> a -> a
+PrimBAndS     (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBOrS      (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBXorS     (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBAndS     (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBOrS      (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBXorS     (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBAndS     (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBOrS      (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBXorS     (Integral t, a ~ VecScalar d t) => a -> t -> a
+PrimBNot      (Integral t, a ~ VecScalar d t) => a -> a
+PrimBShiftL   (Integral t, a ~ VecScalar d t, b ~ VecScalar d Word) => a -> b -> a
+PrimBShiftR   (Integral t, a ~ VecScalar d t, b ~ VecScalar d Word) => a -> b -> a
+PrimBShiftLS  (Integral t, a ~ VecScalar d t) => a -> Word -> a
+PrimBShiftRS  (Integral t, a ~ VecScalar d t) => a -> Word -> a
+------------- ---------------------------------------------------
+
+###Logic Functions
+-------   ---
+PrimAnd   Bool -> Bool -> Bool
+PrimOr    Bool -> Bool -> Bool
+PrimXor   Bool -> Bool -> Bool
+PrimNot   (a ~ VecScalar d Bool) => a -> a
+PrimAny   VecScalar d Bool -> Bool
+PrimAll   VecScalar d Bool -> Bool
+-------   ---
+
+###Angle, Trigonometry and Exponential Functions
+----------  --                                        ---
+PrimACos    (a ~ VecScalar d Float) => a -> a
+PrimACosH   (a ~ VecScalar d Float) => a -> a
+PrimASin    (a ~ VecScalar d Float) => a -> a
+PrimASinH   (a ~ VecScalar d Float) => a -> a
+PrimATan    (a ~ VecScalar d Float) => a -> a -> a
+PrimATanH   (a ~ VecScalar d Float) => a -> a -> a
+PrimCos     (a ~ VecScalar d Float) => a -> a -> a
+PrimCosH    (a ~ VecScalar d Float) => a -> a -> a
+PrimDegrees (a ~ VecScalar d Float) => a -> a -> a
+PrimRadians (a ~ VecScalar d Float) => a -> a -> a    Converts degrees to radians, i.e.,  ⋅degrees 180
+PrimSin     (a ~ VecScalar d Float) => a -> a -> a
+PrimSinH    (a ~ VecScalar d Float) => a -> a -> a
+PrimTan     (a ~ VecScalar d Float) => a -> a -> a
+PrimTanH    (a ~ VecScalar d Float) => a -> a -> a
+PrimExp     (a ~ VecScalar d Float) => a -> a -> a
+PrimLog     (a ~ VecScalar d Float) => a -> a -> a
+PrimExp2    (a ~ VecScalar d Float) => a -> a -> a
+PrimLog2    (a ~ VecScalar d Float) => a -> a -> a
+PrimSqrt    (a ~ VecScalar d Float) => a -> a -> a
+PrimInvSqrt (a ~ VecScalar d Float) => a -> a -> a
+PrimPow     (a ~ VecScalar d Float) => a -> a -> a
+PrimATan2   (a ~ VecScalar d Float) => a -> a -> a
+----------  --                                        ---
+
+###Common Functions
+--------------- ----
+PrimFloor       (a ~ VecScalar d Float) => a -> a
+PrimTrunc       (a ~ VecScalar d Float) => a -> a
+PrimRound       (a ~ VecScalar d Float) => a -> a
+PrimRoundEven   (Num t, a ~ VecScalar d t) => a -> a -> a
+PrimCeil        (Num t, a ~ VecScalar d t) => a -> a -> a
+PrimFract       (Num t, a ~ VecScalar d t) => a -> a -> a
+PrimMin         (Num t, a ~ VecScalar d t) => a -> a -> a
+PrimMax         (Num t, a ~ VecScalar d t) => a -> a -> a
+PrimMinS        (Num t, a ~ VecScalar d t) => a -> t -> a
+PrimMaxS        (Num t, a ~ VecScalar d t) => a -> t -> a
+PrimIsNan       (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> b
+PrimIsInf       (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> b
+PrimAbs         (Signed t, a ~ VecScalar d t) => a -> a
+PrimSign        (Signed t, a ~ VecScalar d t) => a -> a
+PrimModF        (a ~ VecScalar d Float) => a -> (a, a)
+PrimClamp       (Num t, a ~ VecScalar d t) => a -> a -> a -> a
+PrimClampS      (Num t, a ~ VecScalar d t) => a -> t -> t -> a
+PrimMix         (a ~ VecScalar d Float) => a -> a -> a -> a
+PrimMixS        (a ~ VecScalar d Float) => a -> a -> Float -> a
+PrimMixB        (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> a -> b -> a
+PrimStep        (a ~ TFVec d Float) => a -> a -> a
+PrimStepS       (a ~ VecScalar d Float) => Float -> a -> a
+PrimSmoothStep  (a ~ TFVec d Float) => a -> a -> a -> a
+PrimSmoothStepS (a ~ VecScalar d Float) => Float -> Float -> a -> a
+--------------- ----
+
+###Integer/Float Conversion Functions
+-------------------   ---
+PrimFloatBitsToInt    VecScalar d Float -> VecScalar d Int
+PrimFloatBitsToUInt   VecScalar d Float -> VecScalar d Word
+PrimIntBitsToFloat    VecScalar d Int   -> VecScalar d Float
+PrimUIntBitsToFloat   VecScalar d Word  -> VecScalar d Float
+-------------------   ---
+
+###Geometric Functions
+----------------  ---
+PrimLength        (a ~ VecScalar d Float) => a -> Float
+PrimDistance      (a ~ VecScalar d Float) => a -> a -> Float
+PrimDot           (a ~ VecScalar d Float) => a -> a -> Float
+PrimCross         (a ~ VecScalar 3 Float) => a -> a -> a
+PrimNormalize     (a ~ VecScalar d Float) => a -> a
+PrimFaceForward   (a ~ VecScalar d Float) => a -> a -> a -> a
+PrimRefract       (a ~ VecScalar d Float) => a -> a -> a -> a
+PrimReflect       (a ~ VecScalar d Float) => a -> a -> a
+----------------  ---
+
+###Matrix Functions
+----------------  ---
+PrimTranspose     TFMat h w  -> TFMat w h
+PrimDeterminant   TFMat s s  -> Float
+PrimInverse       TFMat s s  -> TFMat s s
+PrimOuterProduct  w          -> h          -> TFMat h w
+PrimMulMatVec     TFMat h w  -> w          -> h
+PrimMulVecMat     h          -> TFMat h w  -> w
+PrimMulMatMat     TFMat i j  -> TFMat j k  -> TFMat i k
+----------------  ---
+
+###Vector and Scalar Relational Functions
+--------------------  ---
+PrimLessThan          (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b
+PrimLessThanEqual     (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b
+PrimGreaterThan       (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b
+PrimGreaterThanEqual  (t ~ MatVecScalarElem a) => a -> a -> Bool
+PrimEqualV            (t ~ MatVecScalarElem a) => a -> a -> Bool
+PrimNotEqualV         (t ~ MatVecScalarElem a) => a -> a -> Bool
+PrimEqual             (t ~ MatVecScalarElem a) => a -> a -> Bool
+PrimNotEqual          (t ~ MatVecScalarElem a) => a -> a -> Bool
+--------------------  ---
+
+###Fragment Processing Functions
+----------  ---
+PrimDFdx    (a ~ VecScalar d Float) => a -> a
+PrimDFdy    (a ~ VecScalar d Float) => a -> a
+PrimFWidth  (a ~ VecScalar d Float) => a -> a
+----------  ---
+
+###Noise Functions
+----------  ---
+PrimNoise1  VecScalar d Float -> Float
+PrimNoise2  VecScalar d Float -> Vec 2 Float
+PrimNoise3  VecScalar d Float -> Vec 3 Float
+PrimNoise4  VecScalar d Float -> Vec 4 Float
+----------  ---
