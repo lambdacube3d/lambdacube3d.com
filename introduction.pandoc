@@ -38,7 +38,7 @@ LambdaCube 3D EDSL
 LambdaCube 3D EDSL (embedded domain specific language) is a Haskell library, whilst
 LambdaCube 3D DSL (abberviated as LambdaCube 3D) is a standalone Haskell-like language with its own compiler and libraries.
 Currently the EDSL version is maintained and the DSL version is actively developed.
-The DSL version has less syntactic noise. Other pros and cons can be found here. <link>
+The DSL version has less syntactic noise. Other pros and cons can be found [here](http://lambdacube3d.com/questions#why-are-you-developing-a-separate-dsl-instead-of-a-haskell-edsl).
 
 LambdaCube 3D EDSL is quite similar to GPipe. The main difference is that GPipe has more expressive power
 (it has dynamic pipelines) whilst there is more optimization opportunity in the LambdaCube 3D EDSL.
@@ -62,7 +62,7 @@ and the other parts in Haskell, C++ or JavaScript.
 You may choose whether you would like develop you application for mobile or for desktop computers.
 You also may choose whether you would like run you application in the browser or as a standalone application.
 
-After making these decitions, probably the easiest way to understand how different parts of your application
+After making these decisions, probably the easiest way to understand how different parts of your application
 fits together is to look at a corresponding hello world program.
 
 <TODO>
