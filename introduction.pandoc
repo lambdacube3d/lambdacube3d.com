@@ -50,17 +50,68 @@ Luminance is a Haskell EDSL for GPU graphics.
 In Luminance, shaders can only be implemented in the C-like shader language.
 
 
+Overview
+========
+
+Suppose you would like to develop an application with GPU graphics.
+Let's call the part of your application which is responsible for the GPU graphics the **graphics engine**.
+
+Semantically the graphics engine is a pure function. We called this function the **pipeline**.
+The output of the pipeline is called **frame**. A frame can be put on the screen, it can be stored for later use or it can
+be used as an input of pipelines too.
+
+We call **rendering** the computation of one frame given the pipeline and its input.
+We call **multi-pass rendering** when two or more simple pipelines are combined together to get the final frame which is put on the screen.
+We will use the terminology **simple pipeline** and **composed pipeline**.
+LambdaCube 3D supports multi-pass rendering by supporting composed pipelines.
+(If one knows OpenGL, it is worth to be mentioned that simple pipelines are compiled to shader code running on GPU and
+the low-level OpenGL commands which connects the simple pipeline
+inputs and outputs and starts the GPU computation is automatically generated.)
+
+The input of the pipeline is everything what is needed to produce the frame.
+Although in theory one pipeline is enough for the whole application runtime,
+currently LambdaCube 3D does not support dynamic pipelines. This means that
+the composition of simple pipelines cannot depend on the pipeline input.
+This limitation is planned to be lifted.
+Until then a sufficient solution is to use several pipelines during the application runtime, where the application logic
+chooses at every moment the right pipeline and the right input to get the desired frame on the screen.
+
+LambdaCube 3D statically checks that the pipeline input type matches the pipeline's type and that
+pipelines are composed in the right way.
+
+Input types
+-----------
+
+TODO: later or here?
+
+In LambdaCube 3D the input of a simple pipeline always consists of one **primitive stream**, zero or more **uniforms** and zero or more **textures**.
+
+A uniform is a piece of data whose type should be one of supported uniform types.
+Some supported uniform types are `Bool`, `Int`, `Float`, `Vec 3 Bool`, `Mat 4 4 Float`, etc.
+For example, a camera position can be a piece of input of a pipeline as a 4 times 4 `Float` matrix uniform.
+
+A texture is a uniform with type `Texture`.
+(Currently textures are treated specially in LambdadCube 3D but this is planned to be changed.)
+A `Texture` is an **image** with **sampling configurations**.
+An image is a pixel rectangle, i.e. a two dimensional array of **color values**. A color value is vector of `Float`s; the vector
+length should be less or equal to 4.
+A sampling configuration is responsible for the sampling method used (discussed later).
+
+A input stream is a vector whose elements can be **points**, **lines** or **triangles**.
+A point consits of one **vertex**, a line consits of two vertices, and a triangle consists of three vertices.
+A vertex is basically a tuple of **attributes**. An attribute can be for example the x coordinate of
+the vertex. An attribute can have other type than `Float`; one can have for example a Boolean attribute for each vertices.
+
+
 Getting started
 ===============
 
-Suppose you would like to develop an application which has 2D or 3D graphics, and you would like
-to use the GPU for that.
+Suppose that you decide to implement the graphics engine (part of your application related to GPU graphics)
+of your application in LambdaCube 3D.
 
-You can implement the graphics part of your application (the "graphics engine") in LambdaCube 3D,
-and the other parts in Haskell, C++ or JavaScript.
-
-You may choose whether you would like develop you application for mobile or for desktop computers.
-You also may choose whether you would like run you application in the browser or as a standalone application.
+-   Choose the language of the driver of the graphics engine (the part of your application which chooses the pipeline and its input for rendering). Currently Haskell, C++ and JavaScript is supported.
+-   Choose whether you want to develop for mobile or for desktop computers.
+-   Choose whether you want to run the application in the browser or in a standalone application.
 
 After making these decisions, probably the easiest way to understand how different parts of your application
 fits together is to look at a corresponding hello world program.
