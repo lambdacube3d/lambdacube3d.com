@@ -137,7 +137,7 @@ The `emptyDepthImage` function creates an empty depth image given a depth value:
 emptyDepthImage 1000
 ~~~~~
 
-A **stencil image** is to used for maskink (discussed later).
+A **stencil image** is to used for masking (discussed later).
 
 ### Creating frames from images
 
@@ -212,8 +212,8 @@ Some explanation (do not mind if you don't understands these now):
 
 `CullNone` tells that both side of the triangles are visible.  
 `PolygonFill` tells that not only the edges of the trianges are visible.  
-`NoOffset` tells that rasterization will not take depth values into account.  
-`LastVertex` tells that how to interpolate other attributes of vertices.
+`NoOffset` tells that rasterization will not modify depth values.  
+`LastVertex` tells that in case of no interpolation which vertex attribute to use in fragments.
 
 The `rasterize` functions map a rasterization context to a functions which converts a primitive stream to a fragment stream:
 
@@ -265,7 +265,7 @@ An example accumulation context:
 ~~~~~
 
 `DepthOp` tells how to accumulate depth values.  
-`Less` tells that closer (less) depth values wins.  
+`Less` tells that depth test succeed if the fragment's depth values is less (it is closer).  
 `True` tells that the fragments are opaque, and should we written on the frame if the depth test succeeds.  
 `ColorOp` tells how to accumulate (the first) color values.  
 `NoBlending` tells that we don't want to blend (mix) values, the new value is written.  
