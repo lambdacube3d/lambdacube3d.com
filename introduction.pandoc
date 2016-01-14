@@ -60,19 +60,19 @@ Basic terminology
 LambdaCube 3D is a DSL for impelementing graphics engines.
 
 From a purely functional point of view, the graphics engine is a pure function.
-We called this function the **pipeline**.
+We call this function the **pipeline**.
 
 A **frame** is the output of the pipeline.
 A frame is something which can be put on the screen.
 
-Pipelines can be composed such that the output of a pipeline becomes part of the input of another pipeline.
-We will use the terminology **simple pipeline** and **composed pipeline**.
-
 **Rendering** is the computation of one frame given the pipeline and its input.  
-**Multi-pass rendering** is rendering with a composed pipeline.
 
-A **dynamic pipeline** is a composed pipeline in which the composition depends on the pipeline input.
+Pipelines can be assembled from smaller parts.  
 
+**Multi-pass rendering** is rendering with a pipeline which is a composition of several pipelines where
+the output of a pipeline is part of the input of another pipeline. LambdaCube 3D supports multi-pass rendering.
+
+A **dynamic pipeline** is a composed pipeline in which the composition depends on the pipeline input.  
 Currently LambdaCube 3D does not support dynamic pipelines. This limitation is planned to be lifted.
 Until then a workaround is to use several pipelines and the application logic
 chooses at every rendering the right pipeline depending on the input.
@@ -84,7 +84,7 @@ Pipeline inputs
 There are limitations on possible pipeline inputs, which reflects the fact that GPUs are specialised hardware.
 The current limitations are inherited from OpenGL 3.3.
 
-The input of a simple pipeline consists of one primitive stream, zero or more uniforms and zero or more textures.
+The input of a pipeline consists of zero or more vertex streams, zero or more uniforms and zero or more textures.
 
 A **uniform** is a piece of data with a statically known size.
 Supported uniform types are `Bool`, `Int`, `Float`, `Vec 3 Bool`, `Mat 4 4 Float`, etc.
@@ -95,50 +95,237 @@ A **texture** is a uniform with type `Texture`.
 A `Texture` is an image with sampling configurations (discussed later).
 Currently textures are treated specially in LambdadCube 3D but this is planned to be changed.
 
-An **input stream** is a vector whose elements are **points**, **lines** or **triangles**.
+A **vertex stream** is a vector whose elements are **points**, **lines** or **triangles**.
 A point consits of one vertex, a line consits of two vertices, and a triangle consists of three vertices.
+
 A **vertex** is a tuple of attributes.
+
 An **attribute** is a piece of data with a statically known size.
-Supported attribute types are for example `Float`, `Bool` and tuple of supported attribute types.
+Supported attribute types are for example `Float` and `Bool`.
 A typical `Float` attribute is the x coordinate of a vertex.
 
-Simple pipelines
-----------------
+
+Frames and images
+-----------------
+
+Frames have a central role in GPU graphics. Frames are the main storage units between and after computations. 
+
+A frame consists of several images of the same dimension.
+
+An **image** is an array of values.
+
+There are different kind of images depending on the role the image plays.
+
+A **color image** is to store color values. Supported color values are `Float`, and `Float` vectors with dimension at most 4.
+For example, a color image of `Float` values can be used to store a grayscale image, but the `Float` values can be interpreted in any
+color space, or they can be used to a totally different purpose too.
+
+The `emptyColorImage` function creates an empty color image given a color value:
+
+~~~~~ {.haskell}
+emptyColorImage navy
+~~~~~
+
+A **depth image** is to store depth values. A depth value has type `Float` and it is usually used to store the distance between the
+viewpoint and the object shown on a color image.
+In LambdaCube 3D, a depth image has different type than a color image with `Float` values because graphics hardware has dedicated
+operations for depth images.
+
+The `emptyDepthImage` function creates an empty depth image given a depth value:
+
+~~~~~ {.haskell}
+emptyDepthImage 1000
+~~~~~
+
+A **stencil image** is to used for maskink (discussed later).
+
+### Creating frames from images
+
+The `imageFrame` function creates a frame given a tuple of images:
+
+~~~~~ {.haskell}
+imageFrame (emptyDepthImage 1000, emptyColorImage navy)
+~~~~~
+
+There are limitations about how many images a frame can contain.
+A frame can contain at most one depth image and at most one stencil image.
+
+
+Pipeline construction
+---------------------
 
 Ideally, a pipeline is an arbitrary computable function which produces a frame given an input.
 Unfortunately, this is not the case.
 There are limitations on possible pipelines, which reflects the fact that GPUs are specialised hardware.
 The current limitations are inherited from OpenGL 3.3.
 
-The simple pipeline has only one explicit parameter, the input stream.
-Uniforms and textures are implicit parameters of the pipeline; they are used as constant values in the pipeline description.
-
-A simple pipeline is a composition of 4 special functions which are called **vertex shader**, **geometry shader**, **rasterize** and **fragment shader**:
-
-    simple_pipeline = fragment_shader . rasterize . geometry_shader . vertex_shader
-
-Each of these functions has a special shape.
-Given these restricitons, the same pipeline can be expressed in many ways, and
-it is the programmer's task to arrange the computations between these four stages. The LambdaCube 3D compiler is supposed to do some rearrangements as optimizations, though currently this is not implemented.
-
-### Vertex shaders
-
-Vertex shaders map vertex streams to primitive streams.
-
-### Geometry shaders
-
-### Rasterize functions
-
-### Fragment shaders
+Here is a step-by-step overview about how to construct pipelines.
 
 
-Textures
---------
+### Constant frames
 
-An **image** is a pixel rectangle, i.e. a two dimensional array of color values. A **color value** is vector of `Float`s; the vector
-length should be less or equal to 4.
-A **sampling configuration** is responsible for the sampling method used (discussed later).
+The simplest pipeline has no input and outputs a constant frame:
 
+~~~~~ {.haskell}
+makeFrame = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
+~~~~~
+
+
+### From vertex streams to frames
+
+After outputting a constrant frame, the next step is to construct a frame from a vertex stream.
+This can be done in several phases. We go step-by-step through the phases.
+Again, if these steps seem ad-hoc, think about the specialised hardware.
+
+#### From vertex streams to primitive streams: vertex transformations
+
+In the first phase we may transfrom the vertices of the input vertex stream.
+If you would like to skip this step, use the identity transformation:
+
+~~~~~ {.haskell}
+transformVertices id
+~~~~~
+
+The next example project and scale the vertices:
+
+~~~~~ {.haskell}
+transformVertices (scale 0.5 . (projmat *.))
+~~~~~
+
+The projection can be done by a matrix multiplication if we use homogenious coordinates.
+Here we suppose that the vertex stream contain `Vec 4 Float` values and `projmat` has type `Mat 4 4 Float`.
+How to define `projmat` is discussed later.
+
+#### From primitive streams to fragment streams: rasterization
+
+In the rasterization step, each primitive is turned into a set of not-yet-coloured pixels.
+
+The rasterization step is not programmable, but configrable by a **rasterization context**.
+
+An example rasterization context for rasterizing triangles:
+
+~~~~~ {.haskell}
+TriangleCtx CullNone PolygonFill NoOffset LastVertex
+~~~~~
+
+Some explanation (do not mind if you don't understands these now):
+
+`CullNone` tells that both side of the triangles are visible.  
+`PolygonFill` tells that not only the edges of the trianges are visible.  
+`NoOffset` tells that rasterization will not take depth values into account.  
+`LastVertex` tells that how to interpolate other attributes of vertices.
+
+The `rasterize` functions map a rasterization context to a functions which converts a primitive stream to a fragment stream:
+
+~~~~~ {.haskell}
+rasterize (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
+~~~~~
+
+#### Filtering fragment streams
+
+It is possible to filter fragment streams. Filtering is useful to make fragments look transparent.
+In the vast majority of cases we do not filter, so we write:
+
+~~~~~ {.haskell}
+filterFragmentStream PassAll
+~~~~~
+
+#### From filtered fragment streams to shaded fragment streams: shading
+
+In the shading phase we give color to not-yet-colored pixels.
+
+This phase is programmable, the program is given by a function:
+
+~~~~~ {.haskell}
+transformFragmentsRastDepth (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
+~~~~~
+
+The `RastDepth` suffix tells that depth values are automatically computed by the previous rasterization depth;
+we don't want to customize it.
+
+`f` is a helper function:
+
+~~~~~ {.haskell}
+f x = (x + sin x + sin (1.1 * x)) `mod` 4 * 2
+~~~~~
+
+
+#### From shaded fragment streams to frames: accumulation
+
+Now we have a shaded fragment stream which we would like to put on a frame.
+For this we need a frame and we need an **accumulation context**
+
+The accumulation context tells how to "accumulate" fragments, i.e. how to combine
+previous values on the frame with new incoming values.
+
+An example accumulation context:
+
+~~~~~ {.haskell}
+(DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+~~~~~
+
+`DepthOp` tells how to accumulate depth values.  
+`Less` tells that closer (less) depth values wins.  
+`True` tells that the fragments are opaque, and should we written on the frame if the depth test succeeds.  
+`ColorOp` tells how to accumulate (the first) color values.  
+`NoBlending` tells that we don't want to blend (mix) values, the new value is written.  
+`(V4 True True True True)` gives the write masks for individual color channels.
+
+We can pair a shaded fragment stream with an accumulation context with `accumulateWith`:
+
+~~~~~ {.haskell}
+accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+~~~~~
+
+The actual accumulation is done with `overlay` (used as operator here):
+
+~~~~~ {.haskell}
+    = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
+  `overlay`
+      vertexstream
+    & transformVertices (scale 0.5 . (projmat *.))
+    & rasterize (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
+    & filterFragmentStream PassAll
+    & transformFragmentsRastDepth (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
+    & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+~~~~~
+
+Here `(&)` is the flipped function application, and `vertexstream` is a vertex stream.
+
+
+### Putting all together
+
+The pure function which creates the final frame, given the time, the projection matrix and a triangle vertex stream:
+
+~~~~~ {.haskell}
+f x = (x + sin x + sin (1.1 * x)) `mod` 4 * 2
+
+makeFrame (time :: Float)
+          (projmat :: Mat 4 4 Float)
+          (vertexstream :: VertexStream Triangle (Vec 4 Float))
+
+    = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
+  `overlay`
+      vertexstream
+    & transformVertices (scale 0.5 . (projmat *.))
+    & rasterize (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
+    & filterFragmentStream PassAll
+    & transformFragmentsRastDepth (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
+    & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+~~~~~
+
+
+Interfacing pipelines with the outer world
+------------------------------------------
+
+We can connect the inputs of the previous pipeline to our application by naming the input uniforms and input streams:
+
+~~~~~ {.haskell}
+main = renderFrame $
+   makeFrame (Uniform "Time")
+             (Uniform "MVP")
+             (Fetch "stream4" (Attribute "position4"))
+~~~~~
 
 
 
