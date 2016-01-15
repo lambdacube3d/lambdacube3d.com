@@ -101,8 +101,29 @@ A point consits of one vertex, a line consits of two vertices, and a triangle co
 A **vertex** is a tuple of attributes.
 
 An **attribute** is a piece of data with a statically known size.
-Supported attribute types are for example `Float` and `Bool`.
-A typical `Float` attribute is the x coordinate of a vertex.
+Supported attribute types are for example `Float`, `Bool` or `Vec 3 Float`.
+Typical attribute are the spatial position or the color of a vertex.
+
+For example, the vertex stream of a tetrahedron looks something like
+
+~~~~~ {.haskell}
+{pos: V3 0 0 0} {pos: V3 1 0 0} {pos: V3 0 1 0}   -- 1st triangle
+{pos: V3 1 0 0} {pos: V3 0 1 0} {pos: V3 0 0 1}   -- 2nd triangle
+{pos: V3 0 1 0} {pos: V3 0 0 1} {pos: V3 0 0 0}   -- 3rd triangle
+{pos: V3 0 0 1} {pos: V3 0 0 0} {pos: V3 0 0 1}   -- 4th triangle
+~~~~~
+
+The vertex stream of a tetrahedron with an additional `q` Boolean attribute may looks something like
+
+~~~~~ {.haskell}
+{pos: V3 0 0 0, q: True } {pos: V3 1 0 0, q: True } {pos: V3 0 1 0, q: True }   -- 1st triangle
+{pos: V3 1 0 0, q: True } {pos: V3 0 1 0, q: True } {pos: V3 0 0 1, q: False}   -- 2nd triangle
+{pos: V3 0 1 0, q: False} {pos: V3 0 0 1, q: True } {pos: V3 0 0 0, q: True }   -- 3rd triangle
+{pos: V3 0 0 1, q: False} {pos: V3 0 0 0, q: True } {pos: V3 0 0 1, q: True }   -- 4th triangle
+~~~~~
+
+Note that the representation of the vertex stream is hidden in LambdaCube 3D. Usually the vertex stream is provided as a
+flattened stream of vertices by the application.
 
 
 Frames and images
