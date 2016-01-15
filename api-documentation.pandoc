@@ -1,50 +1,269 @@
-LambdaCube 3D 0.3
-===================
+%LambdaCube 3D 0.3
 
--   getting started: Haskell, PureScript, C++
-    -   goal: collect feedback and improve the API later
-    -   hint: provide screenshots of the intented result
+Basic types
+===========
+
+Values
+------
+
+----------- ---------------------
+`Nat`       natural numbers: `Zero`, `Succ Zero`, `Succ (Succ Zero)`, ...; on type level may written also as `0`, `1`, `2`, ...
+`Bool`      Boolean values: `True` or `False`
+`Int`       signed integers: ..., `-2`, `-1`, `0`, `1`, `2`, ... 
+`Word`      unsigned integers: `0`, `1`, `2`, ...
+`Float`     floating point numbers: `0`, `3.14`, ...
+`Vec n t`   `n`-vector of `t` values; `n` may be `2`, `3` or `4`
+`Mat i j t` `i`x`j`-matrix of `t` values; `i` and `j` may be `2`, `3` or `4`; `t` is always `Float`
+----------- ---------------------
+
+The vector constructors are `V2`, `V3` and `V4`.  
+For example,
+
+~~~~~ {.haskell}
+    V3 0 1.1 2 :: Vec 3 Float
+~~~~~
+
+The matrix constructors are `M22F`, `M23F`, `M24F`, `M32F`, `M33F`, `M34F`, `M42F`, `M43F` and `M44F`.
+The matrix constructors needs the columns of the matrices.  
+For example,
+
+~~~~~ {.haskell}
+    M23F (V2 0 0.1) (V2 1 1) (V3 0 0) :: Mat 2 3 Float
+~~~~~
+
+Special types
+-------------
+
+~~~~~ {.haskell}
+PrimitiveType
+    = Triangle
+    | Line
+    | Point
+~~~~~
 
 
--   overview:
-    -   should introduce the purpose and features of the system
-    -   should describe the relation to other systems and libraries
+Basic type families
+-------------------
 
--   basic API documentation: should introduce the functional pipeline and corresponding primitives for the GPU model
-    -   list the supported builtin primitives with type
+### `VecScalar`
 
--   homepage review:
-    -   reorganize content
-    -   list related publications:
-        -   lambdacube related
-        -   pure graphics related
-        -   graphics dsl relted
+~~~~~ {.haskell}
+VecScalar :: Nat -> Type -> Type
+~~~~~
 
-Functional Pipeline Primitives
-==============================
-Framebuffer
------------
--   Image
--   Framebuffer
--   ScreenOut
+If the first argument of `VecScalar` is `1`, then the result is the second argument, otherwise `VecScalar` is the same as `Vec`.  
+Examples:
 
-Rendering Parameters
+~~~~~ {.haskell}
+VecScalar 1 Float = Float
+VecScalar 2 Float = Vec 2 Float
+~~~~~
+
+### `MatVecScalarElem`
+
+~~~~~ {.haskell}
+MatVecScalarElem :: Type -> Type
+~~~~~
+
+`MatVecScalarElem` gives back the type of elements of matrices and vectors; in case of scalars it is the identity function.  
+Examples:
+
+~~~~~ {.haskell}
+MatVecScalarElem Float = Float
+MatVecScalarElem (Vec 3 Bool) = Bool
+MatVecScalarElem (Mat 3 3 Float) = Float
+~~~~~
+
+
+Basic type classes
+------------------
+
+### `Integral`
+
+Integral numeric types are `Int` and `Word`.
+
+### `Signed`
+
+Signed numeric types are `Float` and `Int`.
+
+### `Num`
+
+Numeric types are `Float`, `Int` and `Word`.
+
+### `Floating`
+
+Floating numeric types are `Float`, `Float` vectors and `Float` matrices.
+
+Utility type classes
 --------------------
--   AccumulationContext
--   RasterContext
 
-Shader Input
-------------
--   Uniform
--   TextureSlot
+### `Component`
 
-Texturing
----------
+Component types are `Bool`, `Int`, `Word`, `Float` and vectors.
+
+
+Stream types
+============
+
+Currently there are several stream type has its own type constructor; it is planned to use a common abstraction for them later.
+
+~~~~~ {.haskell}
+VertexStream            :: PrimitiveType ->        Type -> Type
+PrimitiveStream         :: PrimitiveType -> Nat -> Type -> Type
+FragmentStream          ::                  Nat -> Type -> Type
+FilteredFragmentStream  ::                  Nat -> Type -> Type
+ShadedFragmentStream    ::                  Nat -> Type -> Type
+~~~~~
+
+Rasterization contexts
+======================
+
+~~~~~ {.haskell}
+data RasterContext :: PrimitiveType -> Type where
+    TriangleCtx :: CullMode -> PolygonMode -> PolygonOffset -> ProvokingVertex -> RasterContext Triangle
+    PointCtx    :: PointSize -> Float -> PointSpriteCoordOrigin                -> RasterContext Point
+    LineCtx     :: Float -> ProvokingVertex                                    -> RasterContext Line
+
+data CullMode
+    = CullFront FrontFace
+    | CullBack FrontFace
+    | CullNone
+
+data FrontFace
+    = CW
+    | CCW
+
+data PointSize
+    = PointSize Float
+    | ProgramPointSize
+
+data PolygonMode
+    = PolygonFill
+    | PolygonPoint PointSize
+    | PolygonLine Float
+
+data PolygonOffset
+    = NoOffset
+    | Offset Float Float
+
+data PointSpriteCoordOrigin
+    = LowerLeft
+    | UpperLeft
+
+data ProvokingVertex
+    = LastVertex
+    | FirstVertex
+~~~~~
+
+Accumulation contexts
+=====================
+
+
+~~~~~ {.haskell}
+data FragmentOperation :: Type -> Type where
+  ColorOp             :: (mask ~ VecScalar d Bool, color ~ VecScalar d c, Num c) => Blending c -> mask
+                                                                   -> FragmentOperation (Color color)
+  DepthOp             :: ComparisonFunction -> Bool                -> FragmentOperation (Depth Float)
+  StencilOp           :: StencilTests -> StencilOps -> StencilOps  -> FragmentOperation (Stencil Int32)
+
+data Blending :: Type -> Type where
+  NoBlending          ::                                   Blending t
+  BlendLogicOp        :: (Integral t) => LogicOperation -> Blending t
+  Blend               :: (BlendEquation, BlendEquation)
+                         -> ((BlendingFactor, BlendingFactor), (BlendingFactor, BlendingFactor))
+                         -> Vec 4 Float ->                 Blending Float
+
+data BlendingFactor
+    = Zero' --- FIXME: modified
+    | One
+    | SrcColor
+    | OneMinusSrcColor
+    | DstColor
+    | OneMinusDstColor
+    | SrcAlpha
+    | OneMinusSrcAlpha
+    | DstAlpha
+    | OneMinusDstAlpha
+    | ConstantColor
+    | OneMinusConstantColor
+    | ConstantAlpha
+    | OneMinusConstantAlpha
+    | SrcAlphaSaturate
+
+data BlendEquation
+    = FuncAdd
+    | FuncSubtract
+    | FuncReverseSubtract
+    | Min
+    | Max
+
+data LogicOperation
+    = Clear
+    | And
+    | AndReverse
+    | Copy
+    | AndInverted
+    | Noop
+    | Xor
+    | Or
+    | Nor
+    | Equiv
+    | Invert
+    | OrReverse
+    | CopyInverted
+    | OrInverted
+    | Nand
+    | Set
+
+data StencilOperation
+    = OpZero
+    | OpKeep
+    | OpReplace
+    | OpIncr
+    | OpIncrWrap
+    | OpDecr
+    | OpDecrWrap
+    | OpInvert
+
+data ComparisonFunction
+    = Never
+    | Less
+    | Equal
+    | Lequal
+    | Greater
+    | Notequal
+    | Gequal
+    | Always
+~~~~~
+
+Images
+======
+
+~~~~~ {.haskell}
+data Image :: Nat -> Type -> Type where
+  ColorImage          :: forall a d t color . (Num t, color ~ VecScalar d t)
+                      => color  -> Image a (Color color)
+  DepthImage          :: forall a . Float  -> Image a (Depth Float)
+  StencilImage        :: forall a . Int    -> Image a (Stencil Int)
+
+  -- texture support
+  PrjImage            :: FrameBuffer 1 a -> Image 1 a
+  PrjImageColor       :: FrameBuffer 1 (Depth Float, Color (Vec 4 Float)) -> Image 1 (Color (Vec 4 Float))
+~~~~~
+
+Textures
+========
+
 -   Texture2D
 -   Sampler
 
+
+Frame buffers
+=============
+
 Shaders
--------
+=======
+
 -   Fetch
 -   Transform
 -   Rasterize
@@ -54,27 +273,16 @@ Shaders
 -   FragmentFilter
 
 
-questions for the builtin functions:
+
+Builtin primitive operations
+----------------------------
+
+Info for the builtin functions
+
   - what does it do
   - what are the valid parameters
-  - give me an example
+  - give an example
 
-Builtin Primitives
-==================
-
-VecScalar _ Bool = {Bool, Vec 2 Bool, Vec 3 Bool, Vec 4 Bool}
-
-VecScalar _ Float = {Float, Vec 2 Float, Vec 3 Float, Vec 4 Float}
-
-Num = {Float, Int, Word}
-
-Integral = {Int, Word}
-
-Signed = {Float, Int}
-
-MatVecElem = gives the component type of a vector or matrix {Float, Int, Word, Bool}
-
-MatVecScalarElem = gives the component type of a scalar, vector or matrix {Float, Int, Word, Bool}
 
 ###Arithmetic Functions (component-wise)
 --------  --------------------------------------------------  ---------
@@ -242,4 +450,18 @@ PrimFloatBitsToUInt   VecScalar d Float -> VecScalar d Word
 PrimIntBitsToFloat    VecScalar d Int   -> VecScalar d Float
 PrimUIntBitsToFloat   VecScalar d Word  -> VecScalar d Float
 -------------------   ---
+
+
+Interface for inputs
+====================
+
+-   Uniform
+-   TextureSlot
+
+Interface for outputs
+=====================
+
+-   ScreenOut
+
+
 
