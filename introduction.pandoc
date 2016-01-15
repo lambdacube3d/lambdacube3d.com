@@ -129,11 +129,11 @@ flattened stream of vertices by the application.
 Frames and images
 -----------------
 
-Frames have a central role in GPU graphics. Frames are the main storage units between and after computations. 
+Frames are the main storage units which accumulate the results of intermediate computations.
 
 A frame consists of several images of the same dimension.
 
-An **image** is an array of values.
+An **image** is a two dimensional array of values.
 
 There are different kind of images depending on the role the image plays.
 
@@ -197,17 +197,19 @@ makeFrame = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
 After outputting a constrant frame, the next step is to construct a frame from a vertex stream.
 This can be done in several phases. We go step-by-step through the phases.
 Again, if these steps seem ad-hoc, think about the specialised hardware.
+(We believe that the presentation of these limitiation can be impoved. We plan to gradually improve
+the current interface to be more and more higher-level.)
 
 #### From vertex streams to primitive streams: vertex transformations
 
 In the first phase we transfrom the vertices of the input vertex stream.
-Typically the vertices are projected onto the screen and the depth (the distance of the vertex from the viewer) is calculated.
+Typically the vertex coordinates are projected onto the viewport and the depth (the distance of the vertex from the viewer) is calculated.
 If we use [homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates), the projection and
-the depth can be calculated at the same time by multiplying the vertex with a so-called projection matrix.
+the depth can be calculated at the same time by multiplying the vertex with a projection matrix.
 
 The vertices usually have other attributes next to the coordinates, and these attributes can be transformed
 also in the first phase.
-The restriction is that the first phase should produce at least the vertex coordinates needed for rasterization.
+The restriction is that at least the final vertex coordinates should be produced for rasterization.
 
 The `transformVertices1` function transforms a vertex stream into a primitive stream when two helper functions
 are given: one for calculating the vertex coordinates needed for rasterization, and the other for calculating
@@ -226,7 +228,9 @@ How to define `projmat` is discussed later.
 
 #### From primitive streams to fragment streams: rasterization
 
-In the rasterization step, each primitive is turned into a set of not-yet-coloured pixels.
+In the rasterization step, each primitive is turned into a set of disjunct unshaded (not-yet-colored) fragments.
+A fragment is like a pixel; in fact, a pixel is an accumulated set of shaded (colored) overlapping fragments.
+Accumulation means that we combine the color values of overlapping fragments to get the color of the pixel.
 
 The rasterization step is not programmable, but configrable by a **rasterization context**.
 
@@ -260,7 +264,7 @@ filterFragmentStream PassAll
 
 #### From filtered fragment streams to shaded fragment streams: shading
 
-In the shading phase we give color to not-yet-colored pixels.
+In the shading phase we give color to unshaded fragments.
 
 This phase is programmable, the program is given by a function:
 
@@ -311,7 +315,7 @@ The actual accumulation is done with `overlay` (used as operator here):
     = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
   `overlay`
       vertexstream
-    & transformVertices (scale 0.5 . (projmat *.))
+    & transformVertices1 (scale 0.5 . (projmat *.)) id
     & rasterize (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
     & filterFragmentStream PassAll
     & transformFragmentsRastDepth (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
@@ -335,7 +339,7 @@ makeFrame (time :: Float)
     = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
   `overlay`
       vertexstream
-    & transformVertices (scale 0.5 . (projmat *.))
+    & transformVertices1 (scale 0.5 . (projmat *.)) id
     & rasterize (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
     & filterFragmentStream PassAll
     & transformFragmentsRastDepth (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
