@@ -179,22 +179,29 @@ Again, if these steps seem ad-hoc, think about the specialised hardware.
 
 #### From vertex streams to primitive streams: vertex transformations
 
-In the first phase we may transfrom the vertices of the input vertex stream.
-If you would like to skip this step, use the identity transformation:
+In the first phase we transfrom the vertices of the input vertex stream.
+Typically the vertices are projected onto the screen and the depth (the distance of the vertex from the viewer) is calculated.
+If we use [homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates), the projection and
+the depth can be calculated at the same time by multiplying the vertex with a so-called projection matrix.
+
+The vertices usually have other attributes next to the coordinates, and these attributes can be transformed
+also in the first phase.
+The restriction is that the first phase should produce at least the vertex coordinates needed for rasterization.
+
+The `transformVertices1` function transforms a vertex stream into a primitive stream when two helper functions
+are given: one for calculating the vertex coordinates needed for rasterization, and the other for calculating
+the transformed attributes.
+
+The next example project and scale the vertices, and the transformed attributes will be equal to the original
+coordinates of the vertices:
 
 ~~~~~ {.haskell}
-transformVertices id
+transformVertices1 (scale 0.5 . (projmat *.)) id
 ~~~~~
 
-The next example project and scale the vertices:
-
-~~~~~ {.haskell}
-transformVertices (scale 0.5 . (projmat *.))
-~~~~~
-
-The projection can be done by a matrix multiplication if we use homogenious coordinates.
 Here we suppose that the vertex stream contain `Vec 4 Float` values and `projmat` has type `Mat 4 4 Float`.
 How to define `projmat` is discussed later.
+
 
 #### From primitive streams to fragment streams: rasterization
 
