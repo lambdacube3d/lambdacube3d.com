@@ -95,43 +95,46 @@ A **texture** is a uniform with type `Texture`.
 A `Texture` is an image with sampling configurations (discussed later).
 Currently textures are treated specially in LambdadCube 3D but this is planned to be changed.
 
-A **vertex stream** is a vector whose elements are **points**, **lines** or **triangles**.
-A point consits of one vertex, a line consits of two vertices, and a triangle consists of three vertices.
+A **stream** is a vector. In LambdaCube 3D there are two kind of streams: primitive streams and fragment streams.
+
+A **primitive** is either a point, a line, or a triangle.
+
+A **point** is a vertex.  
+A **line** is a pair of vertices.  
+A **triangle** is a triplet of vertices.
 
 A **vertex** is a tuple of attributes.
 
 An **attribute** is a piece of data with a statically known size.
-Supported attribute types are for example `Float`, `Bool` or `Vec 3 Float`.
-Typical attribute are the spatial position or the color of a vertex.
+Supported attribute types are for example `Float`, `Bool` or `Vec 3 Float`.  
+Typical attributes are the spatial position and the color of a vertex.
 
-For example, the vertex stream of a tetrahedron looks something like
-
-~~~~~ {.haskell}
-{pos: V3 0 0 0} {pos: V3 1 0 0} {pos: V3 0 1 0}   -- 1st triangle
-{pos: V3 1 0 0} {pos: V3 0 1 0} {pos: V3 0 0 1}   -- 2nd triangle
-{pos: V3 0 1 0} {pos: V3 0 0 1} {pos: V3 0 0 0}   -- 3rd triangle
-{pos: V3 0 0 1} {pos: V3 0 0 0} {pos: V3 0 0 1}   -- 4th triangle
-~~~~~
-
-The vertex stream of a tetrahedron with an additional `q` Boolean attribute may looks something like
+For example, the primitive stream of a tetrahedron with one position attribute looks something like
 
 ~~~~~ {.haskell}
-{pos: V3 0 0 0, q: True } {pos: V3 1 0 0, q: True } {pos: V3 0 1 0, q: True }   -- 1st triangle
-{pos: V3 1 0 0, q: True } {pos: V3 0 1 0, q: True } {pos: V3 0 0 1, q: False}   -- 2nd triangle
-{pos: V3 0 1 0, q: False} {pos: V3 0 0 1, q: True } {pos: V3 0 0 0, q: True }   -- 3rd triangle
-{pos: V3 0 0 1, q: False} {pos: V3 0 0 0, q: True } {pos: V3 0 0 1, q: True }   -- 4th triangle
+Triangle (V3 0 0 0) (V3 1 0 0) (V3 0 1 0)   -- 1st triangle
+Triangle (V3 1 0 0) (V3 0 1 0) (V3 0 0 1)   -- 2nd triangle
+Triangle (V3 0 1 0) (V3 0 0 1) (V3 0 0 0)   -- 3rd triangle
+Triangle (V3 0 0 1) (V3 0 0 0) (V3 0 0 1)   -- 4th triangle
 ~~~~~
 
-Note that the representation of the vertex stream is hidden in LambdaCube 3D. Usually the vertex stream is provided as a
+The primitive stream of a tetrahedron with a position and an additional Boolean attribute looks something like
+
+~~~~~ {.haskell}
+Triangle (V3 0 0 0, True ) (V3 1 0 0, True ) (V3 0 1 0, True )   -- 1st triangle
+Triangle (V3 1 0 0, True ) (V3 0 1 0, True ) (V3 0 0 1, False)   -- 2nd triangle
+Triangle (V3 0 1 0, False) (V3 0 0 1, True ) (V3 0 0 0, True )   -- 3rd triangle
+Triangle (V3 0 0 1, False) (V3 0 0 0, True ) (V3 0 0 1, True )   -- 4th triangle
+~~~~~
+
+Note that the representation of streams and primitives are hidden. Usually the primitive stream is stored as a
 flattened stream of vertices by the application.
 
 
 Frames and images
 -----------------
 
-Frames are the main storage units which accumulate the results of intermediate computations.
-
-A frame consists of several images of the same dimension.
+A **frame** consists of several images of the same dimension.
 
 An **image** is a two dimensional array of values.
 
@@ -172,11 +175,11 @@ There are limitations about how many images a frame can contain.
 A frame can contain at most one depth image and at most one stencil image.
 
 
-Pipeline construction
----------------------
+Pipelines
+---------
 
 Ideally, a pipeline is an arbitrary computable function which produces a frame given an input.
-Unfortunately, this is not the case.
+This is not the case.
 There are limitations on possible pipelines, which reflects the fact that GPUs are specialised hardware.
 The current limitations are inherited from OpenGL 3.3.
 
@@ -192,45 +195,42 @@ makeFrame = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
 ~~~~~
 
 
-### From vertex streams to frames
+### From primitive streams to frames
 
-After outputting a constrant frame, the next step is to construct a frame from a vertex stream.
-This can be done in several phases. We go step-by-step through the phases.
+A frame can be constructed from a vertex stream in several phases. We go step-by-step through the phases.
 Again, if these steps seem ad-hoc, think about the specialised hardware.
-(We believe that the presentation of these limitiation can be impoved. We plan to gradually improve
+(We believe that some of these limitiation can be lifted by the compiler and the libraries. We plan to gradually improve
 the current interface to be more and more higher-level.)
 
-#### From vertex streams to primitive streams: vertex transformations
+#### Primitive stream transformations
 
-In the first phase we transfrom the vertices of the input vertex stream.
+Usually the first phase is the transfromation of the vertices in the primitive stream.
 Typically the vertex coordinates are projected onto the viewport and the depth (the distance of the vertex from the viewer) is calculated.
 If we use [homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates), the projection and
 the depth can be calculated at the same time by multiplying the vertex with a projection matrix.
 
 The vertices usually have other attributes next to the coordinates, and these attributes can be transformed
 also in the first phase.
-The restriction is that at least the final vertex coordinates should be produced for rasterization.
+The restriction is that at least the vertex coordinates used in the rasterization phase should be produced.
 
-The `transformVertices1` function transforms a vertex stream into a primitive stream when two helper functions
-are given: one for calculating the vertex coordinates needed for rasterization, and the other for calculating
-the transformed attributes.
+The `mapPrimitives` function transforms a primitive stream into another primitive stream.
 
-The next example project and scale the vertices, and the transformed attributes will be equal to the original
-coordinates of the vertices:
+The following example we project and scale the vertices, and we also store the original
+coordinates of the vertices, because we would like to use them later:
 
 ~~~~~ {.haskell}
-transformVertices1 (scale 0.5 . (projmat *.)) id
+mapPrimitives (\x -> (scale 0.5 (projmat *. x), x)
 ~~~~~
 
-Here we suppose that the vertex stream contain `Vec 4 Float` values and `projmat` has type `Mat 4 4 Float`.
-How to define `projmat` is discussed later.
+Here we suppose that the vertices are `Vec 4 Float` values and `projmat` has type `Mat 4 4 Float`.
+How to get `projmat` is discussed later.
 
 
-#### From primitive streams to fragment streams: rasterization
+#### Rasterization
 
-In the rasterization step, each primitive is turned into a set of disjunct unshaded (not-yet-colored) fragments.
-A fragment is like a pixel; in fact, a pixel is an accumulated set of shaded (colored) overlapping fragments.
-Accumulation means that we combine the color values of overlapping fragments to get the color of the pixel.
+In the rasterization phase, each primitive is turned into a set of disjunct unshaded (not-yet-colored) fragments.
+A **fragment** has viewport coordinates and custom attributes.
+It is similar to a pixel.
 
 The rasterization step is not programmable, but configrable by a **rasterization context**.
 
@@ -247,48 +247,54 @@ Some explanation (do not mind if you don't understands these now):
 `NoOffset` tells that rasterization will not modify depth values.  
 `LastVertex` tells that in case of no interpolation which vertex attribute to use in fragments.
 
-The `rasterize` functions map a rasterization context to a functions which converts a primitive stream to a fragment stream:
+The `rasterizePrimitives` creates a functions primitive stream to a fragment stream, given a
+rasterization context and a tuple of `Smooth` and `Flat` values:
 
 ~~~~~ {.haskell}
-rasterize (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
+rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
 ~~~~~
+
+Here the tuple contains only one `Smooth` value.
+The rule is that the tuple size should be equal to the number of vertex attributes minus the position attribute used
+by the rasterisation phase. Each element of this tuple tells how to interplate the individual attribute values.
+
 
 #### Filtering fragment streams
 
-It is possible to filter fragment streams. Filtering is useful to make fragments look transparent.
-In the vast majority of cases we do not filter, so we write:
+It is possible to filter fragment streams. Filtering is used for example to make fragments look transparent.
+If we do not want filtering, we can write
 
 ~~~~~ {.haskell}
-filterFragmentStream PassAll
+filterFragments (\_ -> True)
 ~~~~~
 
-#### From filtered fragment streams to shaded fragment streams: shading
+or we can skip this phase.
 
-In the shading phase we give color to unshaded fragments.
 
-This phase is programmable, the program is given by a function:
+#### Shading
+
+In the shading phase we transform the fragment stream usually to give color to fragments.
+
+This phase is programmable, the program is given by the `mapFragments` function:
 
 ~~~~~ {.haskell}
-transformFragmentsRastDepth (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
+mapFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
 ~~~~~
 
-The `RastDepth` suffix tells that depth values are automatically computed by the previous rasterization depth;
-we don't want to customize it.
-
-`f` is a helper function:
+`f` is here a helper function:
 
 ~~~~~ {.haskell}
 f x = (x + sin x + sin (1.1 * x)) `mod` 4 * 2
 ~~~~~
 
 
-#### From shaded fragment streams to frames: accumulation
+#### Accumulation
 
-Now we have a shaded fragment stream which we would like to put on a frame.
-For this we need a frame and we need an **accumulation context**
+In the accumulation phase sets of overlapping fragments are accumulated into pixels.
+**Accumulation** means that we combine the color values of overlapping fragments to get the color of the pixel.
 
-The accumulation context tells how to "accumulate" fragments, i.e. how to combine
-previous values on the frame with new incoming values.
+Accumulation is not programmable, but configurable by an **accumulation context**.
+The accumulation context tells how to combine previous values on the frame with new incoming values.
 
 An example accumulation context:
 
@@ -312,17 +318,20 @@ accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 The actual accumulation is done with `overlay` (used as operator here):
 
 ~~~~~ {.haskell}
-    = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
-  `overlay`
-      vertexstream
-    & transformVertices1 (scale 0.5 . (projmat *.)) id
-    & rasterize (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
-    & filterFragmentStream PassAll
-    & transformFragmentsRastDepth (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
-    & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+...
+              imageFrame (emptyDepthImage 1000, emptyColorImage navy)
+    `overlay` accumulabefragments
+  where
+    accumulablefragments
+        = vertexstream
+        & mapPrimitives (\x -> (scale 0.5 (projmat *. x), x)
+        & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
+        & filterFragments (\x -> True)
+        & transformFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
+        & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 ~~~~~
 
-Here `(&)` is the flipped function application, and `vertexstream` is a vertex stream.
+Here `(&)` is the flipped function application, and `vertexstream` is a vertex stream of (Vec 4 Float) attributes.
 
 
 ### Putting all together
@@ -336,21 +345,24 @@ makeFrame (time :: Float)
           (projmat :: Mat 4 4 Float)
           (vertexstream :: VertexStream Triangle (Vec 4 Float))
 
-    = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
-  `overlay`
-      vertexstream
-    & transformVertices1 (scale 0.5 . (projmat *.)) id
-    & rasterize (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
-    & filterFragmentStream PassAll
-    & transformFragmentsRastDepth (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
-    & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+    =         imageFrame (emptyDepthImage 1000, emptyColorImage navy)
+    `overlay` accumulabefragments
+  where
+    accumulablefragments
+        = vertexstream
+        & mapPrimitives (\x -> (scale 0.5 (projmat *. x), x)
+        & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
+        & filterFragments (\x -> True)
+        & transformFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
+        & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 ~~~~~
 
 
 Interfacing pipelines with the outer world
 ------------------------------------------
 
-We can connect the inputs of the previous pipeline to our application by naming the input uniforms and input streams:
+We can connect the inputs of the previous pipeline to our application by naming the input uniforms and input streams.
+The `renderFrame` function turns a frame into an action of producing it on the GPU.
 
 ~~~~~ {.haskell}
 main = renderFrame $
