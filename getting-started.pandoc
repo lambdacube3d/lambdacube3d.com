@@ -1,0 +1,14 @@
+Getting Started
+===============
+
+If you want to understand the governing principles behind LambdaCube 3D, you should consult the [Conceptual Overview](overview).
+
+If you just want to see something running right away, we recommend starting from our various examples:
+
+* [Online editor](http://lambdacube3d.com/editor.html)
+* Hello world in Haskell (Windows/Linux/Mac OS X)
+* Hello world in C++ (iPad)
+* Hello world in PureScript (web)
+
+TODO: mention embedding compiler or not?
+TODO: walk through the examples

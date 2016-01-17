@@ -1,0 +1,52 @@
+Related Projects
+================
+
+OpenGL
+------
+
+LambdaCube 3D is an alternative to using OpenGL. The built-in capabilities of LambdaCube 3D are in one-to-one correspondence with the OpenGL standards -- e.g. supported texture formats, primitive functions allowed in shaders or possible blending modes.
+
+LambdaCube 3D is functional and statically typed as opposed to OpenGL's inherently imperative style.
+When using OpenGL, shaders are implemented in a separate language (GLSL).
+In LambdaCube 3D, shaders are implemented as regular functions.
+
+LambdaCube 3D EDSL
+------------------
+
+The preceding incarnation of LambdaCube 3D, deprecated in favour of the new DSL. The LambdaCube 3D EDSL (embedded domain specific language) is a Haskell library, whilst LambdaCube 3D DSL (abbreviated as LambdaCube 3D) is a standalone Haskell-like language with its own compiler and libraries.
+The EDSL variant is still maintained, but active development focuses on the DSL. Our motivation for adopting the DSL approach is explained [here](questions#why-are-you-developing-a-separate-dsl-instead-of-a-haskell-edsl).
+
+GPipe
+-----
+
+The project formerly known as HaGPipe is a Haskell EDSL. This is the only other system we’re aware of that can describe multi-pass rendering processes (i.e. rendering to textures and using the results in subsequent passes) without any need for assistance from the host language or manually tinkering with framebuffers. All the other systems mentioned here are in essence shader language replacements, only intended to be just a small component in a rendering engine. [GPipe](http://www.haskell.org/haskellwiki/GPipe) distinguishes between frequencies in the type system, by explicitly stating whether a value is a PrimitiveStream or a FragmentStream, for instance. It also makes it possible to explicitly configure the fixed functionality of the rendering pipeline, e.g. blending equation or depth test, thereby providing a complete solution.
+
+GPipe supports dynamic pipelines, which makes it strictly more expressive than the LambdaCube 3D EDSL.
+
+Real-Time Shading Language
+--------------------------
+
+The [Stanford Real-Time Programmable Shading Project](http://graphics.stanford.edu/projects/shading/) is the project where the concept of computation frequency was first introduced. The frequency associated with a node in the data-flow network rather unsurprisingly specifies how often that node emits new values. This quantity is directly related to the pipeline phase the node is in: nodes in the fragment shader produce several values for each input coming from the vertex shader, which in turn processes several records (vertex attributes) for each possible change in the uniforms, since uniforms are fixed during a pass. The frequency concept can reach as far as the preprocessing stage, since compile-time constants can be thought of as the ultimate slowest-changing values.
+
+While the language developed by the project is deliberately C-like in its appearance, it is purely functional in nature. All the pipeline is described by a single program, and it is up to the system to either allocate everything in the appropriate shader stage or even multiple passes if the fragment-level computation is too complex to fit in one (or in the absence of programmable shaders). Frequencies are handled by the type system and inferred by the compiler. Unfortunately, due to the fact that this is a decade-old project, the expressiveness of the language is severely limited.
+
+Vertigo
+-------
+
+If we are to marry graphics and functional programming, it is impossible not to mention Conal Elliott’s name. His [Vertigo](http://conal.net/Vertigo/) project shows another way to turn purely functional descriptions into executable shader code, and the demos show how to define parametric surfaces and various materials. Unfortunately, this system doesn’t address the issue of frequencies, as it generates only vertex shaders. However, Conal’s work is generally interesting because he approaches modelling from a purely mathematical standpoint, therefore everything is dictated by precise denotational semantics.
+
+Renaissance
+-----------
+
+One more recent attempt is [Renaissance](https://github.com/chadaustin/renaissance), which allows the user to describe a single pass in a pure functional language. Given such a description, it can infer the type and frequency of the nodes solely from their dependencies, and allocate all the operations in the corresponding shader stages. Unlike RTSL, the syntax of this language is inspired by Haskell, and type annotations are optional. Conceptually, the programmer defines a fragment shader, and it is up to the compiler to float computations back to earlier stages if they don’t refer to any fragment-frequency constructs. Otherwise, the two systems are similar in expressive power.
+
+Spark
+-----
+
+Unlike the others, [Spark](http://software.intel.com/en-us/articles/spark-modular-composable-shaders-for-graphics-hardware/) approaches modelling using OO principles. It is interesting for us mainly because it is trying to attack the same problem from another direction: organisation of rendering code with reusable components, where the separation of concerns is independent from the pipeline stages. In Spark, the means of combination are inheritance and generous use of mixins. The type system is aware of different frequencies, and it also allows the user to define new ones.
+
+Luminance
+---------
+
+Luminance is a Haskell EDSL for GPU graphics.
+In Luminance, shaders can only be implemented in the C-like shader language.

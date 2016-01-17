@@ -1,389 +1,50 @@
-% Introduction to LambdaCube 3D
+<div class='fullscreen'>
+<a href='https://lambdacube3d.wordpress.com/'>
+<img src='/lambdacube-logo.svg' />
+</a>
+[*Try online*](http://lambdacube3d.com/editor.html)
+</div>
 
+About LambdaCube 3D
+===================
 
-Scope
-=====
+**LambdaCube 3D is Haskell-like purely functional domain specific language for programming the GPU (graphics processing unit).**
 
-LambdaCube 3D is a domain specific language for programming the GPU (graphics processing unit).
-LambdaCube 3D is a Haskell-like purely functional language.
-
-Currently LambdaCube 3D is intended for implement the part of the program which is responsible for 2D or 3D computer graphics.
-Other parts of the program (e.g. networking, application logic) can be implemented in Haskell, C++ or JavaScript.
+The purpose of LambdaCube 3D is to provide a platform and host language independent graphics API. It allows the programmer to define the rendering pipeline with a single language, which is compiled into shaders and CPU-side setup code. Other parts of the program (e.g. networking or application logic) can be implemented in Haskell, C++ or JavaScript.
 LambdaCube 3D can be used for desktop and mobile applications, either in standalone applications or in browsers too.
 
+Quick References
+----------------
 
-Related projects
-================
+* [LambdaCube 3D blog](https://lambdacube3d.wordpress.com/)
+* [GitHub organisation](https://github.com/lambdacube3d)
+* [Getting Started](getting-started)
+* [Conceptual Overview](overview)
+* [API reference](api-documentation)
+* [Questions & Answers](questions)
+* [History](history)
+* [Related projects](related)
 
-You may want to skip this section if you have not heard of the following projects.
 
-OpenGL
-------
+Motivations and Goals
+=====================
 
-LambdaCube 3D is an alternative to using OpenGl.
-LambdaCube 3D is functional and statically typed as opposed to OpenGl's inherently imperative style.
-In any OpenGL bindings a dedicated language, the shader language should be used to implement the shaders (the GPU subprograms).
-In LambdaCube 3D, shaders are implemented as regular functions.
+The basic motivation for creating LambdaCube is really simple: it represents the perfect intersection of different fields that
+have excited us for a long time -- pure functional programming, computer graphics, and compiler research. We intend to explore a
+totally new branch of the design space for authoring and developer tools.
 
-GPipe
------
+Ideally this project would be of interest to people with very different backgrounds. We're employing some of the latest and
+greatest bits of type theory -- in some ways being a step or two ahead of the newest extensions to Haskell --, but at the same
+time we're also aiming to create a friendly, efficient environment for rapidly iterating visual ideas.
 
-GPipe is the most related project to LambdaCube 3D, with similar goals. The main difference is that
-GPipe is a Haskell library whilst LambdaCube 3D is a standalone Haskell-like language.
-See also LambdaCube 3D EDSL below.
+We strongly believe in the value of exposing ourselves and others to completely new fields of thought, and approaching them with
+an open mind. Great discoveries often happen at the boundaries, when a new connection is made -- both between the people and the
+ideas from each side. Only the future can tell whether LambdaCube will have any such impact, but one can always hope!
 
-LambdaCube 3D EDSL
-------------------
 
-LambdaCube 3D EDSL (embedded domain specific language) is a Haskell library, whilst
-LambdaCube 3D DSL (abberviated as LambdaCube 3D) is a standalone Haskell-like language with its own compiler and libraries.
-Currently the EDSL version is maintained and the DSL version is actively developed.
-The DSL version has less syntactic noise. Other pros and cons can be found [here](http://lambdacube3d.com/questions#why-are-you-developing-a-separate-dsl-instead-of-a-haskell-edsl).
+Contact Us
+==========
 
-LambdaCube 3D EDSL is quite similar to GPipe. The main difference is that GPipe has more expressive power
-(it supports dynamic pipelines) whilst there is more optimization opportunity in the LambdaCube 3D EDSL.
-
-Luminance
----------
-
-Luminance is a Haskell EDSL for GPU graphics.
-In Luminance, shaders can only be implemented in the C-like shader language.
-
-
-Overview
-========
-
-Basic terminology
------------------
-
-**Graphics engine** is the part of an application which is responsible for the GPU graphics.
-LambdaCube 3D is a DSL for impelementing graphics engines.
-
-From a purely functional point of view, the graphics engine is a pure function.
-We call this function the **pipeline**.
-
-A **frame** is the output of the pipeline.
-A frame is something which can be put on the screen.
-
-**Rendering** is the computation of one frame given the pipeline and its input.  
-
-Pipelines can be assembled from smaller parts.  
-
-**Multi-pass rendering** is rendering with a pipeline which is a composition of several pipelines where
-the output of a pipeline is part of the input of another pipeline. LambdaCube 3D supports multi-pass rendering.
-
-A **dynamic pipeline** is a composed pipeline in which the composition depends on the pipeline input.  
-Currently LambdaCube 3D does not support dynamic pipelines. This limitation is planned to be lifted.
-Until then a workaround is to use several pipelines and the application logic
-chooses at every rendering the right pipeline depending on the input.
-(If a predefined set of pipelines is not enough, it is possible to create pipelines on the fly.)
-
-Pipeline inputs
----------------
-
-There are limitations on possible pipeline inputs, which reflects the fact that GPUs are specialised hardware.
-The current limitations are inherited from OpenGL 3.3.
-
-The input of a pipeline consists of zero or more vertex streams, zero or more uniforms and zero or more textures.
-
-A **uniform** is a piece of data with a statically known size.
-Supported uniform types are `Bool`, `Int`, `Float`, `Vec 3 Bool`, `Mat 4 4 Float`, etc.
-For example, a camera position can be part of the input as a 4 dimensional `Float` matrix uniform.
-The terminology 'uniform' comes from the fact that uniforms are constant values during the rendering.
-
-A **texture** is a uniform with type `Texture`.
-A `Texture` is an image with sampling configurations (discussed later).
-Currently textures are treated specially in LambdadCube 3D but this is planned to be changed.
-
-A **stream** is a vector. In LambdaCube 3D there are two kind of streams: primitive streams and fragment streams.
-
-A **primitive** is either a point, a line, or a triangle.
-
-A **point** is a vertex.  
-A **line** is a pair of vertices.  
-A **triangle** is a triplet of vertices.
-
-A **vertex** is a tuple of attributes.
-
-An **attribute** is a piece of data with a statically known size.
-Supported attribute types are for example `Float`, `Bool` or `Vec 3 Float`.  
-Typical attributes are the spatial position and the color of a vertex.
-
-For example, the primitive stream of a tetrahedron with one position attribute looks something like
-
-~~~~~ {.haskell}
-Triangle (V3 0 0 0) (V3 1 0 0) (V3 0 1 0)   -- 1st triangle
-Triangle (V3 1 0 0) (V3 0 1 0) (V3 0 0 1)   -- 2nd triangle
-Triangle (V3 0 1 0) (V3 0 0 1) (V3 0 0 0)   -- 3rd triangle
-Triangle (V3 0 0 1) (V3 0 0 0) (V3 0 0 1)   -- 4th triangle
-~~~~~
-
-The primitive stream of a tetrahedron with a position and an additional Boolean attribute looks something like
-
-~~~~~ {.haskell}
-Triangle (V3 0 0 0, True ) (V3 1 0 0, True ) (V3 0 1 0, True )   -- 1st triangle
-Triangle (V3 1 0 0, True ) (V3 0 1 0, True ) (V3 0 0 1, False)   -- 2nd triangle
-Triangle (V3 0 1 0, False) (V3 0 0 1, True ) (V3 0 0 0, True )   -- 3rd triangle
-Triangle (V3 0 0 1, False) (V3 0 0 0, True ) (V3 0 0 1, True )   -- 4th triangle
-~~~~~
-
-Note that the representation of streams and primitives are hidden. Usually the primitive stream is stored as a
-flattened stream of vertices by the application.
-
-
-Frames and images
------------------
-
-A **frame** consists of several images of the same dimension.
-
-An **image** is a two dimensional array of values.
-
-There are different kind of images depending on the role the image plays.
-
-A **color image** is to store color values. Supported color values are `Float`, and `Float` vectors with dimension at most 4.
-For example, a color image of `Float` values can be used to store a grayscale image, but the `Float` values can be interpreted in any
-color space, or they can be used to a totally different purpose too.
-
-The `emptyColorImage` function creates an empty color image given a color value:
-
-~~~~~ {.haskell}
-emptyColorImage navy
-~~~~~
-
-A **depth image** is to store depth values. A depth value has type `Float` and it is usually used to store the distance between the
-viewpoint and the object shown on a color image.
-In LambdaCube 3D, a depth image has different type than a color image with `Float` values because graphics hardware has dedicated
-operations for depth images.
-
-The `emptyDepthImage` function creates an empty depth image given a depth value:
-
-~~~~~ {.haskell}
-emptyDepthImage 1000
-~~~~~
-
-A **stencil image** is to used for masking (discussed later).
-
-### Creating frames from images
-
-The `imageFrame` function creates a frame given a tuple of images:
-
-~~~~~ {.haskell}
-imageFrame (emptyDepthImage 1000, emptyColorImage navy)
-~~~~~
-
-There are limitations about how many images a frame can contain.
-A frame can contain at most one depth image and at most one stencil image.
-
-
-Pipelines
----------
-
-Ideally, a pipeline is an arbitrary computable function which produces a frame given an input.
-This is not the case.
-There are limitations on possible pipelines, which reflects the fact that GPUs are specialised hardware.
-The current limitations are inherited from OpenGL 3.3.
-
-Here is a step-by-step overview about how to construct pipelines.
-
-
-### Constant frames
-
-The simplest pipeline has no input and outputs a constant frame:
-
-~~~~~ {.haskell}
-makeFrame = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
-~~~~~
-
-
-### From primitive streams to frames
-
-A frame can be constructed from a vertex stream in several phases. We go step-by-step through the phases.
-Again, if these steps seem ad-hoc, think about the specialised hardware.
-(We believe that some of these limitiation can be lifted by the compiler and the libraries. We plan to gradually improve
-the current interface to be more and more higher-level.)
-
-#### Primitive stream transformations
-
-Usually the first phase is the transfromation of the vertices in the primitive stream.
-Typically the vertex coordinates are projected onto the viewport and the depth (the distance of the vertex from the viewer) is calculated.
-If we use [homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates), the projection and
-the depth can be calculated at the same time by multiplying the vertex with a projection matrix.
-
-The vertices usually have other attributes next to the coordinates, and these attributes can be transformed
-also in the first phase.
-The restriction is that at least the vertex coordinates used in the rasterization phase should be produced.
-
-The `mapPrimitives` function transforms a primitive stream into another primitive stream.
-
-The following example we project and scale the vertices, and we also store the original
-coordinates of the vertices, because we would like to use them later:
-
-~~~~~ {.haskell}
-mapPrimitives (\x -> (scale 0.5 (projmat *. x), x)
-~~~~~
-
-Here we suppose that the vertices are `Vec 4 Float` values and `projmat` has type `Mat 4 4 Float`.
-How to get `projmat` is discussed later.
-
-
-#### Rasterization
-
-In the rasterization phase, each primitive is turned into a set of disjunct unshaded (not-yet-colored) fragments.
-A **fragment** has viewport coordinates and custom attributes.
-It is similar to a pixel.
-
-The rasterization step is not programmable, but configrable by a **rasterization context**.
-
-An example rasterization context for rasterizing triangles:
-
-~~~~~ {.haskell}
-TriangleCtx CullNone PolygonFill NoOffset LastVertex
-~~~~~
-
-Some explanation (do not mind if you don't understands these now):
-
-`CullNone` tells that both side of the triangles are visible.  
-`PolygonFill` tells that not only the edges of the trianges are visible.  
-`NoOffset` tells that rasterization will not modify depth values.  
-`LastVertex` tells that in case of no interpolation which vertex attribute to use in fragments.
-
-The `rasterizePrimitives` creates a functions primitive stream to a fragment stream, given a
-rasterization context and a tuple of `Smooth` and `Flat` values:
-
-~~~~~ {.haskell}
-rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
-~~~~~
-
-Here the tuple contains only one `Smooth` value.
-The rule is that the tuple size should be equal to the number of vertex attributes minus the position attribute used
-by the rasterisation phase. Each element of this tuple tells how to interplate the individual attribute values.
-
-
-#### Filtering fragment streams
-
-It is possible to filter fragment streams. Filtering is used for example to make fragments look transparent.
-If we do not want filtering, we can write
-
-~~~~~ {.haskell}
-filterFragments (\_ -> True)
-~~~~~
-
-or we can skip this phase.
-
-
-#### Shading
-
-In the shading phase we transform the fragment stream usually to give color to fragments.
-
-This phase is programmable, the program is given by the `mapFragments` function:
-
-~~~~~ {.haskell}
-mapFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
-~~~~~
-
-`f` is here a helper function:
-
-~~~~~ {.haskell}
-f x = (x + sin x + sin (1.1 * x)) `mod` 4 * 2
-~~~~~
-
-
-#### Accumulation
-
-In the accumulation phase sets of overlapping fragments are accumulated into pixels.
-**Accumulation** means that we combine the color values of overlapping fragments to get the color of the pixel.
-
-Accumulation is not programmable, but configurable by an **accumulation context**.
-The accumulation context tells how to combine previous values on the frame with new incoming values.
-
-An example accumulation context:
-
-~~~~~ {.haskell}
-(DepthOp Less True, ColorOp NoBlending (V4 True True True True))
-~~~~~
-
-`DepthOp` tells how to accumulate depth values.  
-`Less` tells that depth test succeed if the fragment's depth values is less (it is closer).  
-`True` tells that the fragments are opaque, and should we written on the frame if the depth test succeeds.  
-`ColorOp` tells how to accumulate (the first) color values.  
-`NoBlending` tells that we don't want to blend (mix) values, the new value is written.  
-`(V4 True True True True)` gives the write masks for individual color channels.
-
-We can pair a shaded fragment stream with an accumulation context with `accumulateWith`:
-
-~~~~~ {.haskell}
-accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
-~~~~~
-
-The actual accumulation is done with `overlay` (used as operator here):
-
-~~~~~ {.haskell}
-...
-              imageFrame (emptyDepthImage 1000, emptyColorImage navy)
-    `overlay` accumulabefragments
-  where
-    accumulablefragments
-        = vertexstream
-        & mapPrimitives (\x -> (scale 0.5 (projmat *. x), x)
-        & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
-        & filterFragments (\x -> True)
-        & transformFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
-        & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
-~~~~~
-
-Here `(&)` is the flipped function application, and `vertexstream` is a vertex stream of (Vec 4 Float) attributes.
-
-
-### Putting all together
-
-The pure function which creates the final frame, given the time, the projection matrix and a triangle vertex stream:
-
-~~~~~ {.haskell}
-f x = (x + sin x + sin (1.1 * x)) `mod` 4 * 2
-
-makeFrame (time :: Float)
-          (projmat :: Mat 4 4 Float)
-          (vertexstream :: VertexStream Triangle (Vec 4 Float))
-
-    =         imageFrame (emptyDepthImage 1000, emptyColorImage navy)
-    `overlay` accumulabefragments
-  where
-    accumulablefragments
-        = vertexstream
-        & mapPrimitives (\x -> (scale 0.5 (projmat *. x), x)
-        & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
-        & filterFragments (\x -> True)
-        & transformFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
-        & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
-~~~~~
-
-
-Interfacing pipelines with the outer world
-------------------------------------------
-
-We can connect the inputs of the previous pipeline to our application by naming the input uniforms and input streams.
-The `renderFrame` function turns a frame into an action of producing it on the GPU.
-
-~~~~~ {.haskell}
-main = renderFrame $
-   makeFrame (Uniform "Time")
-             (Uniform "MVP")
-             (Fetch "stream4" (Attribute "position4"))
-~~~~~
-
-
-
-Getting started
-===============
-
-Suppose you want to implement the graphics engine of your application in LambdaCube 3D.
-
--   Decide whether you want to develop for mobile or for desktop computers.  
-    Supported platforms: ...
--   Decide whether your application runs in the browser or it is a standalone application.  
-    Restrictions: ...
--   Choose the language of the part of your application which communicates with the graphics engine.  
-    Currently Haskell, C++ and JavaScript is supported.
-
-After making these decisions, look at a corresponding hello world program and try to modify it.
-
+* csaba.hruska&#64;gmail.com
+* patai.gergely&#64;gmail.com
+* divipp&#64;gmail.com
