@@ -7,6 +7,12 @@ cabal-dev
 *.chs.h
 *.dyn_o
 *.dyn_hi
+
+*.tpl
+!snaplets/heist/templates/base.tpl
+!snaplets/heist/templates/index.tpl
+!snaplets/heist/templates/pipeline.tpl
+
 .virtualenv
 .hpc
 .hsenv
