@@ -31,7 +31,7 @@ div.fullscreen {
     display: none;
 }
 
-th {
+div.big_like_h1 th {
     //display: block;
     font-size: 2em;
     margin-top: 0.67em;
