@@ -81,6 +81,17 @@ Development history
 
 date            feature
 --------------- ---------------------------------------------------------------
+
+2016.01.18. 	Improved quake renderer: support for game models and character animations
+2016.01.03. 	LambdaCube 3D Docker image for development and Travis CI
+2015.12.30.     Roadmap for the next 6 months
+2015.12.30. 	Continuous integration with Travis CI
+2015.12.19.	Switch to new compiler (lots of improvements; faster & better)
+2015.10.22.     C++ backend for OpenGL ES 2.0
+2015.10.04.     Fast reducer prototype
+2015.09.19.     Data definition language which supports Haskell, PureScript and C++
+2015.09.17.     Dependent type inference prototype
+2015.09.02.    	Pattern match compilation
 2015.06.07.     Geometry can be defined in LambdaCube 3D now
 2015.06.04.     Texture support
 2015.05.31.     New language features: list comprehension, dot-dot expression
