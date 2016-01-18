@@ -252,7 +252,7 @@ In the current system the yes. That will be fixed in a later version.
 
 ### Does the compiler decide what to run on the CPU and on the GPU? How?
 
-TODO: answer
+The language has builtin primitives to mimic the GPU functionality. The parameters of these builtin functions (e.g. vertex and fragment shader function) are executed in the GPU hardware.
 
 
 ## Performance
