@@ -16,17 +16,19 @@ About LambdaCube 3D
 The purpose of LambdaCube 3D is to provide a platform and host language independent graphics API. It allows the programmer to define the rendering pipeline with a single language, which is compiled into shaders and CPU-side setup code. Other parts of the program (e.g. networking or application logic) can be implemented in Haskell, C++ or JavaScript.
 LambdaCube 3D can be used for desktop and mobile applications, either in standalone applications or in browsers too.
 
-Quick References
-----------------
+---------------------------------------------------------------------------------------------------------
+Quick References                                            Documentation
+---------------------------------------------------------   ---------------------------------------------
+[LambdaCube 3D blog](https://lambdacube3d.wordpress.com/)   [Getting Started](getting-started)
 
-* [LambdaCube 3D blog](https://lambdacube3d.wordpress.com/)
-* [GitHub organisation](https://github.com/lambdacube3d)
-* [Getting Started](getting-started)
-* [Conceptual Overview](overview)
-* [API reference](api-documentation)
-* [Questions & Answers](questions)
-* [History](history)
-* [Related projects](related)
+[GitHub organisation](https://github.com/lambdacube3d)      [Conceptual Overview](overview)
+
+[Questions & Answers](questions)                            [API reference](api-documentation)
+
+[History](history)                                          [Language Specification](lang-specification)
+
+[Related projects](related)
+---------------------------------------------------------   ---------------------------------------------
 
 
 Motivations and Goals
