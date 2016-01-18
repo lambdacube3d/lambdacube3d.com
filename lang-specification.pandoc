@@ -8,45 +8,41 @@ LambdaCube 3D is specified as [Haskell98](https://www.haskell.org/onlinereport/)
 Haskell98 language features
 ---------------------------
 
--   patterns
-    -   variable, constructor, wildcard -- *Done*
-    -   tuple, list -- *Done*
-    -   at-pattern -- *Done*
-    -   irrefutable pattern -- *TODO*
--   expressions
-    -   variable, constructor, application, lambda, case, if -- *Done*
-    -   let -- *WIP*
-    -   type signature -- *Done*
-    -   tuples, lists -- *Done*
-    -   list comprehensions -- *Done*
-    -   dot-dot expressions -- *WIP*
-    -   do syntax -- *TODO*
-    -   operators, fixity declarations -- *Done*
--   definitions
-    -   value definition, function, function alternative, guard, where-block -- *Done*
-    -   mutual recursion -- *TODO*
-    -   type signature -- *WIP*
-    -   data declarations -- *Done*
-    -   newtype declarations -- *TODO*
-    -   type synonyms -- *TODO*
-    -   type classes -- *WIP*
-        -   defaulting -- *TODO*
-        -   deriving -- *TODO*
--   modules
-    -   module imports and export lists -- *WIP*
+-   algebraic data types (ADTs)
+-   special syntax for tuples and lists
+-   `case`, `let`, `if` statements
+-   lambda expressions
+-   list comprehensions
+-   operators, operator fixity declarations
+-   pattern matching; wildcard patterns
+-   function alternatives
+-   value definitions
+-   where-blocks
+-   simple recursion
+
+Work in progress:
+
+-   type classes
+-   module imports and export lists
+-   type signatures
+-   dot-dot expressions
+-   constructor operator fixity declarations
+
+TODO:
+
+-   mutual recursion (currently definitions should be ordered bottom-up)
+-   irrefutable patterns
+-   at-patterns
+-   type class defaulting
+-   type instance deriving
+-   newtype declarations
+-   type synonyms
+-   do syntax
 
 There are some diversions from Haskell98. Our plan is to keep this list very short.
 
--   [Different Prelude](#prelude)  -- *WIP*
--   Definitions should be ordered bottom-up  -- \* 
+-   Different Prelude: look at the [API documentation](api-documentation).
 
-Notes
-------- ---------------
-\*      Not essential restriction (will be lifted)
-*Done*  Done
-*WIP*   Work In Progress
-*TODO*  We think we know how to do this, needs time
-------- ---------------
 
 
 Extentions compared to Haskell98
@@ -54,37 +50,37 @@ Extentions compared to Haskell98
 
 These extensions are automatically enabled.
 
-### Registered extensions
+### Known extensions
 
--   [`NoMonomorphismRestriction`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoMonomorphismRestriction) -- *Done*
--   [`NoNPlusKPatterns`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoNPlusKPatterns)  -- *Done*
--   [`TypeApplication`](https://ghc.haskell.org/trac/ghc/wiki/TypeApplication)  -- *Done*
--   `KindSignatures` -- *Done*
--   [`EmptyDataDecls`](https://ghc.haskell.org/trac/haskell-prime/wiki/EmptyDataDecls) -- *TODO*
--   [`PolyKinds` & `DataKinds`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/kind-polymorphism-and-promotion.html) -- *WIP*
--   [`GADTs`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/data-type-extensions.html#gadt) (includes `ExistentialQuantification`) -- *WIP*
--   [`TypeFamilies`](https://wiki.haskell.org/GHC/Type_families) -- *WIP*
--   [`PartialTypeSignatures`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/partial-type-signatures.html) -- *WIP*
--   [`ScopedTypeVariables`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/other-type-extensions.html#scoped-type-variables) -- *TODO*
--   [`RankNTypes`](https://ghc.haskell.org/trac/haskell-prime/wiki/RankNTypes) -- *TODO*
--   [Typed holes](https://wiki.haskell.org/GHC/Typed_holes) -- *TODO*
--   [`LambdaCase`](https://ghc.haskell.org/trac/haskell-prime/wiki/LambdaCase) -- *TODO*
--   `LANGUAGE` pragmas
-    -   `NoImplicitPrelude` -- *Done*
+-   [`NoMonomorphismRestriction`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoMonomorphismRestriction)
+-   [`NoNPlusKPatterns`](https://ghc.haskell.org/trac/haskell-prime/wiki/NoNPlusKPatterns)
+-   [`TypeApplication`](https://ghc.haskell.org/trac/ghc/wiki/TypeApplication)
+-   [`KindSignatures`](https://downloads.haskell.org/~ghc/7.6.3/docs/html/users_guide/kind-polymorphism.html)
+-   [`EmptyDataDecls`](https://ghc.haskell.org/trac/haskell-prime/wiki/EmptyDataDecls)
+-   [`PolyKinds` & `DataKinds`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/kind-polymorphism-and-promotion.html)
+-   [`RankNTypes`](https://ghc.haskell.org/trac/haskell-prime/wiki/RankNTypes)
+-   `NoImplicitPrelude` language pragma
 
-### Other extensions
+Work in progress:
 
--   [Row polymorphism](#row-polymorphism) -- *Done*
--   [Swizzling](#swizzling) -- *WIP*
--   [Compositional typing](#compositional-typing) -- *Done*
--   `ImplicitParams` -- *WIP*
--   Type error specialisation -- *TODO*
+-   [`GADTs`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/data-type-extensions.html#gadt) (includes [`ExistentialQuantification`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/data-type-extensions.html#existential-quantification))
+-   [`TypeFamilies`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/type-families.html)
+-   [`PartialTypeSignatures`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/partial-type-signatures.html)
+-   [`ScopedTypeVariables`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/other-type-extensions.html#scoped-type-variables)
+-   [`PatternGuards`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/syntax-extns.html#pattern-guards)
+-   [`ViewPatterns`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/syntax-extns.html#view-patterns)
+-   [`PatternSynonyms`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/syntax-extns.html#pattern-synonyms)
 
+Planned:
 
-Prelude
-=======
+-   [Typed holes](https://wiki.haskell.org/GHC/Typed_holes)
+-   [`LambdaCase`](https://ghc.haskell.org/trac/haskell-prime/wiki/LambdaCase)
 
-[The current Prelude](https://github.com/csabahruska/lc-dsl/blob/master/lambdacube-dsl/tests/accept/Prelude.lc)
+### Custom extensions
+
+-   [Row polymorphism](#row-polymorphism)
+-   [Swizzling](#swizzling)
+-   `ImplicitParams`
 
 
 Row polymorphism
@@ -97,9 +93,9 @@ Row polymorphism is implemented following [Edward Kmett's presentation on Ermine
 v1 = {x: 1.0, y: 2.0, z: 3.0}
 v2 = {x: 1.0, y: 2.0, z: 3.0, a: 4.0}
 
-f v = v.x +! v.y
+f v = v.x + v.y
 
-r = f v1 +! f v2    -- this is valid
+r = f v1 + f v2    -- this is valid
 ~~~~~~~~
 
 
@@ -117,6 +113,7 @@ It is also possible to use the letters `r`, `g`, `b` and `a` instead of `x`, `y`
 
 [^swizzling]: [Wikipedia article](http://en.wikipedia.org/wiki/Swizzling_%28computer_graphics%29)
 
+<!--
 
 Compositional typing
 ====================
@@ -176,4 +173,4 @@ Gergő Érdi made a short survey on the error messages given some Haskell compil
 
 Link to Gergő Érdi's master thesis: [Compositional Type Checking for Hindley-Milner Type Systems with Ad-hoc Polymorphism](http://gergo.erdi.hu/projects/tandoori/Tandoori-Compositional-Typeclass.pdf)
 
-
+//-->
