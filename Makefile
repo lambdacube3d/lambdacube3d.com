@@ -1,18 +1,27 @@
 TEMPLATES=snaplets/heist/templates
-TPL=$(TEMPLATES)/destinations.tpl $(TEMPLATES)/questions.tpl $(TEMPLATES)/haskell.tpl
+PANDOC=$(wildcard *.pandoc)
+#PANDOCSRC=$(patsubst %.pandoc,%,$(PANDOC))
+TPL=$(patsubst %.pandoc,$(TEMPLATES)/%.tpl,$(PANDOC))
 STATIC=static/slides.html static/600px-Green500_evolution.png static/cpu-vs-gpu-thumbnail.png static/GeForce_GTX_980_Block_Diagram_FINAL_575px.png
+SERVER=dist/build/lambdacube3dcom/lambdacube3dcom
 
 .PHONEY: all
-all: $(TPL) static/slides.html
+all: $(TPL) static/slides.html $(SERVER)
 
-$(TEMPLATES)/destinations.tpl: destinations.pandoc
-	pandoc -S -t html $< -o $@
+$(SERVER): lambdacube3d.com.cabal $(wildcard src/*.hs)
+	cabal install
 
-$(TEMPLATES)/questions.tpl: questions.pandoc template.tpl
-	pandoc --toc --template=template.tpl -S -t html $< -o $@
+$(TPL): $(TEMPLATES)/%.tpl: %.pandoc template.tpl
+	pandoc --template=template.tpl -S -t html $< -o $@
 
-$(TEMPLATES)/haskell.tpl: haskell.pandoc template.tpl
-	pandoc --toc --template=template.tpl -S -t html $< -o $@
+#$(TEMPLATES)/destinations.tpl: destinations.pandoc
+#	pandoc -S -t html $< -o $@
+
+#$(TEMPLATES)/questions.tpl: questions.pandoc template.tpl
+#	pandoc --toc --template=template.tpl -S -t html $< -o $@
+
+#$(TEMPLATES)/haskell.tpl: haskell.pandoc template.tpl
+#	pandoc --toc --template=template.tpl -S -t html $< -o $@
 
 static/slides.html: slides.pandoc
 	pandoc -s -S -t slidy --slide-level=2 $< -o $@
@@ -22,6 +31,14 @@ static/slides.html: slides.pandoc
 
 %.svg: %.dia
 	dia -e $@ $<
+
+.PHONEY: clean
+clean:
+	rm $(TPL)
+
+.PHONEY: localrun
+localrun:
+	./$(SERVER)
 
 .PHONEY: upload
 upload:
