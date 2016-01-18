@@ -42,7 +42,7 @@ localrun:
 
 .PHONEY: upload
 upload:
-	chmod g+w $(TPL)
-#	scp $(TPL) lambdacube3d.com:/home/www/hello/snaplets/heist/templates
-	scp $(STATIC) lambdacube3d.com:/home/www/hello/static
+	chmod g+w $(wildcard $(TEMPLATES)/*.tpl)
+	scp $(wildcard $(TEMPLATES)/*.tpl) lambdacube3d.com:/home/www/hello/snaplets/heist/templates
+#	scp $(STATIC) lambdacube3d.com:/home/www/hello/static
 
