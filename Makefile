@@ -34,7 +34,7 @@ static/slides.html: slides.pandoc
 
 .PHONEY: clean
 clean:
-	rm $(TPL)
+	rm -f $(TPL)
 
 .PHONEY: localrun
 localrun:
