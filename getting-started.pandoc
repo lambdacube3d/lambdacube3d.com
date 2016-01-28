@@ -33,6 +33,9 @@ $ ghc --make HelloJson
 $ ./HelloJson
 ~~~~~
 
+![](hello-screenshot.png)
+
+
 In order to turn LambdaCube 3D source files into JSON descriptions, we will also need [`lambdacube-compiler`](https://github.com/lambdacube3d/lambdacube-compiler):
 
 ~~~~~
