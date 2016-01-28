@@ -3,12 +3,242 @@ Getting Started
 
 If you want to understand the governing principles behind LambdaCube 3D, you should consult the [Conceptual Overview](overview).
 
-If you just want to see something running right away, we recommend starting from our various examples:
+If you just want to see something running right away, we recommend checking out the [online editor](http://lambdacube3d.com/editor.html).
 
-* [Online editor](http://lambdacube3d.com/editor.html)
-* Hello world in Haskell (Windows/Linux/Mac OS X)
-* Hello world in C++ (iPad)
-* Hello world in PureScript (web)
+If you want to develop a Haskell application using LambdaCube 3D, just read on.
 
-TODO: mention embedding compiler or not?
-TODO: walk through the examples
+Hello world in Haskell
+----------------------
+
+LambdaCube is available on Hackage, which should make it easy for Haskell developers to get things rolling. For the purpose of this guide we assume that you already have a working Haskell environment (GHC with `cabal-install`) set up. It is best to start by installing the [`lambdacube-gl`](https://github.com/lambdacube3d/lambdacube-gl) package, which provides the Haskell OpenGL backend for LambdaCube 3D.
+
+~~~~~
+$ cabal install lambdacube-gl
+~~~~~
+
+Note that this step also installs [`lambdacube-ir`](https://github.com/lambdacube3d/lambdacube-ir), which is the core library (IR stands for "intermediate representation"). This library provides the machinery to load compiled pipeline descriptions -- a JSON based format -- for use in the backend.
+
+The `lambdacube-gl` package contains a Hello World example to demonstrate the basic usage of the GL backend. To gain access to the example, we need to unpack the backend package:
+
+~~~~~
+$ cabal unpack lambdacube-gl
+$ cd lambdacube-gl-0.3.0.0/examples
+~~~~~
+
+Afterwards, we can run the example that executes the precompiled pipeline (`hello.json`):
+
+~~~~~
+$ cabal install GLFW-b
+$ ghc --make HelloJson
+$ ./HelloJson
+~~~~~
+
+In order to turn LambdaCube 3D source files into JSON descriptions, we will also need [`lambdacube-compiler`](https://github.com/lambdacube3d/lambdacube-compiler):
+
+~~~~~
+$ cabal install lambdacube-compiler
+~~~~~
+
+The compiler package installs an executable called `lc` and a library that exposes the same functionality. With the compiler present, we can produce the JSON description from the `hello.lc` source file also included in the example:
+
+~~~~~
+$ lc hello.lc
+~~~~~
+
+When developing a LambdaCube 3D application, the recommended way of dealing with `*.lc` files is to invoke the compiler as an external tool (which would be bundled with the application upon release), and load the resulting JSON pipeline description using the backend API.
+
+As an alternative, it is also possible to access the compiler functionality through the library. This option is demonstrated in the second variant of the example, which directly reads the `hello.lc` pipeline source:
+
+~~~~~
+$ ghc --make Hello
+$ ./Hello
+~~~~~
+
+Let's have a closer look at the first Hello World variant. Below follows the full source of the example.
+
+`Hello.hs`
+----------
+
+First we get the imports out of the way. 
+
+~~~~~ {.haskell}
+{-# LANGUAGE PackageImports, LambdaCase, OverloadedStrings #-}
+import "GLFW-b" Graphics.UI.GLFW as GLFW
+import qualified Data.Map as Map
+import qualified Data.Vector.Storable as SV
+
+import LambdaCube.GL as LambdaCubeGL -- renderer
+import LambdaCube.GL.Mesh as LambdaCubeGL
+
+import Codec.Picture as Juicy
+
+import Data.Aeson
+import qualified Data.ByteString as SB
+~~~~~
+
+Then we start with the entry point of the program.
+
+~~~~~ {.haskell}
+main :: IO ()
+main = do
+~~~~~
+
+As a first step, we initialise the window using GLFW. This has to be done before accessing any GPU functionality.
+
+~~~~~ {.haskell}
+    win <- initWindow "LambdaCube 3D DSL Hello World" 640 640
+~~~~~
+
+Next, we define the shape of the input to the rendering pipeline as required by the backend. The schema is a pure data structure that lists the names and types of primitive streams (`defObjectArray`) and uniforms (`defUniforms`) that the pipeline can process. The names and types have to agree with those in the pipeline description (see [`hello.lc`] below).
+
+For the curious, the schema is a writer monad at heart, and `do` notation is only used for convenience to easily merge different schema fragments.
+
+~~~~~ {.haskell}
+    let inputSchema = makeSchema $ do
+          defObjectArray "objects" Triangles $ do
+            "position"  @: Attribute_V2F
+            "uv"        @: Attribute_V2F
+          defUniforms $ do
+            "time"           @: Float
+            "diffuseTexture" @: FTexture2D
+~~~~~
+
+Given the schema, we create a container that will hold the input to the pipeline at any given time. If we think of the pipeline as a pure function, this is the place that stores the argument for the next application.
+
+~~~~~ {.haskell}
+    storage <- LambdaCubeGL.allocStorage inputSchema
+~~~~~
+
+Now that we have the storage, we can populate it with the pipeline input. We have two triangles that form a square when put together (just to demonstrate the use of multiple meshes), and a texture.
+
+~~~~~ {.haskell}
+    LambdaCubeGL.uploadMeshToGPU triangleA >>= LambdaCubeGL.addMeshToObjectArray storage "objects" []
+    LambdaCubeGL.uploadMeshToGPU triangleB >>= LambdaCubeGL.addMeshToObjectArray storage "objects" []
+
+    Right img <- Juicy.readImage "logo.png"
+    textureData <- LambdaCubeGL.uploadTexture2DToGPU img
+~~~~~
+
+At this point we can load the pipeline itself. Note that the input data is independent of the pipeline itself, and the two can be freely swapped out separately.
+
+~~~~~ {.haskell}
+    Just pipelineDesc <- decodeStrict <$> SB.readFile "hello.json"
+    renderer <- LambdaCubeGL.allocRenderer pipelineDesc
+~~~~~
+
+All the building blocks are in place, but we still need to connect them. The `setStorage` function associates the storage with the pipeline and checks that the two are compatible. If there is a schema mismatch, it returns the error message wrapped in `Just`, otherwise it returns `Nothing`. In the latter case we are ready to enter the rendering loop.
+
+~~~~~ {.haskell}
+    LambdaCubeGL.setStorage renderer storage >>= \case
+      Just err -> putStrLn err
+      Nothing  -> loop
+        where loop = do
+~~~~~
+
+In this example our main loop is directly implemented in the IO monad. First we tell the pipeline the current dimensions of the window so it can configure the viewport.
+
+~~~~~ {.haskell}
+                (w, h) <- GLFW.getWindowSize win
+                LambdaCubeGL.setScreenSize storage (fromIntegral w) (fromIntegral h)
+~~~~~
+
+Afterwards, we update the input of the pipeline. In this case only uniforms need to be changed on every frame. Since the texture actually stays the same, we could have set `diffuseTexture` just once in the beginning before starting the loop.
+
+~~~~~ {.haskell}
+                LambdaCubeGL.updateUniforms storage $ do
+                  "diffuseTexture" @= return textureData
+                  "time" @= do
+                              Just t <- GLFW.getTime
+                              return (realToFrac t :: Float)
+~~~~~
+
+Now that the input is properly set, we can render the frame. This is where we conceptually apply the pipeline function to the currently stored argument.
+
+~~~~~ {.haskell}
+                LambdaCubeGL.renderFrame renderer
+                GLFW.swapBuffers win
+~~~~~
+
+Finally, we check whether Escape is pressed and leave the loop if it is.
+
+~~~~~ {.haskell}
+                GLFW.pollEvents
+                let keyIsPressed k = fmap (==KeyState'Pressed) $ GLFW.getKey win k
+                escape <- keyIsPressed Key'Escape
+                if escape then return () else loop
+~~~~~
+
+The only thing left is the final cleanup.
+
+~~~~~ {.haskell}
+    LambdaCubeGL.disposeRenderer renderer
+    LambdaCubeGL.disposeStorage storage
+    GLFW.destroyWindow win
+    GLFW.terminate
+~~~~~
+
+After the main function we define the input geometry: two separate triangles. Both meshes have a position and a UV attribute defined for each vertex.
+
+~~~~~ {.haskell}
+triangleA :: LambdaCubeGL.Mesh
+triangleA = Mesh
+    { mAttributes   = Map.fromList
+        [ ("position",  A_V2F $ SV.fromList [V2 1 1, V2 1 (-1), V2 (-1) (-1)])
+        , ("uv",        A_V2F $ SV.fromList [V2 1 1, V2 0 1, V2 0 0])
+        ]
+    , mPrimitive    = P_Triangles
+    , mGPUData      = Nothing
+    }
+
+triangleB :: LambdaCubeGL.Mesh
+triangleB = Mesh
+    { mAttributes   = Map.fromList
+        [ ("position",  A_V2F $ SV.fromList [V2 1 1, V2 (-1) (-1), V2 (-1) 1])
+        , ("uv",        A_V2F $ SV.fromList [V2 1 1, V2 0 0, V2 1 0])
+        ]
+    , mPrimitive    = P_Triangles
+    , mGPUData      = Nothing
+    }
+~~~~~
+
+At the end we define the window initialising function, which is basically GLFW boilerplate.
+
+~~~~~ {.haskell}
+initWindow :: String -> Int -> Int -> IO Window
+initWindow title width height = do
+    GLFW.init
+    GLFW.defaultWindowHints
+    mapM_ GLFW.windowHint
+      [ WindowHint'ContextVersionMajor 3
+      , WindowHint'ContextVersionMinor 3
+      , WindowHint'OpenGLProfile OpenGLProfile'Core
+      , WindowHint'OpenGLForwardCompat True
+      ]
+    Just win <- GLFW.createWindow width height title Nothing Nothing
+    GLFW.makeContextCurrent $ Just win
+    return win
+~~~~~
+
+`hello.lc`
+----------
+
+The hello pipeline starts with a dark blue background, and renders 2D triangle meshes by rotating them around the Z axis and applying a texture. For details on the building blocks of the pipeline you can refer to the [Conceptual Overview](overview).
+
+~~~~~ {.haskell}
+main = renderFrame $
+   makeFrame (Uniform "time")
+             (Texture2DSlot "diffuseTexture")
+             (fetch_ "objects" (Attribute "position", Attribute "uv"))
+
+makeFrame (time :: Float)
+          (texture :: Texture)
+          (prims :: Stream (Primitive Triangle (Vec 2 Float, Vec 2 Float)))
+
+    = imageFrame (emptyColorImage (V4 0 0 0.4 1))
+  `overlay`
+      prims
+    & mapPrimitives (\(p,uv) -> (rotMatrixZ time *. (V4 p%x p%y (-1) 1), uv))
+    & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
+    & mapFragments (\uv -> texture2D (Sampler PointFilter MirroredRepeat texture) uv)
+    & accumulateWith (ColorOp NoBlending (V4 True True True True))
+~~~~~
