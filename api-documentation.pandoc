@@ -6,17 +6,24 @@ Basic types
 Values
 ------
 
------------ ---------------------
-`Nat`       natural numbers: `Zero`, `Succ Zero`, `Succ (Succ Zero)`, ...; on type level may written also as `0`, `1`, `2`, ...
-`Bool`      Boolean values: `True` or `False`
-`Int`       signed integers: ..., `-2`, `-1`, `0`, `1`, `2`, ... 
-`Word`      unsigned integers: `0`, `1`, `2`, ...
-`Float`     floating point numbers: `0`, `3.14`, ...
-`Vec n t`   `n`-vector of `t` values; `n` may be `2`, `3` or `4`
-`Mat i j t` `i`x`j`-matrix of `t` values; `i` and `j` may be `2`, `3` or `4`; `t` is always `Float`
------------ ---------------------
+type        description                   example values
+----------- ----------------------------- -------------------------
+`Bool`      Boolean values                `True`, `False`
+`Int`       signed integers               ..., `-2`, `-1`, `0`, `1`, `2`, ... 
+`Word`      unsigned integers             `0`, `1`, `2`, ...
+`Nat`       natural numbers               `0`, `1`, `2`, ...
+                                          or `Zero`, `Succ Zero`, `Succ (Succ Zero)`, ...
+`Float`     floating point numbers        `0`, `3.14`, ...
+`Vec n t`   vectors                       `V3 0.1 0 0`, `V2 True False`
+`Mat i j t` matrices                      `M23F (V2 0 0.1) (V2 1 1) (V3 0 0) :: Mat 2 3 Float`
+----------- ----------------------------- -------------------------
 
-The vector constructors are `V2`, `V3` and `V4`.  
+The difference between `Word` and `Nat` is that they have different representation.
+`Word` values are atomic, whilst `Nat` values have more structure: for example the pattern `Succ a` will
+match all non-zero naturals. Usually `Nat` is used at the type level.
+
+The vector constructors are `V2`, `V3` and `V4`.
+It is only possible to construct vectors with 2, 3 or 4 dimensions.  
 For example,
 
 ~~~~~ {.haskell}
@@ -31,11 +38,14 @@ For example,
     M23F (V2 0 0.1) (V2 1 1) (V3 0 0) :: Mat 2 3 Float
 ~~~~~
 
+It is only possible to construct matrices with dimensions i x j where i and j are 2, 3 or 4.  
+It is only possible to construct martices of float elements.
+
 Special types
 -------------
 
 ~~~~~ {.haskell}
-PrimitiveType
+data PrimitiveType
     = Triangle
     | Line
     | Point
@@ -125,13 +135,9 @@ data RasterContext :: PrimitiveType -> Type where
     LineCtx     :: Float -> ProvokingVertex                                    -> RasterContext Line
 
 data CullMode
-    = CullFront FrontFace
-    | CullBack FrontFace
+    = CullFront
+    | CullBack
     | CullNone
-
-data FrontFace
-    = CW
-    | CCW
 
 data PointSize
     = PointSize Float
@@ -285,132 +291,132 @@ Info for the builtin functions
 
 
 ###Arithmetic Functions (component-wise)
---------  --------------------------------------------------  ---------
-PrimAdd   Num (MatVecElem a) => a -> a -> a                   addition of two scalar, vector or matrix
-PrimSub   Num (MatVecElem a) => a -> a -> a                   substraction of two scalar, vector or matrix
-PrimMul   Num (MatVecElem a) => a -> a -> a                   multiplication of two scalar, vector or matrix (component-wise)
-PrimDiv   (Num t, a ~ VecScalar d t) => a -> a -> a           division of two scalar or vector
-PrimMod   (Num t, a ~ VecScalar d t) => a -> a -> a           modulus of two scalar or vector
-PrimNeg   Signed (MatVecScalarElem a) => a -> a               unary negation of a scalar, vector or matrix (component-wise)
-PrimAddS  (t ~ MatVecScalarElem a, Num t) => a -> t -> a      addition between (scalar, vector or matrix) and a scalar
-PrimSubS  (t ~ MatVecScalarElem a, Num t) => a -> t -> a      substraction between (scalar, vector or matrix) and a scalar
-PrimMulS  (t ~ MatVecScalarElem a, Num t) => a -> t -> a      multiplication between (scalar, vector or matrix) and a scalar
-PrimDivS  (Num t, a ~ VecScalar d t) => a -> t -> a           division between (scalar, vector or matrix) and a scalar
-PrimModS  (Num t, a ~ VecScalar d t) => a -> t -> a           modulus between (scalar, vector or matrix) and a scalar
---------  --------------------------------------------------  ---------
+--------  ----- --------------------------------------------------  ---------
+`(+)`     `::`  `Num (MatVecElem a) => a -> a -> a`                 addition of two scalar, vector or matrix
+`(-)`     `::`  `Num (MatVecElem a) => a -> a -> a`                 substraction of two scalar, vector or matrix
+`(*)`     `::`  `Num (MatVecElem a) => a -> a -> a`                 multiplication of two scalar, vector or matrix (component-wise)
+`(/)`     `::`  `(Num t, a ~ VecScalar d t) => a -> a -> a`         division of two scalar or vector
+`mod`     `::`  `(Num t, a ~ VecScalar d t) => a -> a -> a`         modulus of two scalar or vector
+`neg`     `::`  `Signed (MatVecScalarElem a) => a -> a`             unary negation of a scalar, vector or matrix (component-wise)
+`(+!)`    `::`  `(t ~ MatVecScalarElem a, Num t) => a -> t -> a`    addition between (scalar, vector or matrix) and a scalar
+`(-!)`    `::`  `(t ~ MatVecScalarElem a, Num t) => a -> t -> a`    substraction between (scalar, vector or matrix) and a scalar
+`(*!)`    `::`  `(t ~ MatVecScalarElem a, Num t) => a -> t -> a`    multiplication between (scalar, vector or matrix) and a scalar
+`(/!)`    `::`  `(Num t, a ~ VecScalar d t) => a -> t -> a`         division between (scalar, vector or matrix) and a scalar
+`(%!)`    `::`  `(Num t, a ~ VecScalar d t) => a -> t -> a`         modulus between (scalar, vector or matrix) and a scalar
+--------  ----- --------------------------------------------------  ---------
 
 ###Geometric Functions
-----------------  ---                                           ---
-PrimLength        (a ~ VecScalar d Float) => a -> Float         length of a vector
-PrimDistance      (a ~ VecScalar d Float) => a -> a -> Float    distance of two vectors
-PrimDot           (a ~ VecScalar d Float) => a -> a -> Float    dot product
-PrimCross         (a ~ VecScalar 3 Float) => a -> a -> a        cross product
-PrimNormalize     (a ~ VecScalar d Float) => a -> a             normalize a vector to have length equals to 1
-PrimFaceForward   (a ~ VecScalar d Float) => a -> a -> a -> a   same as faceforward in GLSL e.g. faceForward n i nRef = if dot nRef i < 0 then n else -n
-PrimRefract       (a ~ VecScalar d Float) => a -> a -> a -> a   same as refract in GLSL
-PrimReflect       (a ~ VecScalar d Float) => a -> a -> a        same as reflect in GLSL
-----------------
+------------  ---                                           ---
+length        (a ~ VecScalar d Float) => a -> Float         length of a vector
+distance      (a ~ VecScalar d Float) => a -> a -> Float    distance of two vectors
+dot           (a ~ VecScalar d Float) => a -> a -> Float    dot product
+cross         (a ~ VecScalar 3 Float) => a -> a -> a        cross product
+normalize     (a ~ VecScalar d Float) => a -> a             normalize a vector to have length equals to 1
+faceforward   (a ~ VecScalar d Float) => a -> a -> a -> a   same as faceforward in GLSL e.g. faceForward n i nRef = if dot nRef i < 0 then n else -n
+refract       (a ~ VecScalar d Float) => a -> a -> a -> a   same as refract in GLSL
+reflect       (a ~ VecScalar d Float) => a -> a -> a        same as reflect in GLSL
+------------
 
 ###Matrix Functions
-----------------  ---                                     ---
-PrimTranspose     TFMat h w  -> TFMat w h                 transposes the argument matrix
-PrimDeterminant   TFMat s s  -> Float                     determinant of the argument matrix
-PrimInverse       TFMat s s  -> TFMat s s                 inverse of the argument matrix
-PrimOuterProduct  w          -> h          -> TFMat h w   column vector * row vector = matrix
-PrimMulMatVec     TFMat h w  -> w          -> h           matrix and vector multiplication (linear algebra)
-PrimMulVecMat     h          -> TFMat h w  -> w           vector and matrix multiplication (linear algebra)
-PrimMulMatMat     TFMat i j  -> TFMat j k  -> TFMat i k   multiplication of two matrices (linear algebra)
-----------------  ---
+----------  ---                                     ---
+transpose   TFMat h w  -> TFMat w h                 transposes the argument matrix
+det         TFMat s s  -> Float                     determinant of the argument matrix
+inv         TFMat s s  -> TFMat s s                 inverse of the argument matrix
+outer       w          -> h          -> TFMat h w   column vector * row vector = matrix
+(.*.)       TFMat h w  -> w          -> h           matrix and vector multiplication (linear algebra)
+(*.)        h          -> TFMat h w  -> w           vector and matrix multiplication (linear algebra)
+(.*)        TFMat i j  -> TFMat j k  -> TFMat i k   multiplication of two matrices (linear algebra)
+----------  ---
 
 ###Vector and Scalar Relational Functions (component-wise)
 --------------------  ---                                                               ---
-PrimLessThan          (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   component-wise compare of x < y
-PrimLessThanEqual     (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   component-wise compare of x <= y
-PrimGreaterThan       (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   component-wise compare of x > y
-PrimGreaterThanEqual  (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   component-wise compare of x >= y
+(<)                   (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   component-wise compare of x < y
+(<=)                  (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   component-wise compare of x <= y
+(>)                   (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   component-wise compare of x > y
+(>=)                  (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   component-wise compare of x >= y
+(==)                  (t ~ MatVecScalarElem a) => a -> a -> Bool                        x == y
+(/=)                  (t ~ MatVecScalarElem a) => a -> a -> Bool                        x /= y
 PrimEqualV            (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   x == y (component-wise)
 PrimNotEqualV         (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b   x /= y (component-wise)
-PrimEqual             (t ~ MatVecScalarElem a) => a -> a -> Bool                        x == y
-PrimNotEqual          (t ~ MatVecScalarElem a) => a -> a -> Bool                        x /= y
 --------------------  ---
 
 ###Logic Functions
 -------   ---                                 ---
-PrimAnd   Bool -> Bool -> Bool                logical and
-PrimOr    Bool -> Bool -> Bool                logical or
-PrimXor   Bool -> Bool -> Bool                logical exclusive or
-PrimNot   (a ~ VecScalar d Bool) => a -> a    logical negation (component-wise)
-PrimAny   VecScalar d Bool -> Bool            logical or between vector components
-PrimAll   VecScalar d Bool -> Bool            logical and between vector components
+(&&)      Bool -> Bool -> Bool                logical and
+(||)      Bool -> Bool -> Bool                logical or
+xor       Bool -> Bool -> Bool                logical exclusive or
+not       (a ~ VecScalar d Bool) => a -> a    logical negation (component-wise)
+any       VecScalar d Bool -> Bool            logical or between vector components
+all       VecScalar d Bool -> Bool            logical and between vector components
 -------   ---
 
 ###Angle and Trigonometry Functions
 
 The functions operate component-wise.
 
-----------  --                                       --
-PrimDegrees (a ~ VecScalar d Float) => a -> a -> a   converts radians to degrees
-PrimRadians (a ~ VecScalar d Float) => a -> a -> a   converts degrees to radians
-PrimACos    (a ~ VecScalar d Float) => a -> a        arc cosine
-PrimACosH   (a ~ VecScalar d Float) => a -> a        arc hyperbolic cosine
-PrimASin    (a ~ VecScalar d Float) => a -> a        arc sine
-PrimASinH   (a ~ VecScalar d Float) => a -> a        arc hyperbolic sine
-PrimATan    (a ~ VecScalar d Float) => a -> a -> a   arc tangent
-PrimATan2   (a ~ VecScalar d Float) => a -> a -> a   arc tangent
-PrimATanH   (a ~ VecScalar d Float) => a -> a -> a   arc hyperbolic tangent
-PrimCos     (a ~ VecScalar d Float) => a -> a -> a   cosine
-PrimCosH    (a ~ VecScalar d Float) => a -> a -> a   hyperbolic cosine
-PrimSin     (a ~ VecScalar d Float) => a -> a -> a   sine
-PrimSinH    (a ~ VecScalar d Float) => a -> a -> a   hyperbolic sine
-PrimTan     (a ~ VecScalar d Float) => a -> a -> a   tangent
-PrimTanH    (a ~ VecScalar d Float) => a -> a -> a   hyperbolic tangent
-----------  --                                       --
+------  --                                       --
+degrees (a ~ VecScalar d Float) => a -> a -> a   converts radians to degrees
+radians (a ~ VecScalar d Float) => a -> a -> a   converts degrees to radians
+acos    (a ~ VecScalar d Float) => a -> a        arc cosine
+acosh   (a ~ VecScalar d Float) => a -> a        arc hyperbolic cosine
+asin    (a ~ VecScalar d Float) => a -> a        arc sine
+asinh   (a ~ VecScalar d Float) => a -> a        arc hyperbolic sine
+atan    (a ~ VecScalar d Float) => a -> a -> a   arc tangent
+atan2   (a ~ VecScalar d Float) => a -> a -> a   arc tangent
+atanh   (a ~ VecScalar d Float) => a -> a -> a   arc hyperbolic tangent
+cos     (a ~ VecScalar d Float) => a -> a -> a   cosine
+cosh    (a ~ VecScalar d Float) => a -> a -> a   hyperbolic cosine
+sin     (a ~ VecScalar d Float) => a -> a -> a   sine
+sinh    (a ~ VecScalar d Float) => a -> a -> a   hyperbolic sine
+tan     (a ~ VecScalar d Float) => a -> a -> a   tangent
+tanh    (a ~ VecScalar d Float) => a -> a -> a   hyperbolic tangent
+------  --                                       --
 
 ###Exponential Functions
 
 The functions operate component-wise.
 ----------  --                                       --
-PrimExp     (a ~ VecScalar d Float) => a -> a -> a   natural exponentiation
-PrimLog     (a ~ VecScalar d Float) => a -> a -> a   natural logarithm
-PrimExp2    (a ~ VecScalar d Float) => a -> a -> a   computes 2 raised to the given power
-PrimLog2    (a ~ VecScalar d Float) => a -> a -> a   2 base logarithm
-PrimSqrt    (a ~ VecScalar d Float) => a -> a -> a   square root
-PrimInvSqrt (a ~ VecScalar d Float) => a -> a -> a   1 / square root
-PrimPow     (a ~ VecScalar d Float) => a -> a -> a   x raised to the y power
+exp         (a ~ VecScalar d Float) => a -> a -> a   natural exponentiation
+log         (a ~ VecScalar d Float) => a -> a -> a   natural logarithm
+exp2        (a ~ VecScalar d Float) => a -> a -> a   computes 2 raised to the given power
+log2        (a ~ VecScalar d Float) => a -> a -> a   2 base logarithm
+sqrt        (a ~ VecScalar d Float) => a -> a -> a   square root
+inversesqrt (a ~ VecScalar d Float) => a -> a -> a   1 / square root
+pow         (a ~ VecScalar d Float) => a -> a -> a   x raised to the y power
 ----------  --                                       --
 
 ###Common Functions
 --------------- ----
-PrimFloor       (a ~ VecScalar d Float) => a -> a                                                
+floor           (a ~ VecScalar d Float) => a -> a                                                
 PrimTrunc       (a ~ VecScalar d Float) => a -> a                                                
 PrimRound       (a ~ VecScalar d Float) => a -> a                                                
 PrimRoundEven   (Num t, a ~ VecScalar d t) => a -> a -> a
-PrimCeil        (Num t, a ~ VecScalar d t) => a -> a -> a                           
-PrimFract       (Num t, a ~ VecScalar d t) => a -> a -> a
-PrimMin         (Num t, a ~ VecScalar d t) => a -> a -> a
-PrimMax         (Num t, a ~ VecScalar d t) => a -> a -> a
+ceil            (Num t, a ~ VecScalar d t) => a -> a -> a                           
+fract           (Num t, a ~ VecScalar d t) => a -> a -> a
+min             (Num t, a ~ VecScalar d t) => a -> a -> a
+max             (Num t, a ~ VecScalar d t) => a -> a -> a
 PrimMinS        (Num t, a ~ VecScalar d t) => a -> t -> a
 PrimMaxS        (Num t, a ~ VecScalar d t) => a -> t -> a
 PrimIsNan       (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> b
 PrimIsInf       (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> b
-PrimAbs         (Signed t, a ~ VecScalar d t) => a -> a
-PrimSign        (Signed t, a ~ VecScalar d t) => a -> a
+abs             (Signed t, a ~ VecScalar d t) => a -> a
+sign            (Signed t, a ~ VecScalar d t) => a -> a
 PrimModF        (a ~ VecScalar d Float) => a -> (a, a)
-PrimClamp       (Num t, a ~ VecScalar d t) => a -> a -> a -> a
-PrimClampS      (Num t, a ~ VecScalar d t) => a -> t -> t -> a
-PrimMix         (a ~ VecScalar d Float) => a -> a -> a -> a
+clamp           (Num t, a ~ VecScalar d t) => a -> a -> a -> a
+clampS          (Num t, a ~ VecScalar d t) => a -> t -> t -> a
+mix             (a ~ VecScalar d Float) => a -> a -> a -> a
 PrimMixS        (a ~ VecScalar d Float) => a -> a -> Float -> a
 PrimMixB        (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> a -> b -> a   
-PrimStep        (a ~ TFVec d Float) => a -> a -> a
+step            (a ~ TFVec d Float) => a -> a -> a
 PrimStepS       (a ~ VecScalar d Float) => Float -> a -> a
-PrimSmoothStep  (a ~ TFVec d Float) => a -> a -> a -> a
+smoothstep      (a ~ TFVec d Float) => a -> a -> a -> a
 PrimSmoothStepS (a ~ VecScalar d Float) => Float -> Float -> a -> a
 --------------- ----
 
 ###Fragment Processing Functions
 ----------  ---
-PrimDFdx    (a ~ VecScalar d Float) => a -> a
-PrimDFdy    (a ~ VecScalar d Float) => a -> a
+dFdx        (a ~ VecScalar d Float) => a -> a
+dFdy        (a ~ VecScalar d Float) => a -> a
 PrimFWidth  (a ~ VecScalar d Float) => a -> a
 ----------  ---
 
