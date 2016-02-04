@@ -22,15 +22,15 @@ The `lambdacube-gl` package contains a Hello World example to demonstrate the ba
 
 ~~~~~
 $ cabal unpack lambdacube-gl
-$ cd lambdacube-gl-0.3.0.0/examples
+$ cd lambdacube-gl-0.4.0.0/examples
 ~~~~~
 
 Afterwards, we can run the example that executes the precompiled pipeline (`hello.json`):
 
 ~~~~~
 $ cabal install GLFW-b
-$ ghc --make HelloJson
-$ ./HelloJson
+$ ghc --make Hello
+$ ./Hello
 ~~~~~
 
 ![](hello-screenshot.png)
@@ -53,8 +53,8 @@ When developing a LambdaCube 3D application, the recommended way of dealing with
 As an alternative, it is also possible to access the compiler functionality through the library. This option is demonstrated in the second variant of the example, which directly reads the `hello.lc` pipeline source:
 
 ~~~~~
-$ ghc --make Hello
-$ ./Hello
+$ ghc --make HelloEmbedded
+$ ./HelloEmbedded
 ~~~~~
 
 Let's have a closer look at the first Hello World variant. Below follows the full source of the example.
