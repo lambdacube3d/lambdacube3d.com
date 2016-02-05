@@ -377,6 +377,16 @@ mapPrimitive :: (a -> b) -> Primitive a p -> Primitive b p
 type PrimitiveStream a p = [Primitive p a]
 ~~~~~
 
+Construction of `PrimitiveStream`s:
+
+~~~~~ {.haskell}
+fetch_               :: forall a t . (AttributeTuple t) => String -> t -> PrimitiveStream a t
+fetchArrays_         :: forall a t t' . (AttributeTuple t, t ~ FTRepr' t') => t' -> PrimitiveStream a t
+
+fetch s a t = fetch_ @a s t
+fetchArrays a t = fetchArrays_ @a t
+~~~~~
+
 Operations on `PrimitiveStream`s:
 
 ~~~~~ {.haskell}
