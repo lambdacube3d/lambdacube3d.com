@@ -110,7 +110,7 @@ Builtin primitive operations
 --------------
 
 ###Matrix Functions
-------------  -------------------------------------------   ---
+------------  -------------------------------------------  ---
 `transpose`   `:: TFMat h w  -> TFMat w h`                 transposes the argument matrix
 `det`         `:: TFMat s s  -> Float`                     determinant of the argument matrix
 `inv`         `:: TFMat s s  -> TFMat s s`                 inverse of the argument matrix
