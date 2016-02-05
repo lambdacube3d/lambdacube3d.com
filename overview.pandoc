@@ -204,7 +204,7 @@ rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smoot
 
 Here the tuple contains only one `Smooth` value.
 The rule is that the tuple size should be equal to the number of vertex attributes minus the position attribute used
-by the rasterisation phase. Each element of this tuple tells how to interplate the individual attribute values.
+by the rasterisation phase. Each element of this tuple tells how to interpolate the individual attribute values.
 
 
 #### Filtering fragment streams
