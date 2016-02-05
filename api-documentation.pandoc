@@ -421,9 +421,47 @@ The other operations are not accessible in any phase.
 
 ### Images
 
+An `Image n t` is `n` times a rectangle of `t`-pixels.
+
+~~~~~ {.haskell}
+type Image (n :: Nat) t = Vector n [[t]]
+~~~~~
+
+Clear image construction functions:
+
+~~~~~ {.haskell}
+ColorImage          :: forall a d t color . (Num t, color ~ VecScalar d t)
+                    => color  -> Image a (Color color)
+DepthImage          :: forall a . Float  -> Image a (Depth Float)
+StencilImage        :: forall a . Int    -> Image a (Stencil Int)
+~~~~~
+
+Some wrapper functions for creating 1-layered clear images:
+
+~~~~~ {.haskell}
+emptyDepthImage = DepthImage @1
+emptyColorImage = ColorImage @1
+~~~~~
+
+Other image construction functions (texture support):
+
+~~~~~ {.haskell}
+PrjImage            :: FrameBuffer 1 a -> Image 1 a
+PrjImageColor       :: FrameBuffer 1 (Depth Float, Color (Vec 4 Float)) -> Image 1 (Color (Vec 4 Float))
+~~~~~
+
+*Phase information*  
+`ColorImage`, `DepthImage`, `StencilImage` mapPrimitives` is compiled to runtime GPU code.  
+The other operations are not accessible in any phase.
+
 
 ### Framebuffers
 
+~~~~~ {.haskell}
+data FrameBuffer (n :: Nat) t
+~~~~~
+
+TODO: document this
 
 
 
@@ -584,26 +622,6 @@ data ComparisonFunction
     | Always
 ~~~~~
 
-Images
-======
-
-~~~~~ {.haskell}
-data Image :: Nat -> Type -> Type where
-  ColorImage          :: forall a d t color . (Num t, color ~ VecScalar d t)
-                      => color  -> Image a (Color color)
-  DepthImage          :: forall a . Float  -> Image a (Depth Float)
-  StencilImage        :: forall a . Int    -> Image a (Stencil Int)
-
-  -- texture support
-  PrjImage            :: FrameBuffer 1 a -> Image 1 a
-  PrjImageColor       :: FrameBuffer 1 (Depth Float, Color (Vec 4 Float)) -> Image 1 (Color (Vec 4 Float))
-~~~~~
-
-Textures
-========
-
--   Texture2D
--   Sampler
 
 
 
