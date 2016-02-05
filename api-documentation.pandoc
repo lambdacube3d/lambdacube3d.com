@@ -1,5 +1,30 @@
 %LambdaCube 3D API 0.4
 
+Reduction phases
+================
+
+Reduction is done in three different phases:
+
+-   Compile time CPU
+-   Runtime CPU
+-   Runtime GPU
+
+The runtime CPU and GPU phases are interleaved.
+
+LambdaCube 3D follows the design principles
+
+1)  Every reduction step should be able to be done in the runtime CPU phase.
+2)  Some reductions are done at runtime GPU instead of runtime CPU as an optimization.
+3)  Some reductions are done at compile time CPU instead of runtime CPU as an optimization.
+4)  The programmer should be able to control of the phases via the type system.
+
+Principle 1. is not yet implemented: some reductions are only possible to do at the runtime GPU phase.
+
+Principle 4. is also not implemented yet.
+Currenlty any phase information is provided in the comments, not in the types.
+The compiler and the compiled code automagically do reductions in different phases.
+
+
 Basic types
 ===========
 
@@ -79,8 +104,13 @@ type class    instances                                         description
 `Component`   `Bool`, `Int`, `Word`, `Float` and its vectors    provides `zeroComp` and `oneComp`
 
 
-Builtin primitive operations
+Primitive operations
 ----------------------------
+
+*Phase information*  
+Runtime CPU: None of the primitive oparations are accessible.  
+Runtime GPU: All of the primitive oparations are accessible.  
+Compile time CPU: Some of the primitive oparations are accessible.  
 
 ###Arithmetic Functions (component-wise)
 --------  ----- --------------------------------------------------  ---------
@@ -167,6 +197,7 @@ The functions operate component-wise.
 ###Exponential Functions
 
 The functions operate component-wise.
+
 ------------  -------                                       --
 `exp`         `:: (a ~ VecScalar d Float) => a -> a -> a`   natural exponentiation
 `log`         `:: (a ~ VecScalar d Float) => a -> a -> a`   natural logarithm
@@ -250,12 +281,16 @@ The functions operate component-wise.
 ---------------------   ---
 
 
-Data structures
+Common data structures
 ===============
+
+*Phase information*  
+Most of the operations of common data structures are only accessable on the compile time CPU phase.
+
 
 ### Lists
 
-`List` is the following ADT:
+`List` has the standard definition:
 
 ~~~~~ {.haskell}
 data List a = Nil | Cons a (List a)
@@ -263,12 +298,12 @@ data List a = Nil | Cons a (List a)
 
 Lists has special syntax like in Haskell:
 
-expression              syntax          remarks
---------------          --------------  ------------
-`List a`                `[a]`           in type contexts
-`Nil`                   `[]`            in expression contexts
-`Cons x Nil`            `[x]`           in expression contexts
-`Cons x (Cons y Nil)`   `[x, y]`        in expression contexts
+syntax                  expression              remarks
+--------------          ---------------------   ------------
+`[a]`                   `List a`                in type context
+`[]`                    `Nil`                   in expression context
+`[a]`                   `Cons a Nil`            in expression context
+`[a,b]`                 `Cons a (Cons b Nil)`   in expression context
 
 Some usual operations on lists (the definition is omitted):
 
@@ -277,8 +312,33 @@ map       :: (a -> b) -> [a] -> [b]
 concat    :: [[a]] -> [a]
 ~~~~~
 
+*Phase information*  
+`map` and `concat` is accessible in the runtime GPU phase in some context (see the `Primitive` and `Fragment` types).
 
-### Primitives
+
+### `Maybe`
+
+`Maybe` has the standard definition:
+
+~~~~~ {.haskell}
+data Maybe a = Nothing | Just a
+~~~~~
+
+### Arbitrary length vectors
+
+~~~~~ {.haskell}
+data Vector (n :: Nat) t
+~~~~~
+
+*Phase information*  
+Currently `Vector` is an auxiliary phantom type used in the description of `Fragment`.
+
+
+Special data structures
+===============
+
+
+### Geometric primitives
 
 A `Primitive` value is a container of 1, 2 or 3 values tagged with a `PrimitiveType`.
 
@@ -309,6 +369,10 @@ mapPrimitives :: (a -> b) -> PrimitiveStream p a -> PrimitiveStream p b
 mapPrimitives f = map (mapPrimitive f)
 ~~~~~
 
+*Phase information*  
+`mapPrimitives` is compiled to runtime GPU code.  
+The other operations are not accessible in any phase.
+
 
 ### Fragments
 
@@ -321,8 +385,6 @@ data SimpleFragment t = SimpleFragment
     { sFragmentCoords   :: Vec 3 Float
     , sFragmentValue    :: t
     }
-
-data Vector (n :: Nat) t
 ~~~~~
 
 Basic functions on fragments:
@@ -347,6 +409,10 @@ filterFragments p = map (filterFragment p)
 mapFragments :: (a -> b) -> FragmentStream n a -> FragmentStream n b
 mapFragments f = map (mapFragment f)
 ~~~~~
+
+*Phase information*  
+`customizeDepths`, `filterFragments` and `mapFragments` are compiled to runtime GPU code.  
+The other operations are not accessible in any phase.
 
 
 ### Images
