@@ -2,7 +2,7 @@
 
 We gradually improve the documentation.
 If you have any question or something is confusing and needs to be clarified please
-ask us via [email](introduction#contact-us) or irc on #haskell-game (irc.freenode.net).
+ask us via [email](introduction#contact-us) or irc on `#haskell-game` (irc.freenode.net).
 
 Reduction phases
 ================
@@ -15,16 +15,16 @@ Reduction is done in three different phases:
 
 The runtime CPU and GPU phases are interleaved.
 
-LambdaCube 3D follows the design principles
+LambdaCube 3D follows the design principles:
 
 1)  Every reduction step should be able to be done in the runtime CPU phase.
-2)  Some reductions are done at runtime GPU instead of runtime CPU as an optimization.
-3)  Some reductions are done at compile time CPU instead of runtime CPU as an optimization.
-4)  The programmer should be able to control of the phases via the type system.
+2)  As an optimization, some reductions are done at runtime GPU instead of runtime CPU.
+3)  As an optimization, some reductions are done at compile time CPU instead of runtime CPU.
+4)  The programmer has control of the phases via the type system.
 
 Principle 1. is not yet implemented: some reductions are only possible to do at the runtime GPU phase.
 
-Principle 4. is also not implemented yet.
+Principle 4. is not implemented yet.  
 Currenlty any phase information is provided in the comments, not in the types.
 The compiler and the compiled code automagically do reductions in different phases.
 
@@ -289,10 +289,10 @@ Common data structures
 ===============
 
 *Phase information*  
-Most of the operations of common data structures are only accessable on the compile time CPU phase.
+Most of the operations of common data structures are only accessable at the compile time CPU phase.
 
 
-### Lists
+### `List` data type
 
 `List` has the standard definition:
 
@@ -320,7 +320,7 @@ concat    :: [[a]] -> [a]
 `map` and `concat` is accessible in the runtime GPU phase in some context (see the `Primitive` and `Fragment` types).
 
 
-### `Maybe`
+### `Maybe` data type
 
 `Maybe` has the standard definition:
 
@@ -328,11 +328,14 @@ concat    :: [[a]] -> [a]
 data Maybe a = Nothing | Just a
 ~~~~~
 
-### Arbitrary length vectors
+### `Vector` data type
 
 ~~~~~ {.haskell}
 data Vector (n :: Nat) t
 ~~~~~
+
+A `Vector n t` is an vector with length `n`.  
+The difference between `Vector` and `Vec` is that there is no restriction on the length of a `Vector`.
 
 *Phase information*  
 Currently `Vector` is an auxiliary phantom type used in the description of `Fragment`.
@@ -344,6 +347,15 @@ Special data structures
 
 ### Geometric primitives
 
+There are three type of primitives: triangles, lines and points.
+
+~~~~~ {.haskell}
+data PrimitiveType
+    = Triangle
+    | Line
+    | Point
+~~~~~
+
 A `Primitive` value is a container of 1, 2 or 3 values tagged with a `PrimitiveType`.
 
 ~~~~~ {.haskell}
@@ -351,11 +363,6 @@ data Primitive a :: PrimitiveType -> Type where
     PrimPoint    :: a           -> Primitive a Point
     PrimLine     :: a -> a      -> Primitive a Line
     PrimTriangle :: a -> a -> a -> Primitive a Triangle
-
-data PrimitiveType
-    = Triangle
-    | Line
-    | Point
 ~~~~~
 
 Basic functions on primitives:
@@ -368,7 +375,11 @@ mapPrimitive :: (a -> b) -> Primitive a p -> Primitive b p
 
 ~~~~~ {.haskell}
 type PrimitiveStream a p = [Primitive p a]
+~~~~~
 
+Operations on `PrimitiveStream`s:
+
+~~~~~ {.haskell}
 mapPrimitives :: (a -> b) -> PrimitiveStream p a -> PrimitiveStream p b
 mapPrimitives f = map (mapPrimitive f)
 ~~~~~
@@ -380,11 +391,16 @@ The other operations are not accessible in any phase.
 
 ### Fragments
 
-A `Fragment n t` value contains a viewport coordinate with depth value and an n-vector of `t` values.
+A `Fragment n t` value is an `n`-vector of `Maybe (SimpleFragment t)` values.
+`Maybe` is used because simple fragments may be filtered out with the `filterFragments` function (see later).
 
 ~~~~~ {.haskell}
 type Fragment n t = Vector n (Maybe (SimpleFragment t))
+~~~~~
 
+Each simple fragment is a viewport coordinate with depth value and a data value.
+
+~~~~~ {.haskell}
 data SimpleFragment t = SimpleFragment
     { sFragmentCoords   :: Vec 3 Float
     , sFragmentValue    :: t
@@ -403,7 +419,11 @@ mapFragment    :: (a -> b)     -> Fragment n a -> Fragment n b
 
 ~~~~~ {.haskell}
 type FragmentStream n t  = [Fragment n t]
+~~~~~
 
+Operations on `FragmentStream`s:
+
+~~~~~ {.haskell}
 customizeDepths :: (a -> Float) -> FragmentStream n a -> FragmentStream n a
 customizeDepths f = map (customizeDepth f)
 
@@ -421,19 +441,18 @@ The other operations are not accessible in any phase.
 
 ### Images
 
-An `Image n t` is `n` times a rectangle of `t`-pixels.
+An `Image n t` is `n` times a rectangle of `t`-pixels:
 
 ~~~~~ {.haskell}
 type Image (n :: Nat) t = Vector n [[t]]
 ~~~~~
 
-Clear image construction functions:
+Functions which construct clear images:
 
 ~~~~~ {.haskell}
-ColorImage          :: forall a d t color . (Num t, color ~ VecScalar d t)
-                    => color  -> Image a (Color color)
-DepthImage          :: forall a . Float  -> Image a (Depth Float)
-StencilImage        :: forall a . Int    -> Image a (Stencil Int)
+ColorImage   :: (Num t, color ~ VecScalar d t) => color  -> Image a (Color color)
+DepthImage   :: Float  -> Image n (Depth Float)
+StencilImage :: Int    -> Image n (Stencil Int)
 ~~~~~
 
 Some wrapper functions for creating 1-layered clear images:
@@ -451,11 +470,13 @@ PrjImageColor       :: FrameBuffer 1 (Depth Float, Color (Vec 4 Float)) -> Image
 ~~~~~
 
 *Phase information*  
-`ColorImage`, `DepthImage`, `StencilImage` mapPrimitives` is compiled to runtime GPU code.  
+`ColorImage`, `DepthImage`, `StencilImage`, `PrjImage` and `PrjImageColor` are compiled to runtime GPU code.  
 The other operations are not accessible in any phase.
 
 
 ### Framebuffers
+
+A `FrameBuffer n t` is an `n`-vector of images. The image types are determined by `t` (which is usually a tuple).
 
 ~~~~~ {.haskell}
 data FrameBuffer (n :: Nat) t
@@ -468,48 +489,19 @@ TODO: document this
 Rasterization
 =============
 
+Rasterization and accumulation (see below) are the two most complex operations in the API.
 
-### The `rasterize` function
-
-~~~~~ {.haskell}
-rasterize
-    :: ( b ~ InterpolatedType interpolation
-       , a ~ JoinTupleType (Vec 4 Float) b )
-    => interpolation                -- tuple of Smooth & Flat
-    -> RasterContext a pr
-    -> Primitive a pr
-    -> FragmentStream 1 b
-~~~~~
-
-~~~~~ {.haskell}
-rasterizePrimitives ctx is s = concat (map (rasterize is ctx) s)
-~~~~~
-
-
-~~~~~ {.haskell}
-data Interpolated t where
-  Smooth, NoPerspective
-                      :: (Floating t) => Interpolated t
-  Flat                ::                 Interpolated t
-~~~~~
-
-~~~~~ {.haskell}
-type family InterpolatedType a where
-    InterpolatedType () = ()
-    InterpolatedType (Interpolated a) = a
-    InterpolatedType (Interpolated a, Interpolated b) = (a, b)
-    InterpolatedType (Interpolated a, Interpolated b, Interpolated c) = (a, b, c)
-~~~~~
-
+Rasterization basically turns a `Primitive` value into a list of `Fragment` values.  
+For this, a rasterization context is needed, and also information how interpolation should be done.
 
 
 ### Rasterization contexts
 
 ~~~~~ {.haskell}
 data RasterContext a :: PrimitiveType -> Type where
-  TriangleCtx         :: CullMode -> PolygonMode a -> PolygonOffset -> ProvokingVertex -> RasterContext a Triangle
-  PointCtx            :: PointSize a -> Float -> PointSpriteCoordOrigin                -> RasterContext a Point
-  LineCtx             :: Float -> ProvokingVertex                                      -> RasterContext a Line
+    TriangleCtx  :: CullMode -> PolygonMode a -> PolygonOffset -> ProvokingVertex -> RasterContext a Triangle
+    PointCtx     :: PointSize a -> Float -> PointSpriteCoordOrigin                -> RasterContext a Point
+    LineCtx      :: Float -> ProvokingVertex                                      -> RasterContext a Line
 
 data CullMode
     = CullFront
@@ -537,6 +529,89 @@ data ProvokingVertex
     = LastVertex
     | FirstVertex
 ~~~~~
+
+### Interpolation types
+
+~~~~~ {.haskell}
+data Interpolated t where
+  Smooth        :: (Floating t) => Interpolated t   -- smooth interpolation
+  NoPerspective :: (Floating t) => Interpolated t   -- no perspective correction
+  Flat          ::                 Interpolated t   -- no interpolation
+~~~~~
+
+A tuple of `Interpolated` values are needed for each vertex attribute at rasterization.  
+`InterpolatedType` tells what is the aggregated interpolated type:
+
+~~~~~ {.haskell}
+type family InterpolatedType a where
+    InterpolatedType () = ()
+    InterpolatedType (Interpolated a) = a
+    InterpolatedType (Interpolated a, Interpolated b) = (a, b)
+    InterpolatedType (Interpolated a, Interpolated b, Interpolated c) = (a, b, c)
+~~~~~
+
+
+### Rasterization contexts
+
+TODO: explaination
+
+~~~~~ {.haskell}
+data RasterContext a :: PrimitiveType -> Type where
+    TriangleCtx  :: CullMode -> PolygonMode a -> PolygonOffset -> ProvokingVertex -> RasterContext a Triangle
+    PointCtx     :: PointSize a -> Float -> PointSpriteCoordOrigin                -> RasterContext a Point
+    LineCtx      :: Float -> ProvokingVertex                                      -> RasterContext a Line
+
+data CullMode
+    = CullFront
+    | CullBack
+    | CullNone
+
+data PointSize a
+    = PointSize Float
+    | ProgramPointSize (a -> Float)
+
+data PolygonMode a
+    = PolygonFill
+    | PolygonPoint (PointSize a)
+    | PolygonLine Float
+
+data PolygonOffset
+    = NoOffset
+    | Offset Float Float
+
+data PointSpriteCoordOrigin
+    = LowerLeft
+    | UpperLeft
+
+data ProvokingVertex
+    = LastVertex
+    | FirstVertex
+~~~~~
+
+
+### The `rasterize` function
+
+~~~~~ {.haskell}
+rasterize
+    :: ( b ~ InterpolatedType interpolation
+       , a ~ JoinTupleType (Vec 4 Float) b )
+    => interpolation                -- tuple of Smooth & Flat values
+    -> RasterContext a pr
+    -> Primitive a pr
+    -> FragmentStream 1 b
+~~~~~
+
+TODO: more explanation
+
+Functions built on top of `rasterize`:
+
+~~~~~ {.haskell}
+rasterizePrimitives ctx is s = concat (map (rasterize is ctx) s)
+~~~~~
+
+*Phase information*  
+`rasterizePrimitives` is compiled to runtime GPU code.  
+The other operations are not accessible in any phase.
 
 
 Accumulation
@@ -622,19 +697,51 @@ data ComparisonFunction
     | Always
 ~~~~~
 
+### Accumulation function
+
+~~~~~ {.haskell}
+type family FragOps a where
+    FragOps (t1, t2) = (FragmentOperation t1, FragmentOperation t2)
+    FragOps (t1, t2, t3) = (FragmentOperation t1, FragmentOperation t2, FragmentOperation t3)
+    FragOps (t1, t2, t3, t4) =  (FragmentOperation t1, FragmentOperation t2, FragmentOperation t3, FragmentOperation t4)
+    FragOps (t1, t2, t3, t4, t5) =  (FragmentOperation t1, FragmentOperation t2, FragmentOperation t3, FragmentOperation t4, FragmentOperation t5)
+    FragOps t = (FragmentOperation t)
+~~~~~
+
+
+~~~~~ {.haskell}
+Accumulate :: FragOps b -> FragmentStream n (RemSemantics b) -> FrameBuffer n b -> FrameBuffer n b
+~~~~~
+
+
+~~~~~ {.haskell}
+accumulateWith ctx x = (ctx, x)
+overlay cl (ctx, str) = Accumulate ctx str cl
+~~~~~
 
 
 
 Interface for inputs
 ====================
 
--   Uniform
--   TextureSlot
+~~~~~ {.haskell}
+Uniform   :: String -> t
+Attribute :: String -> t
+~~~~~
 
 Interface for outputs
 =====================
 
--   ScreenOut
+`Output` is an existential type which wraps a framebuffer.
+
+~~~~~ {.haskell}
+data Output where
+  ScreenOut           :: FrameBuffer a b -> Output
+~~~~~
+
+~~~~~ {.haskell}
+renderFrame = ScreenOut
+~~~~~
 
 
 
