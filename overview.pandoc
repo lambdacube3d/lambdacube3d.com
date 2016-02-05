@@ -246,6 +246,8 @@ mapFragments (\_ -> V4 0 1 0 1) -- RGBA
 mapFragments (\_ -> green)
 ~~~~~
 
+![](green-tetrahedron-screenshot.png)
+
 We can paint the fragment green or some time varying color:
 
 ~~~~~ {.haskell}
