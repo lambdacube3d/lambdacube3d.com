@@ -242,6 +242,13 @@ In the shading phase we transform the fragment stream usually to give color to f
 This phase is programmable, the program is given by the `mapFragments` function:
 
 ~~~~~ {.haskell}
+mapFragments (\_ -> V4 0 1 0 1) -- RGBA
+mapFragments (\_ -> green)
+~~~~~
+
+We can paint the fragment green or some time varying color:
+
+~~~~~ {.haskell}
 mapFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
 ~~~~~
 
