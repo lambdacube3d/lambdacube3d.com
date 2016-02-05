@@ -57,6 +57,10 @@ An **attribute** is a piece of data with a statically known size.
 Supported attribute types are for example `Float`, `Bool` or `Vec 3 Float`.  
 Typical attributes are the spatial position and the color of a vertex.
 
+<div style="float:right">
+![](simplex3d.png)
+</div>
+
 For example, the primitive stream of a tetrahedron with one position attribute looks something like
 
 ~~~~~ {.haskell}
@@ -78,6 +82,17 @@ Triangle (V3 0 0 1, False) (V3 0 0 0, True ) (V3 0 0 1, True )   -- 4th triangle
 Note that the representation of streams and primitives are hidden. Usually the primitive stream is stored as a
 flattened stream of vertices by the application.
 
+~~~~~ {.haskell}
+tetrahedron = map (\v -> V4 v%x v%y v%z 1)
+    [ V3 0 0 0, V3 1 0 0, V3 0 1 0
+    , V3 1 0 0, V3 0 1 0, V3 0 0 1
+    , V3 0 1 0, V3 0 0 1, V3 0 0 0
+    , V3 0 0 1, V3 0 0 0, V3 0 0 1
+    ]
+
+tetrahedronStream = fetchArrays Triangle tetrahedron
+~~~~~
+
 
 Frames and images
 -----------------
@@ -97,6 +112,7 @@ The `emptyColorImage` function creates an empty color image given a color value:
 ~~~~~ {.haskell}
 emptyColorImage navy
 ~~~~~
+![](navy-color-image.png)
 
 A **depth image** is to store depth values. A depth value has type `Float` and it is usually used to store the distance between the
 viewpoint and the object shown on a color image.
@@ -106,7 +122,7 @@ operations for depth images.
 The `emptyDepthImage` function creates an empty depth image given a depth value:
 
 ~~~~~ {.haskell}
-emptyDepthImage 1000
+emptyDepthImage 1
 ~~~~~
 
 A **stencil image** is to used for masking (discussed later).
@@ -116,7 +132,7 @@ A **stencil image** is to used for masking (discussed later).
 The `imageFrame` function creates a frame given a tuple of images:
 
 ~~~~~ {.haskell}
-imageFrame (emptyDepthImage 1000, emptyColorImage navy)
+imageFrame (emptyDepthImage 1, emptyColorImage navy)
 ~~~~~
 
 There are limitations about how many images a frame can contain.
@@ -139,7 +155,7 @@ Here is a step-by-step overview about how to construct pipelines.
 The simplest pipeline has no input and outputs a constant frame:
 
 ~~~~~ {.haskell}
-makeFrame = imageFrame (emptyDepthImage 1000, emptyColorImage navy)
+makeFrame = imageFrame (emptyDepthImage 1, emptyColorImage navy)
 ~~~~~
 
 
@@ -267,15 +283,15 @@ The actual accumulation is done with `overlay` (used as operator here):
 
 ~~~~~ {.haskell}
 ...
-              imageFrame (emptyDepthImage 1000, emptyColorImage navy)
-    `overlay` accumulabefragments
+              imageFrame (emptyDepthImage 1, emptyColorImage navy)
+    `overlay` accumulablefragments
   where
     accumulablefragments
         = vertexstream
-        & mapPrimitives (\x -> (scale 0.5 (projmat *. x), x)
+        & mapPrimitives (\x -> (scale 0.5 (projmat *. x), x))
         & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
         & filterFragments (\x -> True)
-        & transformFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
+        & mapFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
         & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 ~~~~~
 
@@ -291,17 +307,17 @@ f x = (x + sin x + sin (1.1 * x)) `mod` 4 * 2
 
 makeFrame (time :: Float)
           (projmat :: Mat 4 4 Float)
-          (vertexstream :: VertexStream Triangle (Vec 4 Float))
+          (vertexstream :: PrimitiveStream Triangle (Vec 4 Float))
 
-    =         imageFrame (emptyDepthImage 1000, emptyColorImage navy)
-    `overlay` accumulabefragments
+    =         imageFrame (emptyDepthImage 1, emptyColorImage navy)
+    `overlay` accumulablefragments
   where
     accumulablefragments
         = vertexstream
-        & mapPrimitives (\x -> (scale 0.5 (projmat *. x), x)
+        & mapPrimitives (\x -> (scale 0.5 (projmat *. x), x))
         & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
         & filterFragments (\x -> True)
-        & transformFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
+        & mapFragments (\x -> (rotMatrixZ time *. rotMatrixY time *. x) *! f time)
         & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 ~~~~~
 
@@ -316,5 +332,25 @@ The `renderFrame` function turns a frame into an action of producing it on the G
 main = renderFrame $
    makeFrame (Uniform "Time")
              (Uniform "MVP")
-             (Fetch "stream4" (Attribute "position4"))
+             (fetch_ "stream4" (Attribute "position4"))
 ~~~~~
+
+Or we can use our tetrahedron what we defined before.
+
+~~~~~ {.haskell}
+tetrahedron = map (\v -> V4 v%x v%y v%z 1)
+    [ V3 0 0 0, V3 1 0 0, V3 0 1 0
+    , V3 1 0 0, V3 0 1 0, V3 0 0 1
+    , V3 0 1 0, V3 0 0 1, V3 0 0 0
+    , V3 0 0 1, V3 0 0 0, V3 0 0 1
+    ]
+
+tetrahedronStream = fetchArrays Triangle tetrahedron
+
+main = renderFrame $
+   makeFrame (Uniform "Time")
+             (Uniform "MVP")
+             tetrahedronStream
+~~~~~
+
+![](tetrahedron-screenshot.png)
