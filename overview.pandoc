@@ -67,7 +67,7 @@ For example, the primitive stream of a tetrahedron with one position attribute l
 Triangle (V3 0 0 0) (V3 1 0 0) (V3 0 1 0)   -- 1st triangle
 Triangle (V3 1 0 0) (V3 0 1 0) (V3 0 0 1)   -- 2nd triangle
 Triangle (V3 0 1 0) (V3 0 0 1) (V3 0 0 0)   -- 3rd triangle
-Triangle (V3 0 0 1) (V3 0 0 0) (V3 0 0 1)   -- 4th triangle
+Triangle (V3 0 0 1) (V3 0 0 0) (V3 1 0 0)   -- 4th triangle
 ~~~~~
 
 The primitive stream of a tetrahedron with a position and an additional Boolean attribute looks something like
@@ -76,7 +76,7 @@ The primitive stream of a tetrahedron with a position and an additional Boolean 
 Triangle (V3 0 0 0, True ) (V3 1 0 0, True ) (V3 0 1 0, True )   -- 1st triangle
 Triangle (V3 1 0 0, True ) (V3 0 1 0, True ) (V3 0 0 1, False)   -- 2nd triangle
 Triangle (V3 0 1 0, False) (V3 0 0 1, True ) (V3 0 0 0, True )   -- 3rd triangle
-Triangle (V3 0 0 1, False) (V3 0 0 0, True ) (V3 0 0 1, True )   -- 4th triangle
+Triangle (V3 0 0 1, False) (V3 0 0 0, True ) (V3 1 0 0, True )   -- 4th triangle
 ~~~~~
 
 Note that the representation of streams and primitives are hidden. Usually the primitive stream is stored as a
@@ -87,7 +87,7 @@ tetrahedron = map (\v -> V4 v%x v%y v%z 1)
     [ V3 0 0 0, V3 1 0 0, V3 0 1 0
     , V3 1 0 0, V3 0 1 0, V3 0 0 1
     , V3 0 1 0, V3 0 0 1, V3 0 0 0
-    , V3 0 0 1, V3 0 0 0, V3 0 0 1
+    , V3 0 0 1, V3 0 0 0, V3 1 0 0
     ]
 
 tetrahedronStream = fetchArrays Triangle tetrahedron
@@ -351,7 +351,7 @@ tetrahedron = map (\v -> V4 v%x v%y v%z 1)
     [ V3 0 0 0, V3 1 0 0, V3 0 1 0
     , V3 1 0 0, V3 0 1 0, V3 0 0 1
     , V3 0 1 0, V3 0 0 1, V3 0 0 0
-    , V3 0 0 1, V3 0 0 0, V3 0 0 1
+    , V3 0 0 1, V3 0 0 0, V3 1 0 0
     ]
 
 tetrahedronStream = fetchArrays Triangle tetrahedron
