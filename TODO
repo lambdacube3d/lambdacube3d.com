@@ -1,0 +1,63 @@
+------
+TODO:
+  add to api reference doc:
+
+  imageFrame = FrameBuffer
+
+  - add sampler and texturing primitives
+------
+
+done - add contact info to overview and api docs
+  if something is confusing and needs to be clarified or have questions
+  write email or ask on irc haskell-game
+  help us to improve the documentation
+
+figures for overview:
+  Pipeline inputs:
+    done - tetrahedron image with attributes on it
+
+  Frames and images:
+    image
+    color image
+    depth image
+
+  Pipelines/Constant frames
+    done - screenshot
+
+  Pipelines/Rasterization
+    diagram of a rasterized triangle
+
+  Pipelines/Shading
+    add a more simple shading example with a screenshot
+    also add a screenshot for the fancy shading example
+
+  Pipelines/Accumulation
+  Pipelines/Putting all together
+    done - screenshot
+
+idea:
+  make the code snipets interactive with embedded online editor (like iron python)
+
+
+package overview page:
+ build instructions
+ explanations of purposes
+  recent packages
+    lambdacube-ir
+    lambdacube-gl
+    lambdacube-compiler
+  deprecated packages
+    edsl
+      lambdacube-edsl
+      lambdacube-core
+    engine
+      lambdacube-engine
+      lambdacube-bullet
+
+- screenshots on front page
+- feature list on front page
+    static typing/compile time spec conformance/no blank screen
+    unified language for GL + GLSL
+    easy code reuse
+    live coding / boosts creativity
+    multiplatform/easy to integrate/supported backends: JavaScript C++ C# Java Haskell PureScript (typescript, swift, objc, python)
