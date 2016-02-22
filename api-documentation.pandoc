@@ -341,7 +341,7 @@ Common data structures
 Most of the operations of common data structures are only accessable at the compile time CPU phase.
 
 
-### `List` data type
+### Homogeneous lists
 
 `List` has the standard definition:
 
@@ -351,12 +351,16 @@ data List a = Nil | Cons a (List a)
 
 Lists has special syntax like in Haskell:
 
-syntax                  expression              remarks
---------------          ---------------------   ------------
-`[a]`                   `List a`                in type context
-`[]`                    `Nil`                   in expression context
-`[a]`                   `Cons a Nil`            in expression context
-`[a,b]`                 `Cons a (Cons b Nil)`   in expression context
+type                    desugared form
+--------------------    ---------------------
+`[a]`                   `List a`
+
+expression              desugared form
+--------------------    ---------------------
+`[]`                    `Nil`
+`[a]`                   `Cons a Nil`
+`[a,b]`                 `Cons a (Cons b Nil)`
+...                     ...
 
 Some usual operations on lists (the definition is omitted):
 
@@ -367,6 +371,42 @@ concat    :: [[a]] -> [a]
 
 *Phase information*  
 `map` and `concat` is accessible in the runtime GPU phase in some context (see the `Primitive` and `Fragment` types).
+
+
+### Heterogeneous lists (tuples)
+
+~~~~~ {.haskell}
+data HList :: [Type] -> Type where
+    HNil :: HList '[]
+    HCons :: x -> HList xs -> HList '(x: xs)
+~~~~~
+
+Examples:
+
+~~~~~ {.haskell}
+    HNil :: HList '[]
+    HCons True HNil :: HList '[Bool]
+    HCons 3 (HCons True HNil) :: HList '[Int, Bool]
+~~~~~
+
+Heterogeneous lists has special syntax like tuples in Haskell.  
+The only difference is that LambdaCube 3D has special syntax for one element tuples too:
+
+type                    desugared form
+--------------------    ---------------------
+`()`                    `HList '[]`
+`((a))`                 `HList '[a]`
+`(a, b)`                `HList '[a, b]`
+`(a, b, c)`             `HList '[a, b, c]`
+...                     ...
+
+expression              desugared form
+--------------------    ---------------------
+`()`                    `HNil`
+`((a))`                 `HCons a HNil`
+`(a, b)`                `HCons a (HCons b HNil)`
+`(a, b, c)`             `HCons a (HCons b (HCons c HNil))`
+...                     ...
 
 
 ### `Maybe` data type
@@ -429,11 +469,9 @@ type PrimitiveStream a p = [Primitive p a]
 Construction of `PrimitiveStream`s:
 
 ~~~~~ {.haskell}
-fetch_               :: forall a t . (AttributeTuple t) => String -> t -> PrimitiveStream a t
-fetchArrays_         :: forall a t t' . (AttributeTuple t, t ~ FTRepr' t') => t' -> PrimitiveStream a t
+fetchArrays :: forall a t t' . t ~ map ListElem t' => HList t' -> PrimitiveStream a (HList t)
 
-fetch s a t = fetch_ @a s t
-fetchArrays a t = fetchArrays_ @a t
+type family ListElem a where ListElem [a] = a
 ~~~~~
 
 Operations on `PrimitiveStream`s:
@@ -759,17 +797,30 @@ data ComparisonFunction
 ### Accumulation function
 
 ~~~~~ {.haskell}
-type family FragOps a where
-    FragOps (t1, t2) = (FragmentOperation t1, FragmentOperation t2)
-    FragOps (t1, t2, t3) = (FragmentOperation t1, FragmentOperation t2, FragmentOperation t3)
-    FragOps (t1, t2, t3, t4) =  (FragmentOperation t1, FragmentOperation t2, FragmentOperation t3, FragmentOperation t4)
-    FragOps (t1, t2, t3, t4, t5) =  (FragmentOperation t1, FragmentOperation t2, FragmentOperation t3, FragmentOperation t4, FragmentOperation t5)
-    FragOps t = (FragmentOperation t)
+type family ImageLC a :: Nat where ImageLC (Image n t) = n
+
+allSame :: [a] -> Type
+allSame [] = 'Unit
+allSame [x] = 'Unit
+allSame (x: y: xs) = 'T2 (x ~ y) (allSame (y:xs))
+
+sameLayerCounts a = allSame (map 'ImageLC a)
+
+remSemantics :: ImageSemantics -> Type
+remSemantics (Color a) = a
+remSemantics (Depth a) = a
+remSemantics (Stencil a) = a
+
+remSemantics' :: [ImageSemantics] -> [Type]
+remSemantics' (Depth _: x) = map remSemantics x 
+remSemantics' x = map remSemantics x 
+
+type family FragmentOperationSem a :: ImageSemantics where FragmentOperationSem (FragmentOperation x) = x
 ~~~~~
 
 
 ~~~~~ {.haskell}
-Accumulate :: FragOps b -> FragmentStream n (RemSemantics b) -> FrameBuffer n b -> FrameBuffer n b
+Accumulate :: forall (n :: Nat) (c :: [Type]) . (b ~ map FragmentOperationSem c) => HList c -> FragmentStream n (HList (remSemantics' b)) -> FrameBuffer n b -> FrameBuffer n b
 ~~~~~
 
 
@@ -786,6 +837,10 @@ Interface for inputs
 ~~~~~ {.haskell}
 Uniform   :: String -> t
 Attribute :: String -> t
+~~~~~
+
+~~~~~ {.haskell}
+fetch       :: forall a t . String -> t -> PrimitiveStream a t
 ~~~~~
 
 Interface for outputs
