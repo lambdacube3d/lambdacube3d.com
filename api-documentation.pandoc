@@ -13,20 +13,22 @@ Reduction is done in three different phases:
 -   Runtime CPU
 -   Runtime GPU
 
-The runtime CPU and GPU phases are interleaved.
+The runtime CPU and runtime GPU phases are interleaved.
 
-LambdaCube 3D follows the design principles:
+Design principles:
 
-1)  Every reduction step should be able to be done in the runtime CPU phase.
-2)  As an optimization, some reductions are done at runtime GPU instead of runtime CPU.
+1)  Every reduction step is done in the runtime CPU phase by default.
+2)  As an optimization, some reductions are done at runtime GPU instead of runtime CPU.  
+    GPU operations are very slow on CPU, but the CPU implementation of GPU primitives ensures that there is
+    no cheating in the types of GPU primitives.
 3)  As an optimization, some reductions are done at compile time CPU instead of runtime CPU.
-4)  The programmer has control of the phases via the type system.
+4)  The programmer can assert that a computation is done in a specific phase via the type system.  
+    In this way, one can refactor LambdaCube 3D source code without fear of performance regressions.
 
 Principle 1. is not yet implemented: some reductions are only possible to do at the runtime GPU phase.
 
-Principle 4. is not implemented yet.  
-Currenlty any phase information is provided in the comments, not in the types.
-The compiler and the compiled code automagically do reductions in different phases.
+Principle 4. is not implemented yet: phase information is provided in the comments, not in the types.
+The compiler code generator automagically decide between the phases.
 
 
 Basic types
@@ -47,9 +49,9 @@ type        description                   example values
 `Mat i j t` matrices                      `M23F (V2 0 0.1) (V2 1 1) (V3 0 0) :: Mat 2 3 Float`
 ----------- ----------------------------- -------------------------
 
-The difference between `Word` and `Nat` is that they have different representation.
-`Word` values are atomic, whilst `Nat` values have more structure: for example the pattern `Succ a` will
-match all non-zero naturals. Usually `Nat` is used at the type level.
+The difference between `Word` and `Nat` is that they have different representations.
+`Word` values are atomic, whilst `Nat` values have more structure: for example the pattern `Succ a`
+matches all non-zero naturals. Usually `Nat` is used in types, for example, the dimension of a `Vec` is a `Nat` instead of an `Int`.
 
 The vector constructors are `V2`, `V3` and `V4`.
 It is only possible to construct vectors with 2, 3 or 4 dimensions.  
@@ -105,7 +107,7 @@ type class    instances                                         description
 `Signed`      `Float`, `Int`                                    signed numbers
 `Num`         `Float`, `Int`, `Word`                            numbers
 `Floating`    `Float`, `Float` vectors, `Float` matrices        floating point numbers and containers
-`Component`   `Bool`, `Int`, `Word`, `Float` and its vectors    provides `zeroComp` and `oneComp`
+`Component`   `Bool`, `Int`, `Word`, `Float` and its vectors    provides `zero` and `one` (see below)
 
 
 Primitive operations
@@ -116,45 +118,83 @@ Runtime CPU: None of the primitive oparations are accessible.
 Runtime GPU: All of the primitive oparations are accessible.  
 Compile time CPU: Some of the primitive oparations are accessible.  
 
-###Arithmetic Functions (component-wise)
---------  ----- --------------------------------------------------  ---------
-`(+)`     `::`  `Num (MatVecElem a) => a -> a -> a`                 addition of two scalar, vector or matrix
-`(-)`     `::`  `Num (MatVecElem a) => a -> a -> a`                 substraction of two scalar, vector or matrix
-`(*)`     `::`  `Num (MatVecElem a) => a -> a -> a`                 multiplication of two scalar, vector or matrix (component-wise)
-`(/)`     `::`  `(Num t, a ~ VecScalar d t) => a -> a -> a`         division of two scalar or vector
-`mod`     `::`  `(Num t, a ~ VecScalar d t) => a -> a -> a`         modulus of two scalar or vector
-`neg`     `::`  `Signed (MatVecScalarElem a) => a -> a`             unary negation of a scalar, vector or matrix (component-wise)
-`(+!)`    `::`  `(t ~ MatVecScalarElem a, Num t) => a -> t -> a`    addition between (scalar, vector or matrix) and a scalar
-`(-!)`    `::`  `(t ~ MatVecScalarElem a, Num t) => a -> t -> a`    substraction between (scalar, vector or matrix) and a scalar
-`(*!)`    `::`  `(t ~ MatVecScalarElem a, Num t) => a -> t -> a`    multiplication between (scalar, vector or matrix) and a scalar
-`(/!)`    `::`  `(Num t, a ~ VecScalar d t) => a -> t -> a`         division between (scalar, vector or matrix) and a scalar
-`(%!)`    `::`  `(Num t, a ~ VecScalar d t) => a -> t -> a`         modulus between (scalar, vector or matrix) and a scalar
---------  ----- --------------------------------------------------  ---------
+### Values
 
-###Geometric Functions
+--------  ------------------------  ---------
+`zero`    `:: Component a => a`     Generic zero value, for example `zero = V3 0.0 0.0 0.0 :: Vec 3 Float`
+`one`     `:: Component a => a`     Generic one value, for example `one = V3 1.0 1.0 1.0 :: Vec 3 Float`
+--------  ------------------------  ---------
+
+~~~~~ {.haskell}
+rgb :: Float -> Float -> Float -> Vec 4 Float
+rgb r g b = V4 r g b 1.0
+~~~~~
+
+--------- ------------------ ----------------------------
+`black  ` `:: Vec 4 Float`   same as `rgb 0.0 0.0 0.0`
+`gray   ` `:: Vec 4 Float`   same as `rgb 0.5 0.5 0.5`
+`silver ` `:: Vec 4 Float`   same as `rgb 0.75 0.75 0.75`
+`white  ` `:: Vec 4 Float`   same as `rgb 1.0 1.0 1.0`
+`maroon ` `:: Vec 4 Float`   same as `rgb 0.5 0.0 0.0`
+`red    ` `:: Vec 4 Float`   same as `rgb 1.0 0.0 0.0`
+`olive  ` `:: Vec 4 Float`   same as `rgb 0.5 0.5 0.0`
+`yellow ` `:: Vec 4 Float`   same as `rgb 1.0 1.0 0.0`
+`green  ` `:: Vec 4 Float`   same as `rgb 0.0 0.5 0.0`
+`lime   ` `:: Vec 4 Float`   same as `rgb 0.0 1.0 0.0`
+`teal   ` `:: Vec 4 Float`   same as `rgb 0.0 0.5 0.5`
+`aqua   ` `:: Vec 4 Float`   same as `rgb 0.0 1.0 1.0`
+`navy   ` `:: Vec 4 Float`   same as `rgb 0.0 0.0 0.5`
+`blue   ` `:: Vec 4 Float`   same as `rgb 0.0 0.0 1.0`
+`purple ` `:: Vec 4 Float`   same as `rgb 0.5 0.0 0.5`
+`fuchsia` `:: Vec 4 Float`   same as `rgb 1.0 0.0 1.0`
+--------- ------------------ ----------------------------
+
+
+### Arithmetic Functions
+
+The functions operate component-wise.
+
+--------  -----------------------------------------------------  ---------
+`(+)`     `:: Num (MatVecElem a) => a -> a -> a`                 addition of two scalar, vector or matrix
+`(-)`     `:: Num (MatVecElem a) => a -> a -> a`                 substraction of two scalar, vector or matrix
+`(*)`     `:: Num (MatVecElem a) => a -> a -> a`                 multiplication of two scalar, vector or matrix
+`(/)`     `:: (Num t, a ~ VecScalar d t) => a -> a -> a`         division of two scalar or vector
+`mod`     `:: (Num t, a ~ VecScalar d t) => a -> a -> a`         modulus of two scalar or vector
+`neg`     `:: Signed (MatVecScalarElem a) => a -> a`             unary negation of a scalar, vector or matrix
+`(+!)`    `:: (t ~ MatVecScalarElem a, Num t) => a -> t -> a`    addition between (scalar, vector or matrix) and a scalar
+`(-!)`    `:: (t ~ MatVecScalarElem a, Num t) => a -> t -> a`    substraction between (scalar, vector or matrix) and a scalar
+`(*!)`    `:: (t ~ MatVecScalarElem a, Num t) => a -> t -> a`    multiplication between (scalar, vector or matrix) and a scalar
+`(/!)`    `:: (Num t, a ~ VecScalar d t) => a -> t -> a`         division between (scalar, vector or matrix) and a scalar
+`(%!)`    `:: (Num t, a ~ VecScalar d t) => a -> t -> a`         modulus between (scalar, vector or matrix) and a scalar
+--------  -----------------------------------------------------  ---------
+
+### Geometric Functions
+
 --------------  -------------------------------------------------  ---
 `length`        `:: (a ~ VecScalar d Float) => a -> Float`         length of a vector
 `distance`      `:: (a ~ VecScalar d Float) => a -> a -> Float`    distance of two vectors
 `dot`           `:: (a ~ VecScalar d Float) => a -> a -> Float`    dot product
 `cross`         `:: (a ~ VecScalar 3 Float) => a -> a -> a`        cross product
 `normalize`     `:: (a ~ VecScalar d Float) => a -> a`             normalize a vector to have length equals to 1
-`faceforward`   `:: (a ~ VecScalar d Float) => a -> a -> a -> a`   same as faceforward in GLSL e.g. faceForward n i nRef = if dot nRef i < 0 then n else -n
-`refract`       `:: (a ~ VecScalar d Float) => a -> a -> a -> a`   same as refract in GLSL
-`reflect`       `:: (a ~ VecScalar d Float) => a -> a -> a`        same as reflect in GLSL
+`faceforward`   `:: (a ~ VecScalar d Float) => a -> a -> a -> a`   same as [faceforward in GLSL](https://www.opengl.org/sdk/docs/man/html/faceforward.xhtml) e.g. `faceForward n i nRef = if dot nRef i < 0 then n else -n`
+`refract`       `:: (a ~ VecScalar d Float) => a -> a -> a -> a`   same as [refract in GLSL](https://www.opengl.org/sdk/docs/man/html/refract.xhtml)
+`reflect`       `:: (a ~ VecScalar d Float) => a -> a -> a`        same as [reflect in GLSL](https://www.opengl.org/sdk/docs/man/html/reflect.xhtml)
 --------------
 
-###Matrix Functions
+### Matrix Functions
+
 ------------  -------------------------------------------  ---
-`transpose`   `:: TFMat h w  -> TFMat w h`                 transposes the argument matrix
-`det`         `:: TFMat s s  -> Float`                     determinant of the argument matrix
-`inv`         `:: TFMat s s  -> TFMat s s`                 inverse of the argument matrix
-`outer`       `:: w          -> h          -> TFMat h w`   column vector * row vector = matrix
-`(.*.)`       `:: TFMat h w  -> w          -> h`           matrix and vector multiplication (linear algebra)
-`(*.)`        `:: h          -> TFMat h w  -> w`           vector and matrix multiplication (linear algebra)
-`(.*)`        `:: TFMat i j  -> TFMat j k  -> TFMat i k`   multiplication of two matrices (linear algebra)
+`transpose`   `:: Mat i j a  -> Mat j i a`                 transposed matrix
+`det`         `:: Mat i i a  -> Float`                     determinant
+`inv`         `:: Mat i i a  -> Mat i i a`                 inverse matrix
+`(.*.)`       `:: Mat i j a -> Mat j k a -> Mat i k a`     matrix * matrix (multiplication in matrix algebra)
+`(*.)`        `:: Mat i j a -> Vec j a   -> Vec i a`       matrix * column vector (multiplication in matrix algebra)
+`(.*)`        `:: Vec i a   -> Mat i j a -> Vec j a`       row vector * matrix (multiplication in matrix algebra)
+`outer`       `:: Vec j a   -> Vec i a   -> Mat i j a`     column vector * row vector (multiplication in matrix algebra)
 ------------
 
-###Vector and Scalar Relational Functions (component-wise)
+### Vector and Scalar Relational Functions (component-wise)
+
 ----------------------  --------------------------------------------------------------         ---
 `(<)`                   `:: (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b`   component-wise compare of x < y
 `(<=)`                  `:: (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b`   component-wise compare of x <= y
@@ -166,7 +206,8 @@ Compile time CPU: Some of the primitive oparations are accessible.
 `PrimNotEqualV`         `:: (Num t, a ~ VecScalar d t, b ~ VecScalar d Bool) => a -> a -> b`   x /= y (component-wise)
 ----------------------
 
-###Logic Functions
+### Logic Functions
+
 ---------   --------                                 ---
 `(&&)`      `:: Bool -> Bool -> Bool`                logical and
 `(||)`      `:: Bool -> Bool -> Bool`                logical or
@@ -212,77 +253,85 @@ The functions operate component-wise.
 `pow`         `:: (a ~ VecScalar d Float) => a -> a -> a`   x raised to the y power
 ------------
 
-###Common Functions
------------------ ----
-`floor`           `:: (a ~ VecScalar d Float) => a -> a`                                                
-`trunc`           `:: (a ~ VecScalar d Float) => a -> a`                                                
-`round`           `:: (a ~ VecScalar d Float) => a -> a`                                        
-`roundEven`       `:: (Num t, a ~ VecScalar d t) => a -> a -> a`
-`ceil`            `:: (Num t, a ~ VecScalar d t) => a -> a -> a`            
-`fract`           `:: (Num t, a ~ VecScalar d t) => a -> a -> a`
-`min`             `:: (Num t, a ~ VecScalar d t) => a -> a -> a`
-`max`             `:: (Num t, a ~ VecScalar d t) => a -> a -> a`
-`PrimMinS`        `:: (Num t, a ~ VecScalar d t) => a -> t -> a`
-`PrimMaxS`        `:: (Num t, a ~ VecScalar d t) => a -> t -> a`
-`isNan`           `:: (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> b`
-`isInf`           `:: (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> b`
-`abs`             `:: (Signed t, a ~ VecScalar d t) => a -> a`
-`sign`            `:: (Signed t, a ~ VecScalar d t) => a -> a`
-`modF`            `:: (a ~ VecScalar d Float) => a -> (a, a)`
-`clamp`           `:: (Num t, a ~ VecScalar d t) => a -> a -> a -> a`
-`clampS`          `:: (Num t, a ~ VecScalar d t) => a -> t -> t -> a`
-`mix`             `:: (a ~ VecScalar d Float) => a -> a -> a -> a`
-`mixS`            `:: (a ~ VecScalar d Float) => a -> a -> Float -> a`
-`mixB`            `:: (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> a -> b -> a`
-`step`            `:: (a ~ TFVec d Float) => a -> a -> a`
-`stepS`           `:: (a ~ VecScalar d Float) => Float -> a -> a`
-`smoothstep`      `:: (a ~ TFVec d Float) => a -> a -> a -> a`
-`smoothstepS`     `:: (a ~ VecScalar d Float) => Float -> Float -> a -> a`
+### Common Functions
+
+----------------- -------------------------------------------------------------     -------------------------
+`floor`           `:: (a ~ VecScalar d Float) => a -> a`                            the largest integer not larger than the value (component-wise)
+`trunc`           `:: (a ~ VecScalar d Float) => a -> a`                            the integer whose absolute value is largest but not larger than the absolute value of the value (component-wise)
+`round`           `:: (a ~ VecScalar d Float) => a -> a`                            the nearest integer to the value (component-wise)
+`roundEven`       `:: (Num t, a ~ VecScalar d t) => a -> a -> a`                    the nearest even integer to the value (component-wise)
+`ceil`            `:: (Num t, a ~ VecScalar d t) => a -> a -> a`                    the smallest integer not less than the value (component-wise)
+`fract`           `:: (Num t, a ~ VecScalar d t) => a -> a -> a`                    the fractional part of the value (component-wise)
+`modF`            `:: (a ~ VecScalar d Float) => a -> (a, a)`                       integer and fractional components (component-wise)
+`min`             `:: (Num t, a ~ VecScalar d t) => a -> a -> a`                    component-wise minimum
+`max`             `:: (Num t, a ~ VecScalar d t) => a -> a -> a`                    component-wise maximum
+`PrimMinS`        `:: (Num t, a ~ VecScalar d t) => a -> t -> a`                    minimum between (scalar, vector or matrix) and a scalar
+`PrimMaxS`        `:: (Num t, a ~ VecScalar d t) => a -> t -> a`                    maximum between (scalar, vector or matrix) and a scalar
+`isNan`           `:: (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> b`      `True` if the value is a number (component-wise)
+`isInf`           `:: (a ~ VecScalar d Float, b ~ VecScalar d Bool) => a -> b`      `True` if the value is positive or negative infinity (component-wise)
+`abs`             `:: (Signed t, a ~ VecScalar d t) => a -> a`                      component-wise absolute value
+`sign`            `:: (Signed t, a ~ VecScalar d t) => a -> a`                      component-wise sign
+`clamp`           `:: (Num t, a ~ VecScalar d t) => a -> a -> a -> a`               constrain a value to lie between two further values (component-wise)
+`clampS`          `:: (Num t, a ~ VecScalar d t) => a -> t -> t -> a`               `clamp` with scalars
+`mix`             `:: (a ~ VecScalar d Float) => a -> a -> a -> a`                  linear interpolation between two values (component-wise)
+`mixS`            `:: (a ~ VecScalar d Float) => a -> a -> Float -> a`              interpolate one scalar between (scalar, vector or matrix) values
+`mixB`            `:: (a ~ VecScalar d Float) => a -> a -> VecScalar d Bool -> a`   `True`: select first value; `False`: select second value (component-wise)
+`step`            `:: (a ~ Vec d Float) => a -> a -> a`                             step function: 0.0 if the second value is less then the first; 1.0 otherwise (component-wise)
+`stepS`           `:: (a ~ VecScalar d Float) => Float -> a -> a`                   `step` with scalar
+`smoothstep`      `:: (a ~ Vec d Float) => a -> a -> a -> a`                        [Hermite interpolation](https://www.opengl.org/sdk/docs/man/html/smoothstep.xhtml)  (component-wise)
+`smoothstepS`     `:: (a ~ VecScalar d Float) => Float -> Float -> a -> a`          `smoothstep` with scalar
 -----------------
 
-###Fragment Processing Functions
-------------  ---
-`dFdx`        `(a ~ VecScalar d Float) => a -> a`
-`dFdy`        `(a ~ VecScalar d Float) => a -> a`
-`fWidth`      `(a ~ VecScalar d Float) => a -> a`
+### Fragment Processing Functions
+
+------------  ------------------------------------- -------------------------
+`dFdx`        `(a ~ VecScalar d Float) => a -> a`   [partial derivate](https://www.opengl.org/sdk/docs/man/html/dFdx.xhtml)
+`dFdy`        `(a ~ VecScalar d Float) => a -> a`   [partial derivate](https://www.opengl.org/sdk/docs/man/html/dFdx.xhtml)
+`fWidth`      `(a ~ VecScalar d Float) => a -> a`   [the sum of the absolute value of derivatives in x and y](https://www.opengl.org/sdk/docs/man/html/fwidth.xhtml)
 ------------
 
-###Noise Functions
---------  ---
-`noise1`  `:: VecScalar d Float -> Float`
-`noise2`  `:: VecScalar d Float -> Vec 2 Float`
-`noise3`  `:: VecScalar d Float -> Vec 3 Float`
-`noise4`  `:: VecScalar d Float -> Vec 4 Float`
+### Noise Functions
+
+--------  ----------------------------------------  --------------------------
+`noise1`  `:: VecScalar d Float -> Float`           [pseudo-random noise](https://www.opengl.org/sdk/docs/man4/html/noise.xhtml)
+`noise2`  `:: VecScalar d Float -> Vec 2 Float`     [pseudo-random noise](https://www.opengl.org/sdk/docs/man4/html/noise.xhtml)
+`noise3`  `:: VecScalar d Float -> Vec 3 Float`     [pseudo-random noise](https://www.opengl.org/sdk/docs/man4/html/noise.xhtml)
+`noise4`  `:: VecScalar d Float -> Vec 4 Float`     [pseudo-random noise](https://www.opengl.org/sdk/docs/man4/html/noise.xhtml)
 --------  ---
 
-###Bit-wise Functions
---------------- ---------------------------------------------------
-`PrimBAnd`      `:: (Integral t, a ~ VecScalar d t) => a -> a -> a`
-`PrimBOr`       `:: (Integral t, a ~ VecScalar d t) => a -> a -> a`
-`PrimBXor`      `:: (Integral t, a ~ VecScalar d t) => a -> a -> a`
-`PrimBAndS`     `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBOrS`      `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBXorS`     `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBAndS`     `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBOrS`      `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBXorS`     `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBAndS`     `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBOrS`      `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBXorS`     `:: (Integral t, a ~ VecScalar d t) => a -> t -> a`
-`PrimBNot`      `:: (Integral t, a ~ VecScalar d t) => a -> a`
-`PrimBShiftL`   `:: (Integral t, a ~ VecScalar d t, b ~ VecScalar d Word) => a -> b -> a`
-`PrimBShiftR`   `:: (Integral t, a ~ VecScalar d t, b ~ VecScalar d Word) => a -> b -> a`
-`PrimBShiftLS`  `:: (Integral t, a ~ VecScalar d t) => a -> Word -> a`
-`PrimBShiftRS`  `:: (Integral t, a ~ VecScalar d t) => a -> Word -> a`
---------------- ---------------------------------------------------
+### Bit-wise Functions
 
-###Integer/Float Conversion Functions
----------------------   ---
-`PrimFloatBitsToInt`    `:: VecScalar d Float -> VecScalar d Int`
-`PrimFloatBitsToUInt`   `:: VecScalar d Float -> VecScalar d Word`
-`PrimIntBitsToFloat`    `:: VecScalar d Int   -> VecScalar d Float`
-`PrimUIntBitsToFloat`   `:: VecScalar d Word  -> VecScalar d Float`
----------------------   ---
+The functions operate component-wise and bit-wise.
+
+----------- --------------------------------------------------- ---------------------
+`bAnd`      `:: (Integral t, a ~ VecScalar d t) => a -> a -> a` logical AND
+`bOr`       `:: (Integral t, a ~ VecScalar d t) => a -> a -> a` logical OR
+`bXor`      `:: (Integral t, a ~ VecScalar d t) => a -> a -> a` logical XOR
+`bNot`      `:: (Integral t, a ~ VecScalar d t) => a -> a`      logical NOT
+`bAndS`     `:: (Integral t, a ~ VecScalar d t) => a -> t -> a` `bAnd` with scalar
+`bOrS`      `:: (Integral t, a ~ VecScalar d t) => a -> t -> a` `bOr` with scalar
+`bXorS`     `:: (Integral t, a ~ VecScalar d t) => a -> t -> a` `bXor` with scalar
+----------- ---------------------------------------------------
+
+The functions operate component-wise.
+
+---------- ---------------------------------------------------------------------------- ---------------
+`shiftL`   `:: (Integral t, a ~ VecScalar d t, b ~ VecScalar d Word) => a -> b -> a`    shift left
+`shiftR`   `:: (Integral t, a ~ VecScalar d t, b ~ VecScalar d Word) => a -> b -> a`    shift right
+`shiftLS`  `:: (Integral t, a ~ VecScalar d t) => a -> Word -> a`                       `shiftL` with scalar
+`shiftRS`  `:: (Integral t, a ~ VecScalar d t) => a -> Word -> a`                       `shiftR` with scalar
+---------- ---------------------------------------------------
+
+### Integer/Float Conversion Functions
+
+The functions operate component-wise.
+
+-----------------   ------------------------------------------- -----------------------
+`floatBitsToInt`    `:: VecScalar d Float -> VecScalar d Int`   the encoding of a floating point value as an integer
+`floatBitsToWord`   `:: VecScalar d Float -> VecScalar d Word`  the encoding of a floating point value as a word
+`intBitsToFloat`    `:: VecScalar d Int   -> VecScalar d Float` inverse of `floatBitsToInt`
+`wordBitsToFloat`   `:: VecScalar d Word  -> VecScalar d Float` inverse of `floatBitsToWord`
+-----------------   ---
 
 
 Common data structures
