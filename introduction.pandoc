@@ -63,7 +63,8 @@ Features
 -   unified language for GL + GLSL
 -   easy code reuse
 -   live coding / boosts creativity
--   multiplatform/easy to integrate/supported backends:\
+-   supported backends: WebGL1.0/GLES2.0/GL3.3
+-   easy to use with:\
     JavaScript, C++, C#, Java, Haskell, PureScript\
     (typescript, swift, objc, python)
 
