@@ -11,6 +11,9 @@ all: $(TPL) static/slides.html $(SERVER)
 $(SERVER): lambdacube3d.com.cabal $(wildcard src/*.hs)
 	cabal install
 
+.PHONEY: tpl
+tpl: $(TPL) static/slides.html
+
 $(TPL): $(TEMPLATES)/%.tpl: %.pandoc template.tpl
 	pandoc --template=template.tpl -S -t html $< -o $@
 

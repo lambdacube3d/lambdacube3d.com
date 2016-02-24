@@ -1,0 +1,31 @@
+Package Overview
+=================
+
+LambdaCube 3D DSL
+-----------------
+
+package name                                                                    description
+------------                                                                    -------------------------------------------------------
+[lambdacube-gl](http://hackage.haskell.org/package/lambdacube-gl)               OpenGL 3.3 backend for Haskell applications
+[lambdacube-compiler](http://hackage.haskell.org/package/lambdacube-compiler)   Compiler framework with standalone compiler tool
+[lambdacube-ir](http://hackage.haskell.org/package/lambdacube-ir)               Graphics Pipeline Intermediate Representation
+------------                                                                    -------------------------------------------------------
+
+Outdated Packages
+-----------------
+
+### LambdaCube EDSL (2012-2015)
+
+----------------------                                                      ----------------
+[lambdacube-edsl](http://hackage.haskell.org/package/lambdacube-edsl)
+[lambdacube-core](http://hackage.haskell.org/package/lambdacube-core)
+[lambdacube-samples](http://hackage.haskell.org/package/lambdacube-samples)
+----------------------                                                      ----------------
+
+### LambdaCube Engine (2009-2011)
+
+-----------------------------                                                 ---
+[lambdacube-engine](http://hackage.haskell.org/package/lambdacube-engine)
+[lambdacube-bullet](http://hackage.haskell.org/package/lambdacube-bullet)
+[lambdacube-examples](http://hackage.haskell.org/package/lambdacube-examples)
+-----------------------------                                                 ---
