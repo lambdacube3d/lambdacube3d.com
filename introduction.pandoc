@@ -33,6 +33,40 @@ Quick References                                            Documentation
 </div>
 
 
+<div style="float:right;width:320px;margin:0 0 0 5%">
+Showcase
+========
+<a href="https://github.com/lambdacube3d/lambdacube-quake3">
+  <img style="float:right;width:320px" src="/screenshots/lambdacube-dsl-quake3.jpg" title="Quake 3 map viewer in Haskell using LambdaCube 3D">
+</a>
+
+<a href="http://lambdacube3d.com/editor.html">
+  <img style="float:right;width:320px" src="/screenshots/lc-editor.jpg" title="LambdaCube 3D online editor">
+</a>
+
+<a href="https://github.com/Teaspot-Studio/gore-and-ash-lambdacube">
+  <img style="float:right;width:320px" src="/screenshots/gore-and-ash-lc.png" title="gore-and-ash for LambdaCube DSL">
+</a>
+
+<a href="https://github.com/lambdacube3d/lambdacube-quake3">
+  <img style="float:right;width:320px" src="/screenshots/q3-dsl-wip.jpg" title="Quake 3 map viewer work in progress">
+</a>
+
+<a href="https://github.com/lambdacube3d/lambdacube-quake3">
+  <img style="float:right;width:320px" src="/screenshots/q3-dsl-wire.jpg" title="Quake 3 map viewer in debug mode">
+</a>
+</div>
+
+Features
+========
+-   static typing/compile time spec conformance/no blank screen
+-   unified language for GL + GLSL
+-   easy code reuse
+-   live coding / boosts creativity
+-   multiplatform/easy to integrate/supported backends:\
+    JavaScript, C++, C#, Java, Haskell, PureScript\
+    (typescript, swift, objc, python)
+
 Motivations and Goals
 =====================
 
