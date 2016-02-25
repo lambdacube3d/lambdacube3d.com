@@ -1,6 +1,6 @@
-<div class='fullscreen'>
+<div class='fullscreen' style="width:34%;height:34%;">
 <a href='http://lambdacube3d.com/editor.html'>
-<img src='/lambdacube-logo.svg' />
+<img src='/lambdacube-logo.svg' width="100%" heigth="100%"/>
 </a>
 
 [*Try online*](http://lambdacube3d.com/editor.html)
@@ -33,27 +33,27 @@ Quick References                                            Documentation
 </div>
 
 
-<div style="float:right;width:320px;margin:0 0 0 5%">
+<div style="float:right;width:34%;margin:0 0 0 5%">
 Showcase
 ========
 <a href="https://github.com/lambdacube3d/lambdacube-quake3">
-  <img style="float:right;width:320px" src="/screenshots/lambdacube-dsl-quake3.jpg" title="Quake 3 map viewer in Haskell using LambdaCube 3D">
+  <img style="float:right;width:100%" src="/screenshots/lambdacube-dsl-quake3.jpg" title="Quake 3 map viewer in Haskell using LambdaCube 3D">
 </a>
 
 <a href="http://lambdacube3d.com/editor.html">
-  <img style="float:right;width:320px" src="/screenshots/lc-editor.jpg" title="LambdaCube 3D online editor">
+  <img style="float:right;width:100%" src="/screenshots/lc-editor.jpg" title="LambdaCube 3D online editor">
 </a>
 
 <a href="https://github.com/Teaspot-Studio/gore-and-ash-lambdacube">
-  <img style="float:right;width:320px" src="/screenshots/gore-and-ash-lc.png" title="Gore and Ash Haskell 3D game engine: Shadow Mapping example">
+  <img style="float:right;width:100%" src="/screenshots/gore-and-ash-lc.png" title="Gore and Ash Haskell 3D game engine: Shadow Mapping example">
 </a>
 
 <a href="https://github.com/lambdacube3d/lambdacube-quake3">
-  <img style="float:right;width:320px" src="/screenshots/q3-dsl-wip.jpg" title="Quake 3 map viewer work in progress">
+  <img style="float:right;width:100%" src="/screenshots/q3-dsl-wip.jpg" title="Quake 3 map viewer work in progress">
 </a>
 
 <a href="https://github.com/lambdacube3d/lambdacube-quake3">
-  <img style="float:right;width:320px" src="/screenshots/q3-dsl-wire.jpg" title="Quake 3 map viewer in debug mode">
+  <img style="float:right;width:100%" src="/screenshots/q3-dsl-wire.jpg" title="Quake 3 map viewer in debug mode">
 </a>
 </div>
 
