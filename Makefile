@@ -8,7 +8,7 @@ SERVER=dist/build/lambdacube3dcom/lambdacube3dcom
 .PHONEY: all
 all: $(TPL) static/slides.html $(SERVER)
 
-$(SERVER): lambdacube3d.com.cabal $(wildcard src/*.hs)
+$(SERVER): lambdacube3dcom.cabal $(wildcard src/*.hs)
 	cabal install
 
 .PHONEY: tpl
