@@ -26,7 +26,7 @@ Outdated Packages
 
 ### LambdaCube EDSL (2012-2014)
 
-Purely functional Haskell EDSL for GPU graphics programming.
+Purely functional Haskell [EDSL](related#lambdacube-3d-edsl) for GPU graphics programming.
 
 ----------------------                                                      ----------------
 [lambdacube-edsl](http://hackage.haskell.org/package/lambdacube-edsl)
