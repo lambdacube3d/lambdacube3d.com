@@ -59,16 +59,14 @@ Showcase
 </a>
 </div>
 
-Features
-========
--   static typing/compile time spec conformance/no blank screen
--   unified language for GL + GLSL
--   easy code reuse
--   live coding / boosts creativity
--   supported backends: WebGL1.0/GLES2.0/GL3.3
--   easy to use with:\
-    JavaScript, C++, C#, Java, Haskell, PureScript\
-    (typescript, swift, objc, python)
+Highlights
+==========
+-   **easy code reuse** -- pipeline pieces are pure functions
+-   **single language** -- CPU-side setup code and shaders are written in a common language
+-   **type safety** -- if it typechecks, you won't get a blank screen (well, you need to set up your matrices right)
+-   **hotswapping** -- no need to stop the program when you change the pipeline
+-   **multiplatform** -- WebGL1.0/GLES2.0/GL3.3
+-   **language independence** -- Haskell, PureScript (coming soon: C++, Java)
 
 Motivations and Goals
 =====================
