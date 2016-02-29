@@ -32,7 +32,7 @@ The `lambdacube-gl` package contains a Hello World example to demonstrate the ba
 
 ~~~~~
 $ cabal unpack lambdacube-gl
-$ cd lambdacube-gl-0.4.0.0/examples
+$ cd lambdacube-gl-[VERSION]/examples
 ~~~~~
 
 Afterwards, we can run the example that executes the precompiled pipeline (`hello.json`):
@@ -236,20 +236,20 @@ initWindow title width height = do
 The hello pipeline starts with a dark blue background, and renders 2D triangle meshes by rotating them around the Z axis and applying a texture. For details on the building blocks of the pipeline you can refer to the [Conceptual Overview](overview).
 
 ~~~~~ {.haskell}
-main = renderFrame $
-   makeFrame (Uniform "time")
-             (Texture2DSlot "diffuseTexture")
-             (fetch_ "objects" (Attribute "position", Attribute "uv"))
-
 makeFrame (time :: Float)
           (texture :: Texture)
           (prims :: PrimitiveStream Triangle (Vec 2 Float, Vec 2 Float))
 
-    = imageFrame (emptyColorImage (V4 0 0 0.4 1))
+    = imageFrame ((emptyColorImage (V4 0 0 0.4 1)))
   `overlay`
       prims
     & mapPrimitives (\(p,uv) -> (rotMatrixZ time *. (V4 p%x p%y (-1) 1), uv))
-    & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) Smooth
-    & mapFragments (\uv -> texture2D (Sampler PointFilter MirroredRepeat texture) uv)
-    & accumulateWith (ColorOp NoBlending (V4 True True True True))
+    & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
+    & mapFragments (\((uv)) -> ((texture2D (Sampler PointFilter MirroredRepeat texture) uv)))
+    & accumulateWith ((ColorOp NoBlending (V4 True True True True)))
+
+main = renderFrame $
+   makeFrame (Uniform "time")
+             (Texture2DSlot "diffuseTexture")
+             (fetch "objects" (Attribute "position", Attribute "uv"))
 ~~~~~
