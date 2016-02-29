@@ -11,9 +11,6 @@ LambdaCube 3D
 Language Specification
 ======================
 
-Overview
-========
-
 LambdaCube 3D is specified as [Haskell98](https://www.haskell.org/onlinereport/) plus various language extensions.
 
 Haskell98 language features
@@ -41,7 +38,7 @@ Work in progress:
 
 TODO:
 
--   mutual recursion (currently definitions should be ordered bottom-up)
+-   mutual recursion
 -   irrefutable patterns
 -   at-patterns
 -   type class defaulting
@@ -51,12 +48,12 @@ TODO:
 
 There are some diversions from Haskell98. Our plan is to keep this list very short.
 
--   Different Prelude: look at the [API documentation](api-documentation).
+-   Different `Prelude`: look at the [API documentation](api-documentation).
 
 
 
-Extentions compared to Haskell98
---------------------------------
+Extentions to Haskell98
+-----------------------
 
 These extensions are automatically enabled.
 
@@ -85,12 +82,79 @@ Planned:
 
 -   [Typed holes](https://wiki.haskell.org/GHC/Typed_holes)
 -   [`LambdaCase`](https://ghc.haskell.org/trac/haskell-prime/wiki/LambdaCase)
+-   `TupleSections`
 
 ### Custom extensions
 
+-   [Tuples as heterogeneous lists](#heterogeneous-lists)
 -   [Row polymorphism](#row-polymorphism)
 -   [Swizzling](#swizzling)
 -   `ImplicitParams`
+
+
+### Homogeneous and heterogeneous lists
+
+#### Homogeneous lists
+
+`List` has the standard definition:
+
+~~~~~ {.haskell}
+data List a = Nil | Cons a (List a)
+~~~~~
+
+Lists has special syntax like in Haskell:
+
+desugared form (in expr. ctx)   type context                    expression/pattern context
+---------------------------     -------------                   ------------------------
+`'List`                         `[]`                            `'[]`
+`'List` a                       `[`a`]`                         `'[`a`]`
+`Nil`                           `'[]`                           `[]`
+`Cons` a `Nil`                  `'[`a`]`                        `[`a`]`
+`Cons` a `(Cons` b `Nil)`       `'[`a`,`b`]` **or** `[`a`,`b`]` `[`a`,`b`]`
+...                             ...                             ...
+
+#### Heterogeneous lists
+
+The `HList` data type is defined as a GADT:
+
+~~~~~ {.haskell}
+data HList :: [Type] -> Type where
+    HNil :: HList '[]
+    HCons :: x -> HList xs -> HList '(x: xs)
+~~~~~
+
+Examples:
+
+~~~~~ {.haskell}
+    HNil                      ::  HList 'Nil
+    HCons True HNil           ::  HList ('Cons Bool 'Nil)
+    HCons 3 (HCons True HNil) ::  HList ('Cons Int ('Cons Bool 'Nil)
+~~~~~
+
+Heterogeneous lists has special syntax like tuples in Haskell.  
+The only difference is that LambdaCube 3D has special syntax for one element tuples: `((` *element* `))`.
+
+The previous examples with syntactic sugar:
+
+~~~~~ {.haskell}
+    ()        ::  ()
+    ((True))  ::  ((Bool))
+    (3, True) ::  (Int, Bool)
+~~~~~
+
+General rules:
+
+desugared form (in expression ctx)  type context                    expression/pattern context
+---------------------------         -------------                   ------------------------
+`'HList Nil`                        `()`                            `'()`
+`'HList (Cons` a `Nil)`             `((`a`))`                       `'((`a`))`
+`'HList (Cons` a `(Cons` b `Nil)`   `(`a`,`b`)`                     `'(`a`,`b`)`
+...                                 ...                             ...
+`HNil`                              `'()`                           `()`
+`HCons` a `HNil`                    `'((`a`))`                      `((`a`))`
+`HCons` a `(HCons` b `HNil)`        `'(`a`,`b`)`                    `(`a`,`b`)`
+...                                 ...                             ...
+
 
 
 Row polymorphism
