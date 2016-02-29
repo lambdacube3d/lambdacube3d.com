@@ -99,31 +99,63 @@ Planned:
 `List` has the standard definition:
 
 ~~~~~ {.haskell}
-data List a = Nil | Cons a (List a)
+data List a
+    = Nil
+    | Cons a (List a)
 ~~~~~
 
 Lists has special syntax like in Haskell:
 
-desugared form (in expr. ctx)   type context                    expression/pattern context
----------------------------     -------------                   ------------------------
-`'List`                         `[]`                            `'[]`
-`'List` a                       `[`a`]`                         `'[`a`]`
-`Nil`                           `'[]`                           `[]`
-`Cons` a `Nil`                  `'[`a`]`                        `[`a`]`
-`Cons` a `(Cons` b `Nil)`       `'[`a`,`b`]` **or** `[`a`,`b`]` `[`a`,`b`]`
-...                             ...                             ...
+desugared form (in expr. ctx)       type context                            expression/pattern context
+---------------------------         -------------                           ------------------------
+`'List`                             `[]`                                    `'[]`
+`'List` a                           `[`a`]`                                 `'[`a`]`
+`Nil`                               `'[]`                                   `[]`
+`Cons` a `Nil`                      `'[`a`]`                                `[`a`]`
+`Cons` a b                          `'(`a`:`b`)` **or** `(`a`:`b`)`         `(`a`:`b`)`
+`Cons` a `(Cons` b `Nil)`           `'[`a`,`b`]` **or** `[`a`,`b`]`         `[`a`,`b`]`
+`Cons` a `(Cons` b `(Cons` c `Nil))``'[`a`,`b`,`c`]` **or** `[`a`,`b`,`c`]` `[`a`,`b`,`c`]`
+...                                 ...                                     ...
+
+Examples with sytactic sugar:
+
+~~~~~ {.haskell}
+    []                  ::  [Int]
+    []                  ::  [Bool]
+    [True]              ::  [Bool]
+    [True, False]       ::  [Bool]
+    [1, 23, 4]          ::  [Int]
+    [[1], [], [23, 4]]  ::  [[Int]]
+~~~~~
+
+
 
 #### Heterogeneous lists
+
+Heterogeneous lists has special syntax like tuples in Haskell.  
+The only difference is that LambdaCube 3D has special syntax for one element tuples: `((` *element* `))`.
+
+Examples with syntactic sugar:
+
+~~~~~ {.haskell}
+    ()                      ::  ()
+    ((True))                ::  ((Bool))
+    (3, True)               ::  (Int, Bool)
+    [(3, True), (4, False)] ::  [(Int, Bool)]
+    (((3)), [True, False])  ::  (((Int)), [Bool])
+~~~~~
+
+Details:
 
 The `HList` data type is defined as a GADT:
 
 ~~~~~ {.haskell}
 data HList :: [Type] -> Type where
-    HNil :: HList '[]
-    HCons :: x -> HList xs -> HList '(x: xs)
+    HNil :: HList 'Nil
+    HCons :: x -> HList xs -> HList ('Cons x xs)
 ~~~~~
 
-Examples:
+Some of the previous examples without syntactic sugar:
 
 ~~~~~ {.haskell}
     HNil                      ::  HList 'Nil
@@ -131,18 +163,7 @@ Examples:
     HCons 3 (HCons True HNil) ::  HList ('Cons Int ('Cons Bool 'Nil)
 ~~~~~
 
-Heterogeneous lists has special syntax like tuples in Haskell.  
-The only difference is that LambdaCube 3D has special syntax for one element tuples: `((` *element* `))`.
-
-The previous examples with syntactic sugar:
-
-~~~~~ {.haskell}
-    ()        ::  ()
-    ((True))  ::  ((Bool))
-    (3, True) ::  (Int, Bool)
-~~~~~
-
-General rules:
+General rules for desugaring:
 
 desugared form (in expression ctx)  type context                    expression/pattern context
 ---------------------------         -------------                   ------------------------
