@@ -160,6 +160,19 @@ rgb r g b = V4 r g b 1.0
 `fuchsia` `:: Vec 4 Float`   same as `rgb 1.0 0.0 1.0`
 --------- ------------------ ----------------------------
 
+### Transformation Functions
+
+------------------  --------------------------------------------------------------- ----------------------------------------------------------------
+`lookat`            `:: Vec 3 Float -> Vec 3 Float -> Vec 3 Float -> Mat 4 4 Float` Camera transformation matrix, Camera position, Target position, Upward direction
+`perspective`       `:: Float -> Float -> Float -> Float -> Mat 4 4 Float`          Perspective transformation matrix, Near plane, Far plane, Field of view of the y axis, in radians, Aspect ratio, i.e. screen's width\/height
+`scale`             `:: Float -> Vec 4 Float -> Vec 4 Float`                        scale
+`rotMatrixX`        `:: Float -> Mat 4 4 Float`                                     rotate around X axis
+`rotMatrixY`        `:: Float -> Mat 4 4 Float`                                     rotate around Y axis
+`rotMatrixZ`        `:: Float -> Mat 4 4 Float`                                     rotate around Z axis
+`rotationEuler`     `:: Float -> Float -> Float -> Mat 4 4 Float`                   euler angles
+`translateBefore4`  `:: Vec 3 Float -> Mat 4 4 Float`                               ....
+------------------  --------------------------------------------------------------- ----------------------------------------------------------------
+
 
 ### Arithmetic Functions
 

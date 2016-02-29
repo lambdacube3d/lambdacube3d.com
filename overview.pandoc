@@ -199,8 +199,11 @@ mapPrimitives (\((x)) -> (scale 0.5 (projmat *. x), x)
 Here we suppose that the vertices are `Vec 4 Float` values and `projmat` has type `Mat 4 4 Float`.
 The `((x))` is the [special syntax](lang-specification#heterogeneous-lists) for tuples with one element.  
 
-The `projmat` is embodies the camera and prespective projection transformations. The final transformation is sequential composition of simpler
-transformations, using [rotMatrixY](), [lookat](), [perspective]() functions from prelude.
+The `projmat` is embodies the camera and prespective projection transformations. It is a sequential composition of simpler
+transformations, using
+[rotMatrixY](api-documentation#transformation-functions),
+[lookat](api-documentation#transformation-functions),
+[perspective](api-documentation#transformation-functions) functions from prelude.
 
 ~~~~~ {.haskell}
     projmat = perspective 0.1 100.0 (30 * pi / 180) 1.0
