@@ -11,17 +11,24 @@ LambdaCube 3D
 Community
 =========
 
+This is a collection of various information sources for anyone who wants to follow or contribute to the development of LambdaCube 3D.
+
 Mailing list
 ------------
 
-[lambdacube3d-discuss](https://groups.google.com/forum/#!forum/lambdacube3d-discuss)
+We have a mailing list called [lambdacube3d-discuss](https://groups.google.com/forum/#!forum/lambdacube3d-discuss). This is intended to be a general place for discussion. You can ask for help or advice here, give feedback and request features. Also, we'd like to encourage people to show what they did with LambdaCube, and to share their ideas and experiences.  
 
-TODO: description of the purpose: show user projects, ask for help or advice, give feedback, bounce ideas
+Task management
+---------------
+
+You can find our openly readable task tracker on [https://trello.com/b/TcuVPBAR/lambdacube3d](Trello). Note that this is not for tracking external issues, just to show a more real-time view of our progress.
 
 IRC
 ---
-`#haskell-game` on Freenode (irc.freenode.net).
 
+We can be regularly found on `#haskell-game` on Freenode (irc.freenode.net).
+
+<div class='hidden'>
 Project ideas
 -------------
 
@@ -30,4 +37,4 @@ How to contribute???
 -   GSOC?
 -   Game Jam?
 -   write effects?
-
+</div>
