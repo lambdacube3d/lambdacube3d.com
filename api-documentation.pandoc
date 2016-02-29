@@ -29,7 +29,8 @@ The runtime CPU and runtime GPU phases are interleaved.
 Design principles:
 
 1)  Every reduction step is done in the runtime CPU phase by default.
-2)  As an optimization, some reductions are done at runtime GPU instead of runtime CPU.  
+2)  As an optimization, some reductions are done at runtime GPU instead of runtime CPU.
+    Of course, this optimization step is crucial: without this optimization LambdaCube 3D is useless.  
     GPU operations are very slow on CPU, but the CPU implementation of GPU primitives ensures that there is
     no cheating in the types of GPU primitives.
 3)  As an optimization, some reductions are done at compile time CPU instead of runtime CPU.
@@ -39,7 +40,7 @@ Design principles:
 Principle 1. is not yet implemented: some reductions are only possible to do at the runtime GPU phase.
 
 Principle 4. is not implemented yet: phase information is provided in the comments, not in the types.
-The compiler code generator automagically decide between the phases.
+The compiler code generator automagically determines the phases of expressions.
 
 
 Basic types
@@ -361,77 +362,9 @@ The functions operate component-wise.
 Common data structures
 ===============
 
-*Phase information*  
-Most of the operations of common data structures are only accessable at the compile time CPU phase.
+### Homogeneous and heterogeneous lists (lists and tuples)
 
-
-### Homogeneous lists
-
-`List` has the standard definition:
-
-~~~~~ {.haskell}
-data List a = Nil | Cons a (List a)
-~~~~~
-
-Lists has special syntax like in Haskell:
-
-type                    desugared form
---------------------    ---------------------
-`[a]`                   `List a`
-
-expression              desugared form
---------------------    ---------------------
-`[]`                    `Nil`
-`[a]`                   `Cons a Nil`
-`[a,b]`                 `Cons a (Cons b Nil)`
-...                     ...
-
-Some usual operations on lists (the definition is omitted):
-
-~~~~~ {.haskell}
-map       :: (a -> b) -> [a] -> [b]
-concat    :: [[a]] -> [a]
-~~~~~
-
-*Phase information*  
-`map` and `concat` is accessible in the runtime GPU phase in some context (see the `Primitive` and `Fragment` types).
-
-
-### Heterogeneous lists (tuples)
-
-~~~~~ {.haskell}
-data HList :: [Type] -> Type where
-    HNil :: HList '[]
-    HCons :: x -> HList xs -> HList '(x: xs)
-~~~~~
-
-Examples:
-
-~~~~~ {.haskell}
-    HNil :: HList '[]
-    HCons True HNil :: HList '[Bool]
-    HCons 3 (HCons True HNil) :: HList '[Int, Bool]
-~~~~~
-
-Heterogeneous lists has special syntax like tuples in Haskell.  
-The only difference is that LambdaCube 3D has special syntax for one element tuples too:
-
-type                    desugared form
---------------------    ---------------------
-`()`                    `HList '[]`
-`((a))`                 `HList '[a]`
-`(a, b)`                `HList '[a, b]`
-`(a, b, c)`             `HList '[a, b, c]`
-...                     ...
-
-expression              desugared form
---------------------    ---------------------
-`()`                    `HNil`
-`((a))`                 `HCons a HNil`
-`(a, b)`                `HCons a (HCons b HNil)`
-`(a, b, c)`             `HCons a (HCons b (HCons c HNil))`
-...                     ...
-
+[See the language specification](lang-specification#homogeneous-and-heterogeneous-lists)
 
 ### `Maybe` data type
 
@@ -478,36 +411,55 @@ data Primitive a :: PrimitiveType -> Type where
     PrimTriangle :: a -> a -> a -> Primitive a Triangle
 ~~~~~
 
-Basic functions on primitives:
+In LambdaCube3D, `Primitive` is always paramterized by a heterogeneous list whose elements are
+called *attributes*.
 
-~~~~~ {.haskell}
-mapPrimitive :: (a -> b) -> Primitive a p -> Primitive b p
-~~~~~
 
-`PrimitiveStream` is a list of primitives:
+### Primitive streams
+
+`PrimitiveStream` is a central data type of GPUs:
 
 ~~~~~ {.haskell}
 type PrimitiveStream a p = [Primitive p a]
 ~~~~~
 
-Construction of `PrimitiveStream`s:
 
-~~~~~ {.haskell}
-fetchArrays :: forall a t t' . t ~ map ListElem t' => HList t' -> PrimitiveStream a (HList t)
-
-type family ListElem a where ListElem [a] = a
-~~~~~
-
-Operations on `PrimitiveStream`s:
+#### Mapping `PrimitiveStream`s
 
 ~~~~~ {.haskell}
 mapPrimitives :: (a -> b) -> PrimitiveStream p a -> PrimitiveStream p b
 mapPrimitives f = map (mapPrimitive f)
+
+mapPrimitive :: (a -> b) -> Primitive a p -> Primitive b p
 ~~~~~
 
-*Phase information*  
-`mapPrimitives` is compiled to runtime GPU code.  
-The other operations are not accessible in any phase.
+You never need to call `mapPrimitive` directly; use `mapPrimitives` instead, which is compiled to
+runtime GPU code. (The compiled code will be part of the so-called *vertex shader*.)
+
+
+#### Construction of `PrimitiveStream`s
+
+There are two ways to construct a `PrimitiveStream`. The direct way is documented here, the other way is documented
+in [Interface for inputs](#interface-for-inputs).
+
+`fetchArrays` gets a heterogenous list of attribute lists. The atribute lists should have the same length.
+
+~~~~~ {.haskell}
+fetchArrays :: HList x -> PrimitiveStream p (HList (map ListElem x))
+
+type family ListElem a where ListElem [a] = a
+~~~~~
+
+Example usage:
+
+~~~~~ {.haskell}
+    fetchArrays ([1.0, 2.0, 3.0], [True, False, True])
+        :: PrimitiveStream Triangle (Float, Bool)
+~~~~~
+
+Restriction: If the primitive type is `Triangle` then the length of the lists should be divisible by 3;
+if the primitive type is `Line` then the length of the lists should be divisible by 2.  
+(The higher level API will detect misuse of `fetchArrays` statically.)
 
 
 ### Fragments
@@ -519,11 +471,11 @@ A `Fragment n t` value is an `n`-vector of `Maybe (SimpleFragment t)` values.
 type Fragment n t = Vector n (Maybe (SimpleFragment t))
 ~~~~~
 
-Each simple fragment is a viewport coordinate with depth value and a data value.
+A `SimpleFragment` value is an attribute tuple plus a viewport coordinate with depth value:
 
 ~~~~~ {.haskell}
 data SimpleFragment t = SimpleFragment
-    { sFragmentCoords   :: Vec 3 Float
+    { sFragmentCoords   :: Vec 3 Float  -- x, y, depth
     , sFragmentValue    :: t
     }
 ~~~~~
@@ -535,6 +487,8 @@ customizeDepth :: (a -> Float) -> Fragment n a -> Fragment n a
 filterFragment :: (a -> Bool)  -> Fragment n a -> Fragment n a
 mapFragment    :: (a -> b)     -> Fragment n a -> Fragment n b
 ~~~~~
+
+### Fragment streams
 
 `FragmentStream` is a list of fragments:
 
@@ -562,18 +516,49 @@ The other operations are not accessible in any phase.
 
 ### Images
 
-An `Image n t` is `n` times a rectangle of `t`-pixels:
+#### Image kinds
+
+There are different kind of images depending on the role the image plays:
 
 ~~~~~ {.haskell}
-type Image (n :: Nat) t = Vector n [[t]]
+data ImageKind
+    = Color (c :: Type)     -- the image stores `c`-values
+    | Depth                 -- the image stores depth values (`Float`s)
+    | Stencil               -- the image stores stencil values (`Int`s)
 ~~~~~
+
+The type of the stored values is calculated by `imageType`:
+
+~~~~~ {.haskell}
+imageType :: ImageKind -> Type
+imageType (Color c) = c
+imageType Depth     = 'Float
+imageType Stencil   = 'Int
+~~~~~
+
+#### `Image` type
+
+An `Image n t` is `n` times a rectangle of `imageType t`-pixels:
+
+~~~~~ {.haskell}
+type Image (n :: Nat) (t :: ImageKind) = Vector n [[imageType t]]
+~~~~~
+
+The `n` parameter is the so called *layer count*, which count the number of layers. Usually it is 1.
+
+The layer count of an image:
+
+~~~~~ {.haskell}
+type family ImageLC a :: Nat where ImageLC (Image n t) = n
+~~~~~
+
 
 Functions which construct clear images:
 
 ~~~~~ {.haskell}
 ColorImage   :: (Num t, color ~ VecScalar d t) => color  -> Image a (Color color)
-DepthImage   :: Float  -> Image n (Depth Float)
-StencilImage :: Int    -> Image n (Stencil Int)
+DepthImage   :: Float  -> Image n Depth
+StencilImage :: Int    -> Image n Stencil
 ~~~~~
 
 Some wrapper functions for creating 1-layered clear images:
@@ -597,35 +582,46 @@ The other operations are not accessible in any phase.
 
 ### Framebuffers
 
-A `FrameBuffer n t` is an `n`-vector of images. The image types are determined by `t` (which is usually a tuple).
+A `FrameBuffer n t` is a tuple of images:
 
 ~~~~~ {.haskell}
-data FrameBuffer (n :: Nat) t
+type FrameBuffer (n :: Nat) (t :: [ImageKind]) = HList (map (Image n) t)
 ~~~~~
 
-TODO: document this
+#### Construction of framebuffers
 
+One can construct a framebuffer from images if all have the same layer count:
+
+~~~~~ {.haskell}
+imageFrame :: forall (a :: [Type]) . (sameLayerCounts a) => HList a -> FrameBuffer (ImageLC (head a)) (map GetImageKind a)
+
+sameLayerCounts a = allSame (map 'ImageLC a)
+
+allSame :: [a] -> Type
+allSame [] = 'Unit
+allSame [x] = 'Unit
+allSame (x: y: xs) = 'T2 (x ~ y) (allSame (y:xs))
+~~~~~
 
 
 Rasterization
 =============
 
-Rasterization and accumulation (see below) are the two most complex operations in the API.
-
-Rasterization basically turns a `Primitive` value into a list of `Fragment` values.  
+Rasterization turns a `Primitive` value into a list of `Fragment` values.  
 For this, a rasterization context is needed, and also information how interpolation should be done.
 
-
 ### Rasterization contexts
+
+There are different rasterization contexts for each primitive types:
 
 ~~~~~ {.haskell}
 data RasterContext a :: PrimitiveType -> Type where
     TriangleCtx  :: CullMode -> PolygonMode a -> PolygonOffset -> ProvokingVertex -> RasterContext a Triangle
-    PointCtx     :: PointSize a -> Float -> PointSpriteCoordOrigin                -> RasterContext a Point
     LineCtx      :: Float -> ProvokingVertex                                      -> RasterContext a Line
+    PointCtx     :: PointSize a -> Float -> PointSpriteCoordOrigin                -> RasterContext a Point
 ~~~~~
 
-Triangles can be discarded based on their apparent facing, a process known as [Face Culling](https://www.opengl.org/wiki/Face_Culling). 
+Triangles can be discarded based on their apparent facing, a process known as [Face Culling](https://www.opengl.org/wiki/Face_Culling):
 
 ~~~~~ {.haskell}
 data CullMode
@@ -634,157 +630,154 @@ data CullMode
     | CullNone      -- no culling
 ~~~~~
 
+Triangles can be rendered in three ways according to `PolygonMode` values.
+Note that in WebGL triangles are allways filled regardless of `PolygonMode` values.
+
+~~~~~ {.haskell}
+data PolygonMode a
+    = PolygonFill                   -- filled triangles (mostly used)
+    | PolygonPoint (PointSize a)    -- only triangle vertices are rendered as squares with the given size
+    | PolygonLine Float             -- only triangle edges are rendered with the given width
+~~~~~
+
+`PolygonOffset` is used to eliminate the visual unpleasantness when you want to highlight the edges of a solid object.
+See [glPolygonOffset](https://www.opengl.org/sdk/docs/man/html/glPolygonOffset.xhtml).  
+
+~~~~~ {.haskell}
+data PolygonOffset
+    = NoOffset              -- no offset
+    | Offset Float Float    -- how to tweak depth values: *factor* and *units*
+~~~~~
+
+`ProvokingVertex` values are used only in case of `Flat` interpolation (see later).
+
+~~~~~ {.haskell}
+data ProvokingVertex
+    = LastVertex            -- the value of the last vertex is used in flat interpolation
+    | FirstVertex           -- the value of the first vertex is used in flat interpolation
+~~~~~
+
+Points will be rendered as squares.  
+The square sides' size is can given in two ways with `PointSize` data:
+
 ~~~~~ {.haskell}
 data PointSize a
-    = PointSize Float
-    | ProgramPointSize (a -> Float)
+    = PointSize Float                   -- static point size
+    | ProgramPointSize (a -> Float)     -- dynamic point size which depends on attributes
+~~~~~
 
-data PolygonMode a
-    = PolygonFill
-    | PolygonPoint (PointSize a)
-    | PolygonLine Float
+Point are rendered as squares which can be texured.
+`PointSpriteCoordOrigin` tells where is the origin for the texure.
 
-data PolygonOffset
-    = NoOffset
-    | Offset Float Float
-
+~~~~~ {.haskell}
 data PointSpriteCoordOrigin
-    = LowerLeft
-    | UpperLeft
-
-data ProvokingVertex
-    = LastVertex
-    | FirstVertex
+    = LowerLeft       -- texture origin is lower left corner
+    | UpperLeft       -- texture origin is lower left corner
 ~~~~~
 
 ### Interpolation types
 
+During rasterization, attribute values are interpolated between the vertices of triangles and lines.
+
+OpenGL supports three types of interpolation:
+
 ~~~~~ {.haskell}
 data Interpolated t where
+  Flat          ::                 Interpolated t   -- no interpolation
   Smooth        :: (Floating t) => Interpolated t   -- smooth interpolation
   NoPerspective :: (Floating t) => Interpolated t   -- no perspective correction
-  Flat          ::                 Interpolated t   -- no interpolation
 ~~~~~
 
-A tuple of `Interpolated` values are needed for each vertex attribute at rasterization.  
-`InterpolatedType` tells what is the aggregated interpolated type:
+In case of `Flat` interpolation, either the value of the first vertex or the value of the last vertex is chosen.
+The `ProvokingVertex` value of the rasterization context tells which one to choose (see above).
+
+
+### The `rasterizePrimitive` function
+
+`rasterize` turns a `Primitive` into a `FragmentStream`, given a rasterization contex and info for interpolation:
 
 ~~~~~ {.haskell}
-type family InterpolatedType a where
-    InterpolatedType () = ()
-    InterpolatedType (Interpolated a) = a
-    InterpolatedType (Interpolated a, Interpolated b) = (a, b)
-    InterpolatedType (Interpolated a, Interpolated b, Interpolated c) = (a, b, c)
+rasterizePrimitive
+    :: a ~ Vec 4 Float: b
+    => HList (map Interpolated b)                -- tuple of Smooth & Flat
+    -> RasterContext (HList a) pr
+    -> Primitive (HList a) pr
+    -> FragmentStream 1 (HList b)
 ~~~~~
 
+Notes:
 
-### Rasterization contexts
-
-TODO: explaination
-
-~~~~~ {.haskell}
-data RasterContext a :: PrimitiveType -> Type where
-    TriangleCtx  :: CullMode -> PolygonMode a -> PolygonOffset -> ProvokingVertex -> RasterContext a Triangle
-    PointCtx     :: PointSize a -> Float -> PointSpriteCoordOrigin                -> RasterContext a Point
-    LineCtx      :: Float -> ProvokingVertex                                      -> RasterContext a Line
-
-data CullMode
-    = CullFront
-    | CullBack
-    | CullNone
-
-data PointSize a
-    = PointSize Float
-    | ProgramPointSize (a -> Float)
-
-data PolygonMode a
-    = PolygonFill
-    | PolygonPoint (PointSize a)
-    | PolygonLine Float
-
-data PolygonOffset
-    = NoOffset
-    | Offset Float Float
-
-data PointSpriteCoordOrigin
-    = LowerLeft
-    | UpperLeft
-
-data ProvokingVertex
-    = LastVertex
-    | FirstVertex
-~~~~~
+-   The first attribute of the primitive stream should have type `Vec 4 Float`.  
+    This attribute is omitted in the result fragment stream.
+-   One `Interpolated` value is needed for each fragment attribute for rasterization.  
 
 
-### The `rasterize` function
+#### Rasterization of primitive streams
+
+Always use `rasterizePrimitives` instead of `rasterize` becase the former is compiled to runtime GPU code:
 
 ~~~~~ {.haskell}
-rasterize
-    :: ( b ~ InterpolatedType interpolation
-       , a ~ JoinTupleType (Vec 4 Float) b )
-    => interpolation                -- tuple of Smooth & Flat values
-    -> RasterContext a pr
-    -> Primitive a pr
-    -> FragmentStream 1 b
-~~~~~
-
-TODO: more explanation
-
-Functions built on top of `rasterize`:
-
-~~~~~ {.haskell}
+rasterizePrimitives
+    :: a ~ Vec 4 Float: b
+    => HList (map Interpolated b)              -- tuple of Smooth & Flat
+    -> RasterContext (HList a) pr
+    -> PrimitiveStream pr (HList a)
+    -> FragmentStream 1 (HList b)
 rasterizePrimitives ctx is s = concat (map (rasterize is ctx) s)
 ~~~~~
-
-*Phase information*  
-`rasterizePrimitives` is compiled to runtime GPU code.  
-The other operations are not accessible in any phase.
 
 
 Accumulation
 ============
 
+Accumulation combines overlaying fragments. How to combine two overlaying fragments is described by an
+accumulation context.
 
-###Accumulation contexts
+The result of the accumulation is a framebuffer (a tuple of images).
+
+
+### Accumulation contexts
+
+An accumulation context is a tuple which contains one fragment operation for each fragment attribute.
+
+There are three kind of fragment operations depending of the image kind:
 
 ~~~~~ {.haskell}
-data FragmentOperation :: Type -> Type where
-  ColorOp             :: (mask ~ VecScalar d Bool, color ~ VecScalar d c, Num c) => Blending c -> mask
-                                                                   -> FragmentOperation (Color color)
-  DepthOp             :: ComparisonFunction -> Bool                -> FragmentOperation (Depth Float)
-  StencilOp           :: StencilTests -> StencilOps -> StencilOps  -> FragmentOperation (Stencil Int32)
+data FragmentOperation :: ImageKind -> Type where
+  ColorOp   :: Num c
+            => Blending c           -- blending function
+            -> VecScalar d Bool     -- blending filter
+            -> FragmentOperation (Color (VecScalar d c))
+  DepthOp   :: ComparisonFunction
+            -> Bool
+            -> FragmentOperation Depth
+  StencilOp :: StencilTests
+            -> StencilOps
+            -> StencilOps
+            -> FragmentOperation Stencil
+~~~~~
 
+The `ImageKind` of a fragment operation:
+
+~~~~~ {.haskell}
+type family FragmentOperationKind a :: ImageKind where
+    FragmentOperationKind (FragmentOperation x) = x
+~~~~~
+
+
+Blending is combination of color values.
+
+~~~~~ {.haskell}
 data Blending :: Type -> Type where
-  NoBlending          ::                                   Blending t
-  BlendLogicOp        :: (Integral t) => LogicOperation -> Blending t
-  Blend               :: (BlendEquation, BlendEquation)
-                         -> ((BlendingFactor, BlendingFactor), (BlendingFactor, BlendingFactor))
-                         -> Vec 4 Float ->                 Blending Float
+  NoBlending    ::                                   Blending t
+  BlendLogicOp  :: (Integral t) => LogicOperation -> Blending t
+  Blend         :: (BlendEquation, BlendEquation)
+                -> ((BlendingFactor, BlendingFactor), (BlendingFactor, BlendingFactor))
+                -> Vec 4 Float
+                -> Blending Float
+~~~~~
 
-data BlendingFactor
-    = Zero'
-    | One
-    | SrcColor
-    | OneMinusSrcColor
-    | DstColor
-    | OneMinusDstColor
-    | SrcAlpha
-    | OneMinusSrcAlpha
-    | DstAlpha
-    | OneMinusDstAlpha
-    | ConstantColor
-    | OneMinusConstantColor
-    | ConstantAlpha
-    | OneMinusConstantAlpha
-    | SrcAlphaSaturate
-
-data BlendEquation
-    = FuncAdd
-    | FuncSubtract
-    | FuncReverseSubtract
-    | Min
-    | Max
-
+~~~~~ {.haskell}
 data LogicOperation
     = Clear
     | And
@@ -802,17 +795,39 @@ data LogicOperation
     | OrInverted
     | Nand
     | Set
+~~~~~
 
-data StencilOperation
-    = OpZero
-    | OpKeep
-    | OpReplace
-    | OpIncr
-    | OpIncrWrap
-    | OpDecr
-    | OpDecrWrap
-    | OpInvert
+~~~~~ {.haskell}
+data BlendingFactor
+    = ZeroBF
+    | OneBF
+    | SrcColor
+    | OneMinusSrcColor
+    | DstColor
+    | OneMinusDstColor
+    | SrcAlpha
+    | OneMinusSrcAlpha
+    | DstAlpha
+    | OneMinusDstAlpha
+    | ConstantColor
+    | OneMinusConstantColor
+    | ConstantAlpha
+    | OneMinusConstantAlpha
+    | SrcAlphaSaturate
+~~~~~
 
+~~~~~ {.haskell}
+data BlendEquation
+    = FuncAdd
+    | FuncSubtract
+    | FuncReverseSubtract
+    | Min
+    | Max
+~~~~~
+
+Comparison functions for depth values.
+
+~~~~~ {.haskell}
 data ComparisonFunction
     = Never
     | Less
@@ -824,54 +839,88 @@ data ComparisonFunction
     | Always
 ~~~~~
 
+Stencil operations.
+
+~~~~~ {.haskell}
+data StencilOperation
+    = OpZero
+    | OpKeep
+    | OpReplace
+    | OpIncr
+    | OpIncrWrap
+    | OpDecr
+    | OpDecrWrap
+    | OpInvert
+~~~~~
+
 ### Accumulation function
 
-~~~~~ {.haskell}
-type family ImageLC a :: Nat where ImageLC (Image n t) = n
-
-allSame :: [a] -> Type
-allSame [] = 'Unit
-allSame [x] = 'Unit
-allSame (x: y: xs) = 'T2 (x ~ y) (allSame (y:xs))
-
-sameLayerCounts a = allSame (map 'ImageLC a)
-
-remSemantics :: ImageSemantics -> Type
-remSemantics (Color a) = a
-remSemantics (Depth a) = a
-remSemantics (Stencil a) = a
-
-remSemantics' :: [ImageSemantics] -> [Type]
-remSemantics' (Depth _: x) = map remSemantics x 
-remSemantics' x = map remSemantics x 
-
-type family FragmentOperationSem a :: ImageSemantics where FragmentOperationSem (FragmentOperation x) = x
-~~~~~
-
+The `overlay` function overlays the fragments of a fragment streams on the given background images:
 
 ~~~~~ {.haskell}
-Accumulate :: forall (n :: Nat) (c :: [Type]) . (b ~ map FragmentOperationSem c) => HList c -> FragmentStream n (HList (remSemantics' b)) -> FrameBuffer n b -> FrameBuffer n b
+overlay
+    :: forall (n :: Nat) (c :: [Type])
+    . b ~ map FragmentOperationKind c
+    => FrameBuffer n b                            -- backround images
+    -> ( HList c                                  -- fragment operations (accumulation context)
+       , FragmentStream n (HList (imageType' b))  -- fragment steam
+       )
+    -> FrameBuffer n b                            -- result images
+
+imageType' :: [ImageKind] -> [Type]
+imageType' (Depth: x) = map imageType x 
+imageType' x = map imageType x 
 ~~~~~
 
+Notes:
+
+-   No fragment attribute is needed for overlaying depth images: the depth value is taken from the fragment viewport coordinates.
+
+`accumulateWith` just pairs an accumulation context with a fragment stream:
 
 ~~~~~ {.haskell}
 accumulateWith ctx x = (ctx, x)
-overlay cl (ctx, str) = Accumulate ctx str cl
 ~~~~~
 
 
-
-Interface for inputs
+Getting inputs
 ====================
+
+The input of a pipeline consists of primitive streams, uniforms and textures.
+
+### Uniforms and textures
+
+Uniforms can be imported by their name:
 
 ~~~~~ {.haskell}
 Uniform   :: String -> t
+~~~~~
+
+Note that currently the type of the uniform is not statically checked.
+
+A texture is a uniform with type `Texture`.
+Currently textures are treated specially in LambdadCube 3D but this is planned to be changed.
+
+### Primitive streams
+
+A primitive stream can be imported by `fetch`:
+
+~~~~~ {.haskell}
+fetch
+    :: forall a t
+    . String            -- name of the primitive stream
+    -> HList t          -- tuple of attribute names, given by `Attribute`
+    -> PrimitiveStream a (HList t)
+~~~~~
+
+Attribute names can be given by `Attribute`:
+
+~~~~~ {.haskell}
 Attribute :: String -> t
 ~~~~~
 
-~~~~~ {.haskell}
-fetch       :: forall a t . String -> t -> PrimitiveStream a t
-~~~~~
+Note that currently the type of the attributes are not statically checked.
+
 
 Interface for outputs
 =====================

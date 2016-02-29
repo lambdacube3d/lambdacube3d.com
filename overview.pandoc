@@ -100,7 +100,7 @@ tetrahedron = map (\v -> V4 v%x v%y v%z 1)
     , V3 0 0 1, V3 0 0 0, V3 1 0 0
     ]
 
-tetrahedronStream = fetchArrays Triangle tetrahedron
+tetrahedronStream = fetchArrays @Triangle tetrahedron
 ~~~~~
 
 
