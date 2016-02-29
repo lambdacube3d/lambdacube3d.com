@@ -610,12 +610,18 @@ data RasterContext a :: PrimitiveType -> Type where
     TriangleCtx  :: CullMode -> PolygonMode a -> PolygonOffset -> ProvokingVertex -> RasterContext a Triangle
     PointCtx     :: PointSize a -> Float -> PointSpriteCoordOrigin                -> RasterContext a Point
     LineCtx      :: Float -> ProvokingVertex                                      -> RasterContext a Line
+~~~~~
 
+Triangles can be discarded based on their apparent facing, a process known as [Face Culling](https://www.opengl.org/wiki/Face_Culling). 
+
+~~~~~ {.haskell}
 data CullMode
-    = CullFront
-    | CullBack
-    | CullNone
+    = CullFront     -- triangle faces whose vertices appear counter-clockwise are culled
+    | CullBack      -- triangle faces whose vertices appear clockwise are culled
+    | CullNone      -- no culling
+~~~~~
 
+~~~~~ {.haskell}
 data PointSize a
     = PointSize Float
     | ProgramPointSize (a -> Float)

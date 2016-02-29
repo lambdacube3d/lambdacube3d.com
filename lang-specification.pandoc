@@ -27,9 +27,10 @@ Haskell98 language features
 -   operators, operator fixity declarations
 -   pattern matching; wildcard patterns
 -   function alternatives
--   value definitions
+-   value definitions (pattern = expression)
 -   where-blocks
 -   simple recursion
+-   type synonyms
 
 Work in progress:
 
@@ -37,7 +38,6 @@ Work in progress:
 -   module imports and export lists
 -   type signatures
 -   dot-dot expressions
--   constructor operator fixity declarations
 
 TODO:
 
@@ -47,7 +47,6 @@ TODO:
 -   type class defaulting
 -   type instance deriving
 -   newtype declarations
--   type synonyms
 -   do syntax
 
 There are some diversions from Haskell98. Our plan is to keep this list very short.
