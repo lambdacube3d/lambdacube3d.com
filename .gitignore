@@ -17,7 +17,9 @@ cabal-dev
 .hpc
 .hsenv
 .cabal-sandbox/
+.stack-work/
 cabal.sandbox.config
+site_key.txt
 *.prof
 *.aux
 *.hp
