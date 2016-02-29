@@ -8,7 +8,7 @@ LambdaCube 3D
 <a href='http://lambdacube3d.com'>lambdacube3d.com</a>
 </div>
 
-LambdaCube 3D API 0.4
+LambdaCube 3D API 0.5
 ================
 
 We gradually improve the documentation.
@@ -163,14 +163,14 @@ rgb r g b = V4 r g b 1.0
 ### Transformation Functions
 
 ------------------  --------------------------------------------------------------- ----------------------------------------------------------------
-`lookat`            `:: Vec 3 Float -> Vec 3 Float -> Vec 3 Float -> Mat 4 4 Float` Camera transformation matrix, Camera position, Target position, Upward direction
-`perspective`       `:: Float -> Float -> Float -> Float -> Mat 4 4 Float`          Perspective transformation matrix, Near plane, Far plane, Field of view of the y axis, in radians, Aspect ratio, i.e. screen's width\/height
-`scale`             `:: Float -> Vec 4 Float -> Vec 4 Float`                        scale
-`rotMatrixX`        `:: Float -> Mat 4 4 Float`                                     rotate around X axis
-`rotMatrixY`        `:: Float -> Mat 4 4 Float`                                     rotate around Y axis
-`rotMatrixZ`        `:: Float -> Mat 4 4 Float`                                     rotate around Z axis
-`rotationEuler`     `:: Float -> Float -> Float -> Mat 4 4 Float`                   euler angles
-`translateBefore4`  `:: Vec 3 Float -> Mat 4 4 Float`                               ....
+`lookat`            `:: Vec 3 Float -> Vec 3 Float -> Vec 3 Float -> Mat 4 4 Float` camera transformation with args: camera position, target position, upward direction
+`perspective`       `:: Float -> Float -> Float -> Float -> Mat 4 4 Float`          perspective transformation with args: near plane, far plane, field of view of the y axis (in radians), aspect ratio (i.e. screen's width\/height)
+`scale`             `:: Float -> Vec 4 Float -> Vec 4 Float`                        scales a vector
+`rotMatrixX`        `:: Float -> Mat 4 4 Float`                                     rotation around X axis, takes the angle in radians
+`rotMatrixY`        `:: Float -> Mat 4 4 Float`                                     rotation around Y axis, takes the angle in radians
+`rotMatrixZ`        `:: Float -> Mat 4 4 Float`                                     rotation around Z axis, takes the angle in radians
+`rotationEuler`     `:: Float -> Float -> Float -> Mat 4 4 Float`                   rotation using [Euler angles](https://en.wikipedia.org/wiki/Euler_angles)
+`translateBefore4`  `:: Vec 3 Float -> Mat 4 4 Float`                               translation matrix
 ------------------  --------------------------------------------------------------- ----------------------------------------------------------------
 
 
