@@ -24,7 +24,9 @@ package name                                                                    
 Outdated Packages
 -----------------
 
-### LambdaCube EDSL (2012-2015)
+### LambdaCube EDSL (2012-2014)
+
+Purely functional Haskell EDSL for GPU graphics programming.
 
 ----------------------                                                      ----------------
 [lambdacube-edsl](http://hackage.haskell.org/package/lambdacube-edsl)
@@ -33,6 +35,8 @@ Outdated Packages
 ----------------------                                                      ----------------
 
 ### LambdaCube Engine (2009-2011)
+
+Graphics engine in Haskell inspired by [Ogre3D](http://www.ogre3d.org).
 
 -----------------------------                                                 ---
 [lambdacube-engine](http://hackage.haskell.org/package/lambdacube-engine)
