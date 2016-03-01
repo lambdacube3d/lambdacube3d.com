@@ -49,3 +49,8 @@ upload:
 	scp $(wildcard $(TEMPLATES)/*.tpl) lambdacube3d.com:/home/www/hello/snaplets/heist/templates
 #	scp $(STATIC) lambdacube3d.com:/home/www/hello/static
 
+.PHONEY: uploadstatic
+uploadstatic:
+	chmod -R g+w static
+	scp -r static lambdacube3d.com:/home/www/hello/
+
