@@ -51,7 +51,7 @@ The terminology 'uniform' comes from the fact that uniforms are constant values 
 
 A **texture** is a uniform with type `Texture`.
 A `Texture` is an image with sampling configurations (discussed later).
-Currently textures are treated specially in LambdadCube 3D but this is planned to be changed.
+Currently textures are treated specially in LambdaCube 3D but this is planned to be changed.
 
 A **stream** is a vector. In LambdaCube 3D there are two kind of streams: primitive streams and fragment streams.
 

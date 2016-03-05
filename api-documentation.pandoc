@@ -899,7 +899,7 @@ Uniform   :: String -> t
 Note that currently the type of the uniform is not statically checked.
 
 A texture is a uniform with type `Texture`.
-Currently textures are treated specially in LambdadCube 3D but this is planned to be changed.
+Currently textures are treated specially in LambdaCube 3D but this is planned to be changed.
 
 ### Primitive streams
 
