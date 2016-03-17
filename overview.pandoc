@@ -193,7 +193,7 @@ The following example we project and scale the vertices, and we also store the o
 coordinates of the vertices, because we would like to use them later:
 
 ~~~~~ {.haskell}
-mapPrimitives (\((x)) -> (scale 0.5 (projmat *. x), x)
+mapPrimitives (\((x)) -> (scale 0.5 (projmat *. x), x))
 ~~~~~
 
 Here we suppose that the vertices are `Vec 4 Float` values and `projmat` has type `Mat 4 4 Float`.
