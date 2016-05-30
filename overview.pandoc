@@ -367,7 +367,7 @@ main = renderFrame $
              (fetch "stream4" ((Attribute "position4")))
 ~~~~~
 
-Or we can use our tetrahedron what we defined before.
+Or we can use our tetrahedron, which we defined before.
 
 ~~~~~ {.haskell}
 tetrahedron = map (\v -> V4 v%x v%y v%z 1)
