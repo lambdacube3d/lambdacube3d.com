@@ -38,6 +38,8 @@ Quick References                                            Documentation
 <div style="float:right;width:34%;margin:0 0% 1cm 5%">
 Showcase
 ========
+<iframe style="float:right;width:100%" src="https://www.youtube.com/embed/IjtjSqkEhDY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 <a href="https://github.com/lambdacube3d/lambdacube-quake3">
   <img style="float:right;width:100%" src="/screenshots/lambdacube-dsl-quake3.jpg" title="Quake 3 map viewer in Haskell using LambdaCube 3D">
 </a>
